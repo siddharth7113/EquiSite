@@ -26,7 +26,13 @@ EquiSite/
 ├── examples/                  # Sample PDBs and output CSV files
 ├── equisite/                  # Public Python bindings + private inference modules
 │   ├── __init__.py
-│   ├── predictor.py
+│   ├── model/
+│   │   ├── _model.py
+│   │   ├── _pipeline.py
+│   │   └── _result.py
+│   ├── predictor.py           # Backward-compatible predictor wrapper
+│   ├── data/
+│   └── datasets/
 │   └── _*.py
 ├── model/
 │   ├── __init__.py

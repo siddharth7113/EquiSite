@@ -172,14 +172,16 @@ residue_index,residue_name,binding_probability
 You can also use the public Python inference API:
 
 ```python
-from equisite import EquiSitePredictor
+from equisite.model import EquiSitePipeline
 
-predictor = EquiSitePredictor.from_pretrained(binding_type="DNA", device="0")
-results = predictor.predict_proba("my_protein.pdb")
+pipeline = EquiSitePipeline.from_pretrained(binding_type="DNA", device="0")
+results = pipeline.predict_proba("my_protein.pdb")
 for r in results:
     if r["binding_probability"] > 0.5:
         print(f"Residue {r['residue_index']} ({r['residue_name']}): "
               f"{r['binding_probability']:.4f}")
+
+results.to_csv("predictions.csv")
 ```
 
 ---
@@ -244,9 +246,11 @@ EquiSite/
 │
 ├── equisite/               # Public Python inference API
 │   ├── __init__.py
-│   ├── predictor.py
-│   ├── _model_loader.py    # Checkpoint/model loading utilities
-│   ├── _inference_runner.py # Single-PDB inference orchestration
+│   ├── model/              # Public model + pipeline API
+│   │   ├── _model.py
+│   │   ├── _pipeline.py
+│   │   └── _result.py
+│   ├── predictor.py        # Backward-compatible wrapper
 │   └── _*.py               # Other private inference internals
 │
 ├── model/
