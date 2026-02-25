@@ -245,7 +245,9 @@ EquiSite/
 ├── equisite/               # Public Python inference API
 │   ├── __init__.py
 │   ├── predictor.py
-│   └── _*.py               # Private inference internals
+│   ├── _model_loader.py    # Checkpoint/model loading utilities
+│   ├── _inference_runner.py # Single-PDB inference orchestration
+│   └── _*.py               # Other private inference internals
 │
 ├── model/
 │   ├── equisite_t3_pro.py  # EquiSite model definition

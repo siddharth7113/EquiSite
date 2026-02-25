@@ -25,6 +25,9 @@ EquiSite/
 │   └── RNA/best_val.pt
 ├── examples/                  # Sample PDBs and output CSV files
 ├── equisite/                  # Public Python bindings + private inference modules
+│   ├── __init__.py
+│   ├── predictor.py
+│   └── _*.py
 ├── model/
 │   ├── __init__.py
 │   ├── equisite_t3_pro.py
