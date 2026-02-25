@@ -1,13 +1,14 @@
+"""Equivariant instance normalization layers."""
+
 import torch
 import torch.nn as nn
-from torch_geometric.nn import global_mean_pool, global_max_pool
-
 from e3nn.o3 import Irreps
+from torch_geometric.nn import global_max_pool, global_mean_pool
 
 
 # From "Geometric and Physical Quantities improve E(3) Equivariant Message Passing"
 class EquivariantInstanceNorm(nn.Module):
-    '''Instance normalization for orthonormal representations
+    """Instance normalization for orthonormal representations
     It normalizes by the norm of the representations.
     Note that the norm is invariant only for orthonormal representations.
     Irreducible representations `wigner_D` are orthonormal.
@@ -21,9 +22,26 @@ class EquivariantInstanceNorm(nn.Module):
         do we have weight and bias parameters
     reduce : {'mean', 'max'}
         method used to reduce
-    '''
+    """
 
-    def __init__(self, irreps, eps=1e-5, affine=True, reduce='mean', normalization='component'):
+    def __init__(self, irreps, eps=1e-5, affine=True, reduce="mean", normalization="component"):
+        """
+        Initialize EquivariantInstanceNorm.
+
+        Parameters
+        ----------
+        irreps : Any
+            Input argument.
+        eps : Any
+            Input argument.
+        affine : Any
+            Input argument.
+        reduce : Any
+            Input argument.
+        normalization : Any
+            Input argument.
+
+        """
         super().__init__()
 
         self.irreps = Irreps(irreps)
@@ -37,24 +55,33 @@ class EquivariantInstanceNorm(nn.Module):
             self.affine_weight = nn.Parameter(torch.ones(num_features))
             self.affine_bias = nn.Parameter(torch.zeros(num_scalar))
         else:
-            self.register_parameter('affine_weight', None)
-            self.register_parameter('affine_bias', None)
+            self.register_parameter("affine_weight", None)
+            self.register_parameter("affine_bias", None)
 
         assert isinstance(reduce, str), "reduce should be passed as a string value"
-        assert reduce in ['mean', 'max'], "reduce needs to be 'mean' or 'max'"
+        assert reduce in ["mean", "max"], "reduce needs to be 'mean' or 'max'"
         self.reduce = reduce
 
-        assert normalization in ['norm', 'component'], "normalization needs to be 'norm' or 'component'"
+        assert normalization in [
+            "norm",
+            "component",
+        ], "normalization needs to be 'norm' or 'component'"
         self.normalization = normalization
 
-
     def __repr__(self):
+        """
+        Return a readable string representation.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         return f"{self.__class__.__name__} ({self.irreps}, eps={self.eps})"
 
-
-    #@torch.autocast(device_type='cuda', enabled=False)
+    # @torch.autocast(device_type='cuda', enabled=False)
     def forward(self, node_input, batch, **kwargs):
-        '''evaluate
+        """evaluate
         Parameters
         ----------
         node_input : `torch.Tensor`
@@ -63,7 +90,7 @@ class EquivariantInstanceNorm(nn.Module):
         -------
         `torch.Tensor`
             tensor of shape ``(batch, ..., irreps.dim)``
-        '''
+        """
         # batch, *size, dim = node_input.shape  # TODO: deal with batch
         # node_input = node_input.reshape(batch, -1, dim)  # [batch, sample, stacked features]
         # node_input has shape [batch * nodes, dim], but with variable nr of nodes.
@@ -75,10 +102,13 @@ class EquivariantInstanceNorm(nn.Module):
         iw = 0
         ib = 0
 
-        for mul, ir in self.irreps:  # mul is the multiplicity (number of copies) of some irrep type (ir)
+        for (
+            mul,
+            ir,
+        ) in self.irreps:  # mul is the multiplicity (number of copies) of some irrep type (ir)
             d = ir.dim
-            #field = node_input[:, ix: ix + mul * d]  # [batch * sample, mul * repr]
-            field = node_input.narrow(1, ix, mul*d)
+            # field = node_input[:, ix: ix + mul * d]  # [batch * sample, mul * repr]
+            field = node_input.narrow(1, ix, mul * d)
             ix += mul * d
 
             # [batch * sample, mul, repr]
@@ -93,32 +123,32 @@ class EquivariantInstanceNorm(nn.Module):
 
             # Then compute the rescaling factor (norm of each feature vector)
             # Rescaling of the norms themselves based on the option "normalization"
-            if self.normalization == 'norm':
+            if self.normalization == "norm":
                 field_norm = field.pow(2).sum(-1)  # [batch * sample, mul]
-            elif self.normalization == 'component':
+            elif self.normalization == "component":
                 field_norm = field.pow(2).mean(-1)  # [batch * sample, mul]
             else:
-                raise ValueError("Invalid normalization option {}".format(self.normalization))
+                raise ValueError(f"Invalid normalization option {self.normalization}")
             # Reduction method
-            if self.reduce == 'mean':
+            if self.reduce == "mean":
                 field_norm = global_mean_pool(field_norm, batch)  # [batch, mul]
-            elif self.reduce == 'max':
+            elif self.reduce == "max":
                 field_norm = global_max_pool(field_norm, batch)  # [batch, mul]
             else:
-                raise ValueError("Invalid reduce option {}".format(self.reduce))
+                raise ValueError(f"Invalid reduce option {self.reduce}")
 
             # Then apply the rescaling (divide by the sqrt of the squared_norm, i.e., divide by the norm
             field_norm = (field_norm + self.eps).pow(-0.5)  # [batch, mul]
 
             if self.affine:
-                weight = self.affine_weight[None, iw: iw + mul]  # [batch, mul]
+                weight = self.affine_weight[None, iw : iw + mul]  # [batch, mul]
                 iw += mul
                 field_norm = field_norm * weight  # [batch, mul]
 
             field = field * field_norm[batch].reshape(-1, mul, 1)  # [batch * sample, mul, repr]
 
             if self.affine and d == 1 and ir.p == 1:  # scalars
-                bias = self.affine_bias[ib: ib + mul]  # [batch, mul]
+                bias = self.affine_bias[ib : ib + mul]  # [batch, mul]
                 ib += mul
                 field += bias.reshape(mul, 1)  # [batch * sample, mul, repr]
 

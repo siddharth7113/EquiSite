@@ -1,51 +1,199 @@
-# EquiSite: Multi-Scale Equivariant Graph Learning for Robust Nucleic Acid Binding Site Prediction
+# EquiSite
+
+**Multi-Scale Equivariant Graph Learning for Robust Nucleic Acid Binding Site Prediction**
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18617058.svg)](https://doi.org/10.5281/zenodo.18617058)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-This is the official PyTorch implementation of **EquiSite**.
+EquiSite is an SE(3)-equivariant geometric graph neural network that predicts
+**protein–DNA** and **protein–RNA** binding sites at per-residue resolution.
+It explicitly models multi-scale protein geometry (backbone *and* side-chain
+orientations) and **eliminates the need for evolutionary profiles (MSAs)**,
+making it fast enough for high-throughput use on AlphaFold2 models.
 
-**EquiSite** is an SE(3)-equivariant geometric graph neural network for accurate protein-DNA and protein-RNA binding site prediction. EquiSite explicitly models **multi-scale protein geometry** (including atomic side-chain orientations) and **eliminates the need for computationally expensive evolutionary profiles (MSAs)**.
+<!-- ![Graphical Abstract](graphical_abstract.png) -->
+<img src="graphical_abstract.png" alt="Graphical Abstract" width="40%">
 
-EquiSite achieves state-of-the-art performance on both experimental structures and AlphaFold2-predicted models, and supports structure-guided molecular docking (e.g., HADDOCK3)
+---
 
-### Graphical Abstract
+## Table of Contents
 
-![Graphical Abstract](graphical_abstract.png)
+- [How It Works](#how-it-works)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Detailed Usage — `predict.py`](#detailed-usage--predictpy)
+- [Training](#training)
+- [Checkpoints](#checkpoints)
+- [Repository Structure](#repository-structure)
+- [FAQ & Troubleshooting](#faq--troubleshooting)
+- [Citation](#citation)
+- [License](#license)
 
+---
 
+## How It Works
+
+```
+PDB file ──► Clean HETATM ──► HDF5 ──► ESM-2 embeddings ──► EquiSite GNN ──► Per-residue
+             (strip ligands)   (atom    + Backbone/side-chain    (SE(3)-        binding
+                                coords)  geometry features       equivariant)    probabilities
+```
+
+1. **PDB preprocessing** — HETATM records (ligands, waters, etc.) are stripped;
+   the clean structure is converted to an internal HDF5 representation containing
+   atom positions, residue types, and covalent/hydrogen bond information.
+2. **Sequence embeddings** — The protein sequence is passed through
+   [ESM-2 (650M)](https://github.com/facebookresearch/esm) to produce 1280-dim
+   per-residue embeddings.
+3. **Geometric features** — Backbone dihedral angles (φ, ψ, ω) and side-chain
+   torsion angles (χ₁–χ₄) are computed from atom coordinates.
+4. **Graph construction** — A radius graph (default cutoff 11.5 Å) over Cα atoms
+   is built, with spherical harmonic edge features.
+5. **EquiSite model** — A hybrid architecture combining an Equiformer backbone
+   (SE(3)-equivariant attention) with geometric message passing. Outputs a
+   per-residue softmax probability of being a nucleic-acid binding site.
 
 ---
 
 ## Installation
 
-We recommend using Anaconda to manage the environment.
+### Prerequisites
+
+- **Python ≥ 3.9, < 3.12**
+- **CUDA-capable GPU** (recommended; CPU works but is slow for ESM-2)
+- **[PyTorch](https://pytorch.org/get-started/locally/)** with CUDA support
+
+### Option A — uv (recommended)
 
 ```bash
-conda env create -f conda_env.yml
-conda activate equisite
+# 1. Create and activate a virtual environment
+uv venv --python 3.11
+source .venv/bin/activate
+
+# 2. Install PyTorch with CUDA (example for CUDA 12.4)
+uv pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
+
+# 3. Install PyTorch Geometric extensions
+uv pip install torch-scatter torch-sparse torch-cluster torch-spline-conv \
+    -f https://data.pyg.org/whl/torch-2.6.0+cu124.html
+
+# 4. Install EquiSite and remaining dependencies
+uv pip install -e ".[dev]"
 ```
 
-Core dependencies include:
+> **Note:** Adjust the CUDA version in steps 2–3 to match your driver.
+> Run `nvidia-smi` to check your CUDA version. Your driver's CUDA version is
+> backward-compatible, so e.g. a CUDA 13.x driver can use `cu124` wheels.
 
-- Python >= 3.9
-- PyTorch
-- PyTorch Geometric
-- ESM (facebookresearch/esm)
-- h5py
-- numpy
-- scikit-learn
+---
 
+## Quick Start
+
+### Predict DNA-binding residues for a single protein
+
+```bash
+python predict.py --pdb my_protein.pdb --type DNA
+```
+
+This will:
+1. Load the pretrained DNA checkpoint
+2. Process the PDB through the full pipeline
+3. Print a **summary table** of top binding residues to the terminal
+4. Write a CSV with *all* per-residue probabilities to stdout
+
+### Save results to a file
+
+```bash
+python predict.py --pdb my_protein.pdb --type DNA --output results.csv
+```
+
+### Predict RNA-binding residues
+
+```bash
+python predict.py --pdb my_protein.pdb --type RNA --output rna_results.csv
+```
+
+### Run on CPU (no GPU)
+
+```bash
+python predict.py --pdb my_protein.pdb --type DNA --device cpu
+```
+
+### Batch mode (directory of PDBs)
+
+```bash
+python predict.py --pdb_dir ./my_pdbs/ --type DNA --output ./results/
+```
+
+Each PDB gets its own output file in `./results/`.
+
+---
+
+## Detailed Usage — `predict.py`
+
+### Command-Line Arguments
+
+| Argument | Type | Default | Description |
+|---|---|---|---|
+| `--pdb` | `FILE` | — | Path to a single `.pdb` file *(mutually exclusive with `--pdb_dir`)* |
+| `--pdb_dir` | `DIR` | — | Directory containing `.pdb` files (batch mode) |
+| `--type` | `DNA\|RNA` | `DNA` | Binding type to predict |
+| `--model_path` | `FILE` | auto | Override the default checkpoint |
+| `--output` / `-o` | `PATH` | stdout | Output file (single) or directory (batch) |
+| `--format` | `csv\|json` | `csv` | Output format |
+| `--top_k` | `int` | `20` | Number of top residues shown in summary |
+| `--device` | `str` | `0` | `"cpu"` or CUDA device index |
+| `--sequence` | `str` | — | Override protein sequence (e.g. for mutant studies) |
+
+### Output Format
+
+**CSV** (default):
+
+```csv
+residue_index,residue_name,binding_probability
+1,MET,0.012345
+2,LYS,0.234567
+3,THR,0.891234
+...
+```
+
+**JSON** (`--format json`):
+
+```json
+[
+  {"residue_index": 1, "residue_name": "MET", "binding_probability": 0.012345},
+  {"residue_index": 2, "residue_name": "LYS", "binding_probability": 0.234567},
+  ...
+]
+```
+
+### Programmatic Usage
+
+You can also call the inference function directly from Python:
+
+```python
+import torch
+from predict import _load_model, run_single_inference
+
+device = torch.device("cuda:0")
+model = _load_model("checkpoints/DNA/best_val.pt", device)
+
+results = run_single_inference("my_protein.pdb", model, device)
+for r in results:
+    if r["binding_probability"] > 0.5:
+        print(f"Residue {r['residue_index']} ({r['residue_name']}): "
+              f"{r['binding_probability']:.4f}")
+```
 
 ---
 
 ## Training
 
-Example training command:
+Train EquiSite from scratch on your own data:
 
 ```bash
 python train.py \
-    --dataset RNA_Fix \
+    --dataset DNA_Check \
     --dataset_path dataset/ \
     --epochs 200 \
     --batch_size 4 \
@@ -56,64 +204,123 @@ python train.py \
     --level allatom+esm
 ```
 
-Training logs and checkpoints will be saved automatically under:
+### Key Arguments
+
+| Argument | Description |
+|---|---|
+| `--dataset` | Dataset name: `DNA_Check`, `RNA_Check`, etc. |
+| `--dataset_path` | Root path containing dataset directories |
+| `--epochs` | Number of training epochs |
+| `--batch_size` | Training batch size |
+| `--level` | Model level: `aminoacid`, `backbone`, `allatom`, `backbone+esm`, or `allatom+esm` |
+| `--cutoff` | Radius-graph cutoff distance (Å) |
+
+Checkpoints and TensorBoard logs are saved to `./saves/`. The best model
+(by validation ROC-AUC) is saved as `best.pt`.
+
+---
+
+## Checkpoints
+
+Pretrained weights are included in the repository:
+
+| Checkpoint | Task | Path |
+|---|---|---|
+| DNA (573 train) | DNA-binding | `checkpoints/DNA/best_val.pt` |
+| DNA (181 test) | DNA-binding | `checkpoints/DNA_181/best_val.pt` |
+| RNA | RNA-binding | `checkpoints/RNA/best_val.pt` |
+
+Additional checkpoints and full evaluation outputs are available on
+[Zenodo (DOI: 10.5281/zenodo.18617058)](https://doi.org/10.5281/zenodo.18617058).
+
+---
+
+## Repository Structure
 
 ```
-./saves/
-```
-
-The best model (based on validation ROC-AUC) is saved as:
-
-```
-best.pt
+EquiSite/
+├── predict.py              # ← User-friendly inference CLI (start here!)
+├── infer.py                # Legacy batch inference script
+├── train.py                # Training script
+├── pyproject.toml          # pip-installable package metadata
+├── checkpoints/            # Pretrained weights (DNA / RNA)
+├── examples/               # Sample PDBs and output CSVs
+│
+├── model/
+│   ├── equisite_t3_pro.py  # EquiSite model definition
+│   ├── features_equi_t3_pro.py  # Geometric feature encoders
+│   ├── nets/               # Equiformer + attention transformer layers
+│   └── ...
+│
+├── dataset/
+│   ├── DNA_Check/          # DNA dataset + data loader (PBdataset.py)
+│   ├── RNA_Check/          # RNA dataset
+│   ├── PATP/, PCA/, …      # Additional benchmark datasets
+│   └── utils/              # PDB/HDF5 parsing (PyProtein, PyPeriodicTable)
+│
+└── utils/
+    ├── loss.py             # Loss functions
+    ├── padding.py          # Batching utilities
+    └── valid_metrices.py   # Validation metrics (ROC-AUC, MCC, etc.)
 ```
 
 ---
 
-## Inference (PDB → Binding Probabilities)
+## FAQ & Troubleshooting
 
-EquiSite supports end-to-end inference from raw PDB files.
+### "CUDA out of memory" when running `predict.py`
 
-Example:
+ESM-2 (650M parameters) requires ~2–3 GB of GPU memory. The full pipeline
+(ESM-2 + EquiSite) typically needs **≥ 6 GB** for a single protein.
+
+- Use `--device cpu` if your GPU is too small (slower but always works).
+- For very large proteins (> 1000 residues), CPU mode may be necessary.
+
+### PyTorch Geometric installation errors
+
+PyG extensions (`torch-scatter`, `torch-sparse`, etc.) must match your exact
+PyTorch and CUDA versions. Follow the [official PyG install guide](https://pytorch-geometric.readthedocs.io/en/latest/install/installation.html):
 
 ```bash
-python infer.py \
-    --model_path path/to/best.pt \
-    --pdb_dir path/to/pdb_folder \
-    --out_dir output_directory \
-    --device 0
+pip install torch-scatter torch-sparse torch-cluster torch-spline-conv \
+    -f https://data.pyg.org/whl/torch-2.6.0+cu124.html
 ```
 
-For each input structure:
+Replace `torch-2.6.0+cu124` with your actual PyTorch version and CUDA tag.
 
-- A per-residue binding probability file (`.out`) is generated
+### `ModuleNotFoundError: No module named 'model'` or `'dataset'`
 
----
+Make sure you installed the package in development mode:
 
-## Reproducing Manuscript Results
+```bash
+uv pip install -e .
+```
 
-To reproduce the main results:
+This registers `model/`, `dataset/`, and `utils/` as importable packages.
 
-1. Download pretrained checkpoints from Zenodo.
-2. Place the checkpoint file in a local directory.
-3. Run evaluation using `infer.py` or the evaluation logic in `train.py`.
-4. Compare generated outputs with archived result files.
+### How do I use this for docking (e.g. HADDOCK)?
 
-All evaluation outputs reported in the manuscript are archived in the Zenodo release.
-
----
-
-## Data
-
-Datasets used in this study are derived from previously published benchmark collections.  
-Please refer to the manuscript for detailed dataset construction and preprocessing procedures.
-
-This repository contains data processing utilities but does not redistribute raw third-party datasets.
+Use `predict.py` to identify high-probability binding residues, then supply
+those residue indices as "active residues" in your docking setup. A reasonable
+threshold is probability > 0.5, but you may adjust based on your use case.
 
 ---
 
-## 📄 License
+## Citation
 
-This project is released under the MIT License.
+If you use EquiSite in your research, please cite:
+
+```bibtex
+@article{equisite2024,
+  title   = {EquiSite: Multi-Scale Equivariant Graph Learning for Robust
+             Nucleic Acid Binding Site Prediction},
+  year    = {2024},
+  doi     = {10.5281/zenodo.18617058}
+}
+```
 
 ---
+
+## License
+
+This project is released under the [MIT License](LICENSE).

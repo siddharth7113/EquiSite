@@ -1,24 +1,22 @@
-'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+("""""" """""" """""" """""" """""" """""" """""" """""" """""" """""" """""" """""" """''
     \file PyProtein.py
 
     \brief Protein object.
 
-    \copyright Copyright (c) 2021 Visual Computing group of Ulm University,  
-                Germany. See the LICENSE file at the top-level directory of 
+    \\copyright Copyright (c) 2021 Visual Computing group of Ulm University,
+                Germany. See the LICENSE file at the top-level directory of
                 this distribution.
 
     \author pedro hermosilla (pedro-1.hermosilla-casajus@uni-ulm.de)
-'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+""" """""" """""" """""" """""" """""" """""" """""" """""" """""" """""" """""" """""" "")
 
-import os
-import copy
-import numpy as np
 import h5py
-
+import numpy as np
 from sklearn.cluster import SpectralClustering
 
 from dataset.utils.PyMolecule import PyMolecule
-from dataset.utils.PyMolIO import load_protein_pdb, load_protein_mol2
+from dataset.utils.PyMolIO import load_protein_mol2, load_protein_pdb
+
 
 class PyProtein(PyMolecule):
     """Class to store a protein.
@@ -32,7 +30,7 @@ class PyProtein(PyMolecule):
         aminoType_ (int array n'): Aminoacid types.
         aminoIds_ (int array n'): Aminoacid ids.
         aminoChainIds_ (int array n'): Aminoacid chain ids.
-        aminoNeighs_ (int array dx2): List of aminoacid neighbors. 
+        aminoNeighs_ (int array dx2): List of aminoacid neighbors.
     """
 
     def __init__(self, pPeriodicTable):
@@ -60,10 +58,10 @@ class PyProtein(PyMolecule):
         self.atomChainNames_ = None
         self.covBondListHB_ = None
         self.atomCovBondSIndicesHB_ = None
-        
+
         # Declare variables to store the segmentation.
         self.segmentation_ = None
-        
+
         # Pooling indices (This variables are not saved).
         self.poolIds_ = []
         self.poolStartNeighs_ = []
@@ -71,14 +69,13 @@ class PyProtein(PyMolecule):
         self.poolStartNeighsHB_ = []
         self.poolNeighsHB_ = []
 
-
     def compute_min_dists_to_atoms(self, pAtomPosition):
         """Method to compute the minimum distances of the atoms of the protein
             to a set of given atoms.
 
         Args:
             pAtomPosition (np.array nx3): List of atom positions.
-    
+
         Returns:
             (float numpy array): List of minimum distance of each protein atom.
         """
@@ -91,13 +88,12 @@ class PyProtein(PyMolecule):
 
         return outDists
 
-
-    def create_segmentation(self, pAtomPosition, pDistance= 0.0):
+    def create_segmentation(self, pAtomPosition, pDistance=0.0):
         """Method to create a segmentation of the protein from a list of atom positions.
 
         Args:
             pAtomPosition (np.array nx3): List of atom positions.
-            pDistance (float): Distance that defines the radius of effect used for the 
+            pDistance (float): Distance that defines the radius of effect used for the
                 segmentation.
         """
         transProtPos = self.atomPos_[0] + self.center_.reshape((-1, 3))
@@ -114,10 +110,9 @@ class PyProtein(PyMolecule):
                     self.segmentation_[minIndex] = 1
 
         # Check if we found all the atoms in the protein
-        if len(pAtomPosition) != np.sum(self.segmentation_) and pDistance == 0.0:  
+        if len(pAtomPosition) != np.sum(self.segmentation_) and pDistance == 0.0:
             return False
         return True
-
 
     def get_residue_segmentation(self):
         """Method to get the segmentation at residue level.
@@ -128,11 +123,10 @@ class PyProtein(PyMolecule):
         order = np.lexsort((self.segmentation_, self.atomResidueIds_))
         auxResidueIds = self.atomResidueIds_[order]
         auxSegmentation = self.segmentation_[order]
-        index = np.empty(len(auxResidueIds), 'bool')
+        index = np.empty(len(auxResidueIds), "bool")
         index[-1] = True
         index[:-1] = auxResidueIds[1:] != auxResidueIds[:-1]
         return auxSegmentation[index]
-
 
     def get_aminoacid_segmentation(self):
         """Method to get the segmentation at aminoacid level.
@@ -143,26 +137,24 @@ class PyProtein(PyMolecule):
         order = np.lexsort((self.segmentation_, self.atomAminoIds_))
         auxResidueIds = self.atomAminoIds_[order]
         auxSegmentation = self.segmentation_[order]
-        index = np.empty(len(auxResidueIds), 'bool')
+        index = np.empty(len(auxResidueIds), "bool")
         index[-1] = True
         index[:-1] = auxResidueIds[1:] != auxResidueIds[:-1]
         auxSegmentation = auxSegmentation[index]
         if auxResidueIds[0] < 0:
-            return auxSegmentation[1:] #To remove aminoacid index -1 
+            return auxSegmentation[1:]  # To remove aminoacid index -1
         else:
             return auxSegmentation
 
-
     def compute_hydrogen_bonds(self):
-        """Method to compute the hydrogen bonds in the protein.
-        """
+        """Method to compute the hydrogen bonds in the protein."""
 
         # Select the backbone atoms for each aminoacid.
-        caMask = np.logical_and(self.atomNames_== "CA", self.atomTypes_ == 5)
-        cMask = np.logical_and(self.atomNames_== "C", self.atomAminoIds_ >= 0)
-        nMask = np.logical_and(self.atomNames_== "N", self.atomAminoIds_ >= 0)
-        oMask = np.logical_and(self.atomNames_== "O", self.atomAminoIds_ >= 0)
-        
+        caMask = np.logical_and(self.atomNames_ == "CA", self.atomTypes_ == 5)
+        cMask = np.logical_and(self.atomNames_ == "C", self.atomAminoIds_ >= 0)
+        nMask = np.logical_and(self.atomNames_ == "N", self.atomAminoIds_ >= 0)
+        oMask = np.logical_and(self.atomNames_ == "O", self.atomAminoIds_ >= 0)
+
         caPos = self.atomPos_[0, caMask]
         cPos = self.atomPos_[0, cMask]
         nPos = self.atomPos_[0, nMask]
@@ -172,7 +164,6 @@ class PyProtein(PyMolecule):
         oIds = np.nonzero(oMask)[0]
 
         if len(caPos) != len(cPos) or len(caPos) != len(nPos) or len(caPos) != len(oPos):
-
             caAminoIds = self.atomAminoIds_[caMask]
             cAminoIds = self.atomAminoIds_[cMask]
             nAminoIds = self.atomAminoIds_[nMask]
@@ -206,7 +197,7 @@ class PyProtein(PyMolecule):
                 else:
                     newOPos.append(caPos[curAminoIter])
                     newOIds.append(-1)
-                
+
                 if curAminoId == curCAminoId:
                     newCPos.append(cPos[cAminoIter])
                     cAminoIter += 1
@@ -233,23 +224,23 @@ class PyProtein(PyMolecule):
         for curIter in range(len(caPos)):
             startIndex = 0
             if curIter > 0:
-                startIndex = self.aminoNeighsSIndices_[curIter-1]
+                startIndex = self.aminoNeighsSIndices_[curIter - 1]
             endIndex = self.aminoNeighsSIndices_[curIter]
             selCPos = np.array(cPos[curIter])
             selOPos = np.array(oPos[curIter])
-            for curNeighIter in range(endIndex-startIndex):
+            for curNeighIter in range(endIndex - startIndex):
                 curNeigh = self.aminoNeighs_[curNeighIter + startIndex, 0]
                 if curNeigh < curIter:
                     selCPos = cPos[curNeigh]
                     selOPos = oPos[curNeigh]
             cPrev.append(selCPos)
             oPrev.append(selOPos)
-        
+
         # Compute the position of the hydrogen atom.
         cPrev = np.array(cPrev)
         oPrev = np.array(oPrev)
-        prevVec = cPrev - oPrev 
-        prevVec = prevVec / (np.linalg.norm(prevVec, axis = 1, keepdims=True) + 1e-9)
+        prevVec = cPrev - oPrev
+        prevVec = prevVec / (np.linalg.norm(prevVec, axis=1, keepdims=True) + 1e-9)
         hPos = nPos + prevVec
 
         # Compute the hydrogen bonds.
@@ -257,11 +248,11 @@ class PyProtein(PyMolecule):
         distCH = cPos.reshape((-1, 1, 3)) - hPos.reshape((1, -1, 3))
         distOH = oPos.reshape((-1, 1, 3)) - hPos.reshape((1, -1, 3))
         distCN = cPos.reshape((-1, 1, 3)) - nPos.reshape((1, -1, 3))
-        distON = np.linalg.norm(distON, axis = -1)
-        distCH = np.linalg.norm(distCH, axis = -1)
-        distOH = np.linalg.norm(distOH, axis = -1)
-        distCN = np.linalg.norm(distCN, axis = -1)
-        distON = 1.0 / (distON + 1e-9)        
+        distON = np.linalg.norm(distON, axis=-1)
+        distCH = np.linalg.norm(distCH, axis=-1)
+        distOH = np.linalg.norm(distOH, axis=-1)
+        distCN = np.linalg.norm(distCN, axis=-1)
+        distON = 1.0 / (distON + 1e-9)
         distCH = 1.0 / (distCH + 1e-9)
         distOH = 1.0 / (distOH + 1e-9)
         distCN = 1.0 / (distCN + 1e-9)
@@ -271,9 +262,9 @@ class PyProtein(PyMolecule):
             U[curIter, curIter] = 0.0
             startIndex = 0
             if curIter > 0:
-                startIndex = self.aminoNeighsSIndices_[curIter-1]
+                startIndex = self.aminoNeighsSIndices_[curIter - 1]
             endIndex = self.aminoNeighsSIndices_[curIter]
-            for curNeighIter in range(endIndex-startIndex):
+            for curNeighIter in range(endIndex - startIndex):
                 curNeigh = self.aminoNeighs_[curNeighIter + startIndex, 0]
                 U[curIter, curNeigh] = 0.0
 
@@ -283,25 +274,24 @@ class PyProtein(PyMolecule):
             EMin[i, minIndex[i]] = np.amin(U[i, :])
         maskHBonds = EMin < -0.5
         maskHBondsVals = maskHBonds.astype(np.int32)
-        hBondsIndexs = np.transpose(np.nonzero(maskHBonds))
 
         # Create a new graph for the covalent bonds and hydrogen bonds together.
         self.covBondListHB_ = []
         self.atomCovBondSIndicesHB_ = []
         curStartIndex = 0
         for curIter, curEndIndex in enumerate(self.atomCovBondSIndices_):
-
             for curNeighbor in self.covBondList_[curStartIndex:curEndIndex]:
                 self.covBondListHB_.append(curNeighbor)
 
             curAminoIndex = self.atomAminoIds_[curIter]
             if curAminoIndex >= 0:
-
                 if self.atomNames_[curIter] == "O" and np.sum(maskHBondsVals[curAminoIndex, :]) > 0:
                     curAminoNeigh = np.nonzero(maskHBonds[curAminoIndex, :])[0][0]
                     if nIds[curAminoNeigh] >= 0:
                         self.covBondListHB_.append([nIds[curAminoNeigh], curIter])
-                elif self.atomNames_[curIter] == "N" and np.sum(maskHBondsVals[:, curAminoIndex]) > 0:
+                elif (
+                    self.atomNames_[curIter] == "N" and np.sum(maskHBondsVals[:, curAminoIndex]) > 0
+                ):
                     curAminoNeigh = np.nonzero(maskHBonds[:, curAminoIndex])[0][0]
                     if oIds[curAminoNeigh] >= 0:
                         self.covBondListHB_.append([oIds[curAminoNeigh], curIter])
@@ -317,7 +307,6 @@ class PyProtein(PyMolecule):
         self.aminoNeighsSIndicesHB_ = []
         curStartIndex = 0
         for curIter, curEndIndex in enumerate(self.aminoNeighsSIndices_):
-
             for curNeighbor in self.aminoNeighs_[curStartIndex:curEndIndex]:
                 self.aminoNeighsHB_.append(curNeighbor)
 
@@ -334,33 +323,39 @@ class PyProtein(PyMolecule):
         self.aminoNeighsHB_ = np.array(self.aminoNeighsHB_)
         self.aminoNeighsSIndicesHB_ = np.array(self.aminoNeighsSIndicesHB_)
 
+    def __update_neighborhood__(self, pNewIndices, pGraphNeighs, pGraphStartNeighs):
+        """
+        Update neighborhood.
 
-    def __update_neighborhood__(self,
-        pNewIndices,
-        pGraphNeighs,
-        pGraphStartNeighs):
+        Parameters
+        ----------
+        pNewIndices : Any
+            Input argument.
+        pGraphNeighs : Any
+            Input argument.
+        pGraphStartNeighs : Any
+            Input argument.
 
-        newStartIndices = np.full((np.amax(pNewIndices)+1), 0, dtype=np.int32)
+        Returns
+        -------
+        Any
+            Function output.
+        """
+        newStartIndices = np.full((np.amax(pNewIndices) + 1), 0, dtype=np.int32)
 
         if pGraphNeighs.shape[0] > 0:
-        
             # Compute the new neighbors.
             column1 = pNewIndices[pGraphNeighs[:, 0]]
             column2 = pNewIndices[pGraphNeighs[:, 1]]
-            newNeighs = np.concatenate((
-                column1.reshape((-1,1)), 
-                column2.reshape((-1,1))),
-                axis=1)
+            newNeighs = np.concatenate((column1.reshape((-1, 1)), column2.reshape((-1, 1))), axis=1)
 
             # Remove duplicate neighbors.
             newNeighsFiltered = []
             neighsDict = set()
             for curNeigh in newNeighs:
-                if curNeigh[0] != curNeigh[1] \
-                    and curNeigh[0] >= 0 and curNeigh[1] >= 0:
-                    
-                    keyNeigh = str(curNeigh[0])+"_"+str(curNeigh[1])
-                    if not(keyNeigh in neighsDict):
+                if curNeigh[0] != curNeigh[1] and curNeigh[0] >= 0 and curNeigh[1] >= 0:
+                    keyNeigh = str(curNeigh[0]) + "_" + str(curNeigh[1])
+                    if keyNeigh not in neighsDict:
                         neighsDict.add(keyNeigh)
                         newNeighsFiltered.append(curNeigh)
                         newStartIndices[curNeigh[1]] += 1
@@ -375,17 +370,40 @@ class PyProtein(PyMolecule):
 
         return newNeighsFiltered, newStartIndices
 
-
-    def __compute_side_chain_pooling__(self, 
-        pAtomAminoIds, 
+    def __compute_side_chain_pooling__(
+        self,
+        pAtomAminoIds,
         pGraphNeighs1,
         pGraphStartNeighs1,
         pGraphNeighs2,
-        pGraphStartNeighs2, 
-        pCacheGraph):
-        
+        pGraphStartNeighs2,
+        pCacheGraph,
+    ):
         # Reduce by half the number of atoms for each aminoacid using spectral clustering on
         # the graph defined by the covalent bonds.
+        """
+        Compute side chain pooling.
+
+        Parameters
+        ----------
+        pAtomAminoIds : Any
+            Input argument.
+        pGraphNeighs1 : Any
+            Input argument.
+        pGraphStartNeighs1 : Any
+            Input argument.
+        pGraphNeighs2 : Any
+            Input argument.
+        pGraphStartNeighs2 : Any
+            Input argument.
+        pCacheGraph : Any
+            Input argument.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         newAtomCounter = 0
         aminoCounter = 0
         newAminoIds = []
@@ -397,29 +415,33 @@ class PyProtein(PyMolecule):
                 aminoAtomsIndices = np.where(aminoAtomsMask)[0]
 
                 if len(aminoAtomsIndices) > 1:
+                    # print(len(aminoAtomsIndices), curAminoId)
 
-                    #print(len(aminoAtomsIndices), curAminoId)
-
-                    adjMatrix = np.full((len(aminoAtomsIndices), len(aminoAtomsIndices)), 0, dtype=np.int32)
+                    adjMatrix = np.full(
+                        (len(aminoAtomsIndices), len(aminoAtomsIndices)), 0, dtype=np.int32
+                    )
 
                     for curAtomIter, curAtom in enumerate(aminoAtomsIndices):
                         startNeighId = 0
                         if curAtom > 0:
-                            startNeighId = pGraphStartNeighs1[curAtom-1]
+                            startNeighId = pGraphStartNeighs1[curAtom - 1]
                         endNeighId = pGraphStartNeighs1[curAtom]
                         for curNeigh in pGraphNeighs1[startNeighId:endNeighId]:
                             if curNeigh[0] in aminoAtomsIndices:
                                 neighIter = np.where(aminoAtomsIndices == curNeigh[0])[0][0]
                                 adjMatrix[curAtomIter, neighIter] = 1
-                    
+
                     assingment = None
                     matrixKey = adjMatrix.tobytes()
                     if matrixKey in pCacheGraph:
                         assingment = pCacheGraph[matrixKey]
                     else:
                         randState = np.random.RandomState(0)
-                        sc = SpectralClustering(len(aminoAtomsIndices)//2, 
-                          affinity='precomputed', random_state=randState)
+                        sc = SpectralClustering(
+                            len(aminoAtomsIndices) // 2,
+                            affinity="precomputed",
+                            random_state=randState,
+                        )
                         sc.fit(adjMatrix)
                         assingment = sc.labels_
                         pCacheGraph[matrixKey] = assingment
@@ -427,14 +449,13 @@ class PyProtein(PyMolecule):
                     for curAtomIter, curAtom in enumerate(aminoAtomsIndices):
                         newIndices[curAtom] = assingment[curAtomIter] + newAtomCounter
 
-                    for auxIter in range(len(aminoAtomsIndices)//2):
+                    for _aux_iter in range(len(aminoAtomsIndices) // 2):
                         newAminoIds.append(aminoCounter)
-                
-                    aminoCounter += 1
-                    newAtomCounter += len(aminoAtomsIndices)//2
-                
-                else:
 
+                    aminoCounter += 1
+                    newAtomCounter += len(aminoAtomsIndices) // 2
+
+                else:
                     newIndices[aminoAtomsIndices[0]] = newAtomCounter
                     newAminoIds.append(aminoCounter)
                     aminoCounter += 1
@@ -444,31 +465,50 @@ class PyProtein(PyMolecule):
 
         # Update the first graph.
         newNeighs1, newStartNeighs1 = self.__update_neighborhood__(
-            newIndices,
-            pGraphNeighs1,
-            pGraphStartNeighs1)
+            newIndices, pGraphNeighs1, pGraphStartNeighs1
+        )
 
         # Update the second graph.
         newNeighs2, newStartNeighs2 = self.__update_neighborhood__(
-            newIndices,
-            pGraphNeighs2,
-            pGraphStartNeighs2)
+            newIndices, pGraphNeighs2, pGraphStartNeighs2
+        )
 
-        return newIndices, newNeighs1, newStartNeighs1, \
-            newNeighs2, newStartNeighs2, newAminoIds
+        return newIndices, newNeighs1, newStartNeighs1, newNeighs2, newStartNeighs2, newAminoIds
 
-    
-    def __compute_side_chain_pooling_rosetta_cen__(self, 
+    def __compute_side_chain_pooling_rosetta_cen__(
+        self,
         pAtomNames,
-        pAtomAminoIds, 
+        pAtomAminoIds,
         pGraphNeighs1,
         pGraphStartNeighs1,
         pGraphNeighs2,
-        pGraphStartNeighs2):
-        
+        pGraphStartNeighs2,
+    ):
         # Reduce by half the number of atoms for each aminoacid using spectral clustering on
         # the graph defined by the covalent bonds.
-        newAtomCounter = 0
+        """
+        Compute side chain pooling rosetta cen.
+
+        Parameters
+        ----------
+        pAtomNames : Any
+            Input argument.
+        pAtomAminoIds : Any
+            Input argument.
+        pGraphNeighs1 : Any
+            Input argument.
+        pGraphStartNeighs1 : Any
+            Input argument.
+        pGraphNeighs2 : Any
+            Input argument.
+        pGraphStartNeighs2 : Any
+            Input argument.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         aminoCounter = 0
         newAminoIds = []
         newIndices = np.full((len(pGraphStartNeighs1)), -1, dtype=np.int32)
@@ -478,14 +518,9 @@ class PyProtein(PyMolecule):
             if curAminoId >= 0:
                 aminoAtomsMask = pAtomAminoIds == curAminoId
                 aminoAtomsIndices = np.where(aminoAtomsMask)[0]
-            
+
                 sideChain = -1
-                clusterIds = {
-                    "CA": -1,
-                    "CB": -1,
-                    "C" : -1,
-                    "N" : -1,
-                    "O" : -1}
+                clusterIds = {"CA": -1, "CB": -1, "C": -1, "N": -1, "O": -1}
 
                 numNewClusters = 0
                 atomClusterIds = []
@@ -497,7 +532,7 @@ class PyProtein(PyMolecule):
                         else:
                             clusterIds[curName] = clusterCounter
                             atomClusterIds.append(clusterCounter)
-                            clusterCounter+=1
+                            clusterCounter += 1
                             numNewClusters += 1
                     else:
                         if sideChain >= 0:
@@ -505,36 +540,32 @@ class PyProtein(PyMolecule):
                         else:
                             sideChain = clusterCounter
                             atomClusterIds.append(sideChain)
-                            clusterCounter+=1
+                            clusterCounter += 1
                             numNewClusters += 1
 
                 for curAtomIter, curAtom in enumerate(aminoAtomsIndices):
                     newIndices[curAtom] = atomClusterIds[curAtomIter]
 
-                for auxIter in range(numNewClusters):
+                for _aux_iter in range(numNewClusters):
                     newAminoIds.append(aminoCounter)
-            
+
                 aminoCounter += 1
 
         newAminoIds = np.array(newAminoIds)
 
         # Update the first graph.
         newNeighs1, newStartNeighs1 = self.__update_neighborhood__(
-            newIndices,
-            pGraphNeighs1,
-            pGraphStartNeighs1)
+            newIndices, pGraphNeighs1, pGraphStartNeighs1
+        )
 
         # Update the second graph.
         newNeighs2, newStartNeighs2 = self.__update_neighborhood__(
-            newIndices,
-            pGraphNeighs2,
-            pGraphStartNeighs2)
+            newIndices, pGraphNeighs2, pGraphStartNeighs2
+        )
 
-        return newIndices, newNeighs1, newStartNeighs1, \
-            newNeighs2, newStartNeighs2, newAminoIds
+        return newIndices, newNeighs1, newStartNeighs1, newNeighs2, newStartNeighs2, newAminoIds
 
-
-    def create_pooling(self, pCacheGraph, pMethod = "spec_clust"):
+    def create_pooling(self, pCacheGraph, pMethod="spec_clust"):
         """Method to compute the pooling indices.
 
         Args:
@@ -544,7 +575,7 @@ class PyProtein(PyMolecule):
                 - spec_clust: Spectral clustering.
                 - rosetta_cen: Rosetta centroid.
         """
-        
+
         # Initialize the list of pooling layers.
         self.poolIds_ = []
         self.poolStartNeighs_ = []
@@ -554,38 +585,54 @@ class PyProtein(PyMolecule):
 
         # Compute the side chain pooling 1.
         if pMethod == "spec_clust":
-            curPoolIds, curPoolNeighs1, curPoolStartNeighs1, \
-                curPoolNeighs2, curPoolStartNeighs2, \
-                curAminoIds = \
-                self.__compute_side_chain_pooling__(
-                    self.atomAminoIds_,
-                    self.covBondList_,
-                    self.atomCovBondSIndices_,
-                    self.covBondListHB_,
-                    self.atomCovBondSIndicesHB_, 
-                    pCacheGraph)
+            (
+                curPoolIds,
+                curPoolNeighs1,
+                curPoolStartNeighs1,
+                curPoolNeighs2,
+                curPoolStartNeighs2,
+                curAminoIds,
+            ) = self.__compute_side_chain_pooling__(
+                self.atomAminoIds_,
+                self.covBondList_,
+                self.atomCovBondSIndices_,
+                self.covBondListHB_,
+                self.atomCovBondSIndicesHB_,
+                pCacheGraph,
+            )
         elif pMethod == "rosetta_cen":
-            curPoolIds, curPoolNeighs1, curPoolStartNeighs1, \
-                curPoolNeighs2, curPoolStartNeighs2, \
-                curAminoIds = \
-                self.__compute_side_chain_pooling_rosetta_cen__(
-                    self.atomNames_,
-                    self.atomAminoIds_,
-                    self.covBondList_,
-                    self.atomCovBondSIndices_,
-                    self.covBondListHB_,
-                    self.atomCovBondSIndicesHB_)
-            
+            (
+                curPoolIds,
+                curPoolNeighs1,
+                curPoolStartNeighs1,
+                curPoolNeighs2,
+                curPoolStartNeighs2,
+                curAminoIds,
+            ) = self.__compute_side_chain_pooling_rosetta_cen__(
+                self.atomNames_,
+                self.atomAminoIds_,
+                self.covBondList_,
+                self.atomCovBondSIndices_,
+                self.covBondListHB_,
+                self.atomCovBondSIndicesHB_,
+            )
+
         self.poolIds_.append(curPoolIds)
         self.poolStartNeighs_.append(curPoolStartNeighs1)
         self.poolNeighs_.append(curPoolNeighs1)
         self.poolStartNeighsHB_.append(curPoolStartNeighs2)
         self.poolNeighsHB_.append(curPoolNeighs2)
 
-
-    def load_molecular_file(self, pFilePath, pLoadAnim = True, pFileType = "pdb", 
-        pLoadHydrogens = False, pLoadH2O = False, pBackBoneOnly = False, 
-        pChainFilter = None):
+    def load_molecular_file(
+        self,
+        pFilePath,
+        pLoadAnim=True,
+        pFileType="pdb",
+        pLoadHydrogens=False,
+        pLoadH2O=False,
+        pBackBoneOnly=False,
+        pChainFilter=None,
+    ):
         """Method to set the content of the protein from a molecular file.
 
         Args:
@@ -600,23 +647,47 @@ class PyProtein(PyMolecule):
 
         if pFileType == "pdb":
             # Load the pdb file.
-            atomPos, atomTypes, atomNames, atomResidueIds, atomResidueType, \
-                atomChainName, transCenter = load_protein_pdb(pFilePath, pLoadAnim,
-                pLoadHydrogens = pLoadHydrogens, pLoadH2O = pLoadH2O,
-                pLoadGroups=not pBackBoneOnly, pChainFilter = pChainFilter)
+            (
+                atomPos,
+                atomTypes,
+                atomNames,
+                atomResidueIds,
+                atomResidueType,
+                atomChainName,
+                transCenter,
+            ) = load_protein_pdb(
+                pFilePath,
+                pLoadAnim,
+                pLoadHydrogens=pLoadHydrogens,
+                pLoadH2O=pLoadH2O,
+                pLoadGroups=not pBackBoneOnly,
+                pChainFilter=pChainFilter,
+            )
         elif pFileType == "mol2":
             # Load mol2 file.
-            atomPos, atomTypes, atomNames, atomResidueIds, atomResidueType, \
-                atomChainName, transCenter = load_protein_mol2(pFilePath, 
-                pLoadHydrogens = pLoadHydrogens, pLoadH2O = pLoadH2O,
-                pLoadGroups=not pBackBoneOnly, pChainFilter = pChainFilter)
+            (
+                atomPos,
+                atomTypes,
+                atomNames,
+                atomResidueIds,
+                atomResidueType,
+                atomChainName,
+                transCenter,
+            ) = load_protein_mol2(
+                pFilePath,
+                pLoadHydrogens=pLoadHydrogens,
+                pLoadH2O=pLoadH2O,
+                pLoadGroups=not pBackBoneOnly,
+                pChainFilter=pChainFilter,
+            )
 
         # Save the original center of the molecule.
         self.center_ = transCenter
 
         # Get the atom type indexs.
-        auxAtomTypes = np.array([self.periodicTable_.get_atom_index(curIndex) \
-            for curIndex in atomTypes])
+        auxAtomTypes = np.array(
+            [self.periodicTable_.get_atom_index(curIndex) for curIndex in atomTypes]
+        )
 
         # Compute the mask of valid atoms.
         maskValidAtoms = auxAtomTypes >= 0
@@ -630,30 +701,31 @@ class PyProtein(PyMolecule):
         # Convert chain names to ids.
         self.atomChainNames_ = atomChainName[maskValidAtoms]
         chainNames = np.unique(self.atomChainNames_)
-        self.atomChainIds_ = np.array([np.where(chainNames == curChainName)[0][0] \
-            for curChainName in self.atomChainNames_])
+        self.atomChainIds_ = np.array(
+            [np.where(chainNames == curChainName)[0][0] for curChainName in self.atomChainNames_]
+        )
 
         # Compute residue ids.
         auxResidueIds = atomResidueIds[maskValidAtoms] - np.amin(atomResidueIds[maskValidAtoms]) + 1
-        auxResidueIds = auxResidueIds + self.atomChainIds_*np.amax(auxResidueIds)
+        auxResidueIds = auxResidueIds + self.atomChainIds_ * np.amax(auxResidueIds)
         _, self.atomResidueIds_ = np.unique(auxResidueIds, return_inverse=True)
         auxResidueTypes = atomResidueType[maskValidAtoms]
         self.atomResidueNames_ = auxResidueTypes
 
         # Convert the aminoacid label to id.
-        auxResidueTypes = np.array([self.periodicTable_.get_aminoacid_index(curIndex) \
-            for curIndex in auxResidueTypes])
+        auxResidueTypes = np.array(
+            [self.periodicTable_.get_aminoacid_index(curIndex) for curIndex in auxResidueTypes]
+        )
 
         # Get aminoacid information.
-        mask = np.logical_and(self.atomNames_== "CA", self.atomTypes_ == 5)
+        mask = np.logical_and(self.atomNames_ == "CA", self.atomTypes_ == 5)
         self.aminoPos_ = self.atomPos_[:, mask]
         self.aminoType_ = auxResidueTypes[mask]
-        self.aminoChainIds_ = self.atomChainIds_[mask].reshape((-1))
+        self.aminoChainIds_ = self.atomChainIds_[mask].reshape(-1)
 
-        # Process the amino ids.只有有Ca的氨基酸才会被记录
+        # Process amino-acid IDs; only residues with a CA atom are recorded.
         aminoOrigIds = auxResidueIds[mask]
         filtered_indices = [np.where(aminoOrigIds == curAminoId)[0] for curAminoId in auxResidueIds]
-        naminoIds =sorted(set(range(min(aminoOrigIds), max(aminoOrigIds) + 1)) - set(aminoOrigIds))
         # if len(naminoIds) > 0:
         #     print(naminoIds)
         filtered_indices = list(filter(lambda x: len(x) > 0, filtered_indices))
@@ -663,8 +735,9 @@ class PyProtein(PyMolecule):
         self.atomAminoIds_ = np.array(filtered_indices)
         # self.atomAminoIds_ = np.array([np.where(aminoOrigIds == curAminoId)[0] \
         #     for curAminoId in auxResidueIds])
-        self.atomAminoIds_ = np.array([-1 if len(curIndex)==0 else curIndex[0]
-            for curIndex in self.atomAminoIds_])
+        self.atomAminoIds_ = np.array(
+            [-1 if len(curIndex) == 0 else curIndex[0] for curIndex in self.atomAminoIds_]
+        )
 
         # Only load the atom belonging to the backbone.
         if pBackBoneOnly:
@@ -681,28 +754,31 @@ class PyProtein(PyMolecule):
 
         # Get the neighboring aminoacid information.
         self.aminoNeighs_ = []
-        self.aminoNeighsSIndices_ =  np.full((len(aminoOrigIds)), 0, dtype=np.int32)
+        self.aminoNeighsSIndices_ = np.full((len(aminoOrigIds)), 0, dtype=np.int32)
         for aminoIter in range(len(aminoOrigIds)):
-            if aminoIter > 0 and \
-                ((aminoOrigIds[aminoIter]-aminoOrigIds[aminoIter-1]) == 1) and \
-                (self.aminoChainIds_[aminoIter] == self.aminoChainIds_[aminoIter-1]):
-                self.aminoNeighs_.append([aminoIter-1, aminoIter])
-            if aminoIter < len(aminoOrigIds)-1 and \
-                ((aminoOrigIds[aminoIter+1]-aminoOrigIds[aminoIter]) == 1) and \
-                (self.aminoChainIds_[aminoIter] == self.aminoChainIds_[aminoIter+1]):
-                self.aminoNeighs_.append([aminoIter+1, aminoIter])
+            if (
+                aminoIter > 0
+                and ((aminoOrigIds[aminoIter] - aminoOrigIds[aminoIter - 1]) == 1)
+                and (self.aminoChainIds_[aminoIter] == self.aminoChainIds_[aminoIter - 1])
+            ):
+                self.aminoNeighs_.append([aminoIter - 1, aminoIter])
+            if (
+                aminoIter < len(aminoOrigIds) - 1
+                and ((aminoOrigIds[aminoIter + 1] - aminoOrigIds[aminoIter]) == 1)
+                and (self.aminoChainIds_[aminoIter] == self.aminoChainIds_[aminoIter + 1])
+            ):
+                self.aminoNeighs_.append([aminoIter + 1, aminoIter])
             self.aminoNeighsSIndices_[aminoIter] = len(self.aminoNeighs_)
-        self.aminoNeighs_ = np.array(self.aminoNeighs_) 
+        self.aminoNeighs_ = np.array(self.aminoNeighs_)
 
         # Check if there is some inconsistency with the amount of aminoacids.
-        if len(np.unique(self.atomAminoIds_[self.atomAminoIds_>=0])) != len(aminoOrigIds):
+        if len(np.unique(self.atomAminoIds_[self.atomAminoIds_ >= 0])) != len(aminoOrigIds):
             print("############## ERROR!!!")
             print(pFilePath)
-            print(len(np.unique(self.atomAminoIds_[self.atomAminoIds_>=0])), len(aminoOrigIds))
-            print(np.unique(self.atomAminoIds_[self.atomAminoIds_>=0]))
+            print(len(np.unique(self.atomAminoIds_[self.atomAminoIds_ >= 0])), len(aminoOrigIds))
+            print(np.unique(self.atomAminoIds_[self.atomAminoIds_ >= 0]))
             print(aminoOrigIds)
             print("")
-
 
     def get_fasta_seq(self):
         """Method to get the FASTA sequence of the protein.
@@ -712,10 +788,13 @@ class PyProtein(PyMolecule):
         """
 
         # Correct the negative indexs.
-        auxAminoType = np.array([curIndex if curIndex>=0 
-            else (len(self.periodicTable_.aLetters_)-1)
-            for curIndex in self.aminoType_])
-    
+        auxAminoType = np.array(
+            [
+                curIndex if curIndex >= 0 else (len(self.periodicTable_.aLetters_) - 1)
+                for curIndex in self.aminoType_
+            ]
+        )
+
         # Get the sequence letters.
         retSeqList = self.periodicTable_.aLetters_[auxAminoType]
         seq = "".join(retSeqList)
@@ -731,35 +810,34 @@ class PyProtein(PyMolecule):
 
         # Get the sequences of the different chains.
         retSequences = []
-        for curChain in range(len(chainStarting)-1):
+        for curChain in range(len(chainStarting) - 1):
             chainStart = chainStarting[curChain]
-            chainEnd = chainStarting[curChain+1]
+            chainEnd = chainStarting[curChain + 1]
             retSequences.append(seq[chainStart:chainEnd])
 
         return retSequences, seq
 
-    
     def save_hdf5(self, pFilePath):
         """Method to save the protein in a hdf5 file.
 
         Args:
             pFilePath (string): File path.
         """
-        
+
         h5File = h5py.File(pFilePath, "w")
 
         # Save atoms.
-        auxAtomNames = np.array([curName.encode('utf8') for curName in self.atomNames_])
+        auxAtomNames = np.array([curName.encode("utf8") for curName in self.atomNames_])
         h5File.create_dataset("pos_center", data=self.center_)
         h5File.create_dataset("atom_pos", data=self.atomPos_)
         h5File.create_dataset("atom_names", data=auxAtomNames)
         h5File.create_dataset("atom_types", data=self.atomTypes_)
         h5File.create_dataset("cov_bond_list", data=self.covBondList_)
         h5File.create_dataset("cov_bond_list_sindices", data=self.atomCovBondSIndices_)
-        
+
         # Save additional atom info.
-        auxAtomResNames = np.array([curName.encode('utf8') for curName in self.atomResidueNames_])
-        auxAtomChainNames = np.array([curName.encode('utf8') for curName in self.atomChainNames_])
+        auxAtomResNames = np.array([curName.encode("utf8") for curName in self.atomResidueNames_])
+        auxAtomChainNames = np.array([curName.encode("utf8") for curName in self.atomChainNames_])
         h5File.create_dataset("atom_amino_id", data=self.atomAminoIds_)
         h5File.create_dataset("atom_residue_id", data=self.atomResidueIds_)
         h5File.create_dataset("atom_chain_ids", data=self.atomChainIds_)
@@ -767,7 +845,7 @@ class PyProtein(PyMolecule):
         h5File.create_dataset("atom_chain_names", data=auxAtomChainNames)
         h5File.create_dataset("cov_bond_list_hb", data=self.covBondListHB_)
         h5File.create_dataset("cov_bond_list_sindices_hb", data=self.atomCovBondSIndicesHB_)
-        
+
         # Save aminoacids.
         h5File.create_dataset("amino_pos", data=self.aminoPos_)
         h5File.create_dataset("amino_types", data=self.aminoType_)
@@ -778,29 +856,27 @@ class PyProtein(PyMolecule):
         h5File.create_dataset("amino_neighs_sindices_hb", data=self.aminoNeighsSIndicesHB_)
 
         # Save segmentation
-        if not(self.segmentation_ is None):
+        if self.segmentation_ is not None:
             h5File.create_dataset("segmentation", data=self.segmentation_)
 
         h5File.close()
 
-
-    def load_hdf5(self, pFilePath, pLoadAtom = True, pLoadAmino = True, pLoadText = True):
+    def load_hdf5(self, pFilePath, pLoadAtom=True, pLoadAmino=True, pLoadText=True):
         """Method to load a protein from a hdf5 file.
 
         Args:
             pFilePath (string): File path.
             pLoadAtom (bool): Boolean that indicates if the atoms will be loaded.
             pLoadAmino (bool): Boolean that indicates if the aminoacids will be loaded.
-            pLoadText (bool): Boolean that indicates if the text such as atom names, 
+            pLoadText (bool): Boolean that indicates if the text such as atom names,
                 residue names, or chain names will be loaded.
         """
         h5File = h5py.File(pFilePath, "r")
-        
+
         # Load the center of the molecule.
         self.center_ = h5File["pos_center"][()]
 
         if pLoadAtom:
-
             # Load atoms.
             self.atomPos_ = h5File["atom_pos"][()]
             self.atomTypes_ = h5File["atom_types"][()]
@@ -819,9 +895,13 @@ class PyProtein(PyMolecule):
                 auxAtomNames = h5File["atom_names"][()]
                 auxAtomResNames = h5File["atom_residue_names"][()]
                 auxAtomChainNames = h5File["atom_chain_names"][()]
-                self.atomNames_ = np.array([curName.decode('utf8') for curName in auxAtomNames])
-                self.atomResidueNames_ = np.array([curName.decode('utf8') for curName in auxAtomResNames])
-                self.atomChainNames_ = np.array([curName.decode('utf8') for curName in auxAtomChainNames])
+                self.atomNames_ = np.array([curName.decode("utf8") for curName in auxAtomNames])
+                self.atomResidueNames_ = np.array(
+                    [curName.decode("utf8") for curName in auxAtomResNames]
+                )
+                self.atomChainNames_ = np.array(
+                    [curName.decode("utf8") for curName in auxAtomChainNames]
+                )
             else:
                 self.atomNames_ = None
                 self.atomResidueNames_ = None
@@ -840,9 +920,7 @@ class PyProtein(PyMolecule):
             self.covBondListHB_ = None
             self.atomCovBondSIndicesHB_ = None
 
-            
         if pLoadAmino:
-
             # Load aminoacids.
             self.aminoPos_ = h5File["amino_pos"][()]
             self.aminoType_ = h5File["amino_types"][()]
@@ -861,15 +939,13 @@ class PyProtein(PyMolecule):
             self.aminoNeighsHB_ = None
             self.aminoNeighsSIndicesHB_ = None
 
-
         # Load segmentation.
         if "segmentation" in h5File.keys():
             self.segmentation_ = h5File["segmentation"][()]
         else:
             self.segmentation_ = None
-            
-        h5File.close()
 
+        h5File.close()
 
     def save_pooling_hdf5(self, pFilePath):
         """Method to save the protein pooling in a hdf5 file.
@@ -883,14 +959,19 @@ class PyProtein(PyMolecule):
         numPoolings = len(self.poolIds_)
         h5File.create_dataset("num_poolings", data=np.array([numPoolings]))
         for curPool in range(numPoolings):
-            h5File.create_dataset("pool_ids_"+str(curPool), data=self.poolIds_[curPool])
-            h5File.create_dataset("pool_neighs_"+str(curPool), data=self.poolNeighs_[curPool])
-            h5File.create_dataset("pool_neighs_hb_"+str(curPool), data=self.poolNeighsHB_[curPool])
-            h5File.create_dataset("pool_neighs_start_"+str(curPool), data=self.poolStartNeighs_[curPool])
-            h5File.create_dataset("pool_neighs_start_hb_"+str(curPool), data=self.poolStartNeighsHB_[curPool])
+            h5File.create_dataset("pool_ids_" + str(curPool), data=self.poolIds_[curPool])
+            h5File.create_dataset("pool_neighs_" + str(curPool), data=self.poolNeighs_[curPool])
+            h5File.create_dataset(
+                "pool_neighs_hb_" + str(curPool), data=self.poolNeighsHB_[curPool]
+            )
+            h5File.create_dataset(
+                "pool_neighs_start_" + str(curPool), data=self.poolStartNeighs_[curPool]
+            )
+            h5File.create_dataset(
+                "pool_neighs_start_hb_" + str(curPool), data=self.poolStartNeighsHB_[curPool]
+            )
 
         h5File.close()
-
 
     def load_pooling_hdf5(self, pFilePath):
         """Method to load a protein pooling from a hdf5 file.
@@ -899,7 +980,7 @@ class PyProtein(PyMolecule):
             pFilePath (string): File path.
         """
         h5File = h5py.File(pFilePath, "r")
-        
+
         numPoolings = h5File["num_poolings"][()][0]
         self.poolIds_ = []
         self.poolNeighs_ = []
@@ -907,12 +988,12 @@ class PyProtein(PyMolecule):
         self.poolStartNeighs_ = []
         self.poolStartNeighsHB_ = []
         for curPool in range(numPoolings):
-            self.poolIds_.append(h5File["pool_ids_"+str(curPool)][()])
-            self.poolNeighs_.append(h5File["pool_neighs_"+str(curPool)][()])
-            self.poolNeighsHB_.append(h5File["pool_neighs_hb_"+str(curPool)][()])
-            self.poolStartNeighs_.append(h5File["pool_neighs_start_"+str(curPool)][()])
-            self.poolStartNeighsHB_.append(h5File["pool_neighs_start_hb_"+str(curPool)][()])
-            
+            self.poolIds_.append(h5File["pool_ids_" + str(curPool)][()])
+            self.poolNeighs_.append(h5File["pool_neighs_" + str(curPool)][()])
+            self.poolNeighsHB_.append(h5File["pool_neighs_hb_" + str(curPool)][()])
+            self.poolStartNeighs_.append(h5File["pool_neighs_start_" + str(curPool)][()])
+            self.poolStartNeighsHB_.append(h5File["pool_neighs_start_hb_" + str(curPool)][()])
+
         h5File.close()
 
         # def icosahedron():
@@ -936,7 +1017,6 @@ class PyProtein(PyMolecule):
 
         #     return verts, faces
 
-        
         # sphPts, sphFaces = icosahedron()
         # print(len(self.poolNeighsHB_[0]))
         # print(len(self.covBondListHB_))

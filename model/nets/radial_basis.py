@@ -24,6 +24,15 @@ class PolynomialEnvelope(torch.nn.Module):
     """
 
     def __init__(self, exponent):
+        """
+        Initialize PolynomialEnvelope.
+
+        Parameters
+        ----------
+        exponent : Any
+            Input argument.
+
+        """
         super().__init__()
         assert exponent > 0
         self.p = exponent
@@ -32,9 +41,22 @@ class PolynomialEnvelope(torch.nn.Module):
         self.c = -self.p * (self.p + 1) / 2
 
     def forward(self, d_scaled):
+        """
+        Run the forward pass.
+
+        Parameters
+        ----------
+        d_scaled : Any
+            Input argument.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         env_val = (
             1
-            + self.a * d_scaled ** self.p
+            + self.a * d_scaled**self.p
             + self.b * d_scaled ** (self.p + 1)
             + self.c * d_scaled ** (self.p + 2)
         )
@@ -50,12 +72,27 @@ class ExponentialEnvelope(torch.nn.Module):
     """
 
     def __init__(self):
+        """
+        Initialize ExponentialEnvelope.
+
+        """
         super().__init__()
 
     def forward(self, d_scaled):
-        env_val = torch.exp(
-            -(d_scaled ** 2) / ((1 - d_scaled) * (1 + d_scaled))
-        )
+        """
+        Run the forward pass.
+
+        Parameters
+        ----------
+        d_scaled : Any
+            Input argument.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
+        env_val = torch.exp(-(d_scaled**2) / ((1 - d_scaled) * (1 + d_scaled)))
         return torch.where(d_scaled < 1, env_val, torch.zeros_like(d_scaled))
 
 
@@ -76,23 +113,43 @@ class SphericalBesselBasis(torch.nn.Module):
         num_radial: int,
         cutoff: float,
     ):
+        """
+        Initialize SphericalBesselBasis.
+
+        Parameters
+        ----------
+        num_radial : int
+            Input argument.
+        cutoff : float
+            Input argument.
+
+        """
         super().__init__()
-        self.norm_const = math.sqrt(2 / (cutoff ** 3))
+        self.norm_const = math.sqrt(2 / (cutoff**3))
         # cutoff ** 3 to counteract dividing by d_scaled = d / cutoff
 
         # Initialize frequencies at canonical positions
         self.frequencies = torch.nn.Parameter(
-            data=torch.tensor(
-                np.pi * np.arange(1, num_radial + 1, dtype=np.float32)
-            ),
+            data=torch.tensor(np.pi * np.arange(1, num_radial + 1, dtype=np.float32)),
             requires_grad=True,
         )
 
     def forward(self, d_scaled):
+        """
+        Run the forward pass.
+
+        Parameters
+        ----------
+        d_scaled : Any
+            Input argument.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         return (
-            self.norm_const
-            / d_scaled[:, None]
-            * torch.sin(self.frequencies * d_scaled[:, None])
+            self.norm_const / d_scaled[:, None] * torch.sin(self.frequencies * d_scaled[:, None])
         )  # (num_edges, num_radial)
 
 
@@ -118,6 +175,17 @@ class BernsteinBasis(torch.nn.Module):
         num_radial: int,
         pregamma_initial: float = 0.45264,
     ):
+        """
+        Initialize BernsteinBasis.
+
+        Parameters
+        ----------
+        num_radial : int
+            Input argument.
+        pregamma_initial : float
+            Input argument.
+
+        """
         super().__init__()
         prefactor = binom(num_radial - 1, np.arange(num_radial))
         self.register_buffer(
@@ -138,11 +206,22 @@ class BernsteinBasis(torch.nn.Module):
         self.register_buffer("exp2", exp2[None, :], persistent=False)
 
     def forward(self, d_scaled):
+        """
+        Run the forward pass.
+
+        Parameters
+        ----------
+        d_scaled : Any
+            Input argument.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         gamma = self.softplus(self.pregamma)  # constrain to positive
         exp_d = torch.exp(-gamma * d_scaled)[:, None]
-        return (
-            self.prefactor * (exp_d ** self.exp1) * ((1 - exp_d) ** self.exp2)
-        )
+        return self.prefactor * (exp_d**self.exp1) * ((1 - exp_d) ** self.exp2)
 
 
 class RadialBasis(torch.nn.Module):
@@ -167,6 +246,21 @@ class RadialBasis(torch.nn.Module):
         rbf: dict = {"name": "gaussian"},
         envelope: dict = {"name": "polynomial", "exponent": 5},
     ):
+        """
+        Initialize RadialBasis.
+
+        Parameters
+        ----------
+        num_radial : int
+            Input argument.
+        cutoff : float
+            Input argument.
+        rbf : dict
+            Input argument.
+        envelope : dict
+            Input argument.
+
+        """
         super().__init__()
         self.inv_cutoff = 1 / cutoff
 
@@ -187,19 +281,28 @@ class RadialBasis(torch.nn.Module):
 
         # RBFs get distances scaled to be in [0, 1]
         if rbf_name == "gaussian":
-            self.rbf = GaussianSmearing(
-                start=0, stop=1, num_gaussians=num_radial, **rbf_hparams
-            )
+            self.rbf = GaussianSmearing(start=0, stop=1, num_gaussians=num_radial, **rbf_hparams)
         elif rbf_name == "spherical_bessel":
-            self.rbf = SphericalBesselBasis(
-                num_radial=num_radial, cutoff=cutoff, **rbf_hparams
-            )
+            self.rbf = SphericalBesselBasis(num_radial=num_radial, cutoff=cutoff, **rbf_hparams)
         elif rbf_name == "bernstein":
             self.rbf = BernsteinBasis(num_radial=num_radial, **rbf_hparams)
         else:
             raise ValueError(f"Unknown radial basis function '{rbf_name}'.")
 
     def forward(self, d):
+        """
+        Run the forward pass.
+
+        Parameters
+        ----------
+        d : Any
+            Input argument.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         d_scaled = d * self.inv_cutoff
 
         env = self.envelope(d_scaled)

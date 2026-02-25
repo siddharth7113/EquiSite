@@ -1,7 +1,9 @@
+"""Loss functions used by EquiSite training and evaluation."""
+
 import numpy as np
 import torch
-import torch.nn.functional as F
 import torch.nn as nn
+import torch.nn.functional as F
 
 
 def focal_loss(labels, logits, alpha, gamma):
@@ -18,7 +20,7 @@ def focal_loss(labels, logits, alpha, gamma):
     Returns:
       focal_loss: A float32 scalar representing normalized total loss.
     """
-    BCLoss = F.binary_cross_entropy_with_logits(input = logits, target = labels,reduction = "none")
+    BCLoss = F.binary_cross_entropy_with_logits(input=logits, target=labels, reduction="none")
 
     # if gamma == 0.0:
     #     modulator = 1.0
@@ -35,7 +37,6 @@ def focal_loss(labels, logits, alpha, gamma):
 
     focal_loss /= torch.sum(labels)
     return focal_loss
-
 
 
 def CB_loss(labels, logits, samples_per_cls, no_of_classes, loss_type, beta, gamma):
@@ -61,40 +62,41 @@ def CB_loss(labels, logits, samples_per_cls, no_of_classes, loss_type, beta, gam
 
     weights = torch.tensor(weights).float().to("cuda")
     weights = weights.unsqueeze(0)
-    weights = weights.repeat(labels_one_hot.shape[0],1) * labels_one_hot
+    weights = weights.repeat(labels_one_hot.shape[0], 1) * labels_one_hot
     weights = weights.sum(1)
     weights = weights.unsqueeze(1)
-    weights = weights.repeat(1,no_of_classes)
+    weights = weights.repeat(1, no_of_classes)
 
     if loss_type == "focal":
         if len(labels_one_hot) != len(logits):
             print("error")
         cb_loss = focal_loss(labels_one_hot, logits, weights, gamma)
     elif loss_type == "sigmoid":
-        cb_loss = F.binary_cross_entropy_with_logits(input = logits,target = labels_one_hot, weights = weights)
+        cb_loss = F.binary_cross_entropy_with_logits(
+            input=logits, target=labels_one_hot, weights=weights
+        )
     elif loss_type == "softmax":
-        pred = logits.softmax(dim = 1)
-        cb_loss = F.binary_cross_entropy(input = pred, target = labels_one_hot, weight = weights)
+        pred = logits.softmax(dim=1)
+        cb_loss = F.binary_cross_entropy(input=pred, target=labels_one_hot, weight=weights)
     return cb_loss
 
 
-
 # if __name__ == '__main__':
-    # no_of_classes = 2
-    # logits = torch.rand(5,no_of_classes).float()
-    # logits = torch.tensor([[0.2181, 0.8515],
-    #     [0.0102, 0.9692],
-    #     [0.3151, 0.7561],
-    #     [0.7949, 0.7821],
-    #     [0.6522, 0.7507]])
-    # labels = torch.randint(0,no_of_classes, size = (5,))
-    # labels = torch.tensor([1, 0, 0, 0, 0])
-    # beta = 0.999
-    # gamma = 2.0
-    # samples_per_cls = [1,10]
-    # loss_type = "focal"
-    # cb_loss = CB_loss(labels, logits, samples_per_cls, no_of_classes,loss_type, beta, gamma)
-    # print(cb_loss)
+# no_of_classes = 2
+# logits = torch.rand(5,no_of_classes).float()
+# logits = torch.tensor([[0.2181, 0.8515],
+#     [0.0102, 0.9692],
+#     [0.3151, 0.7561],
+#     [0.7949, 0.7821],
+#     [0.6522, 0.7507]])
+# labels = torch.randint(0,no_of_classes, size = (5,))
+# labels = torch.tensor([1, 0, 0, 0, 0])
+# beta = 0.999
+# gamma = 2.0
+# samples_per_cls = [1,10]
+# loss_type = "focal"
+# cb_loss = CB_loss(labels, logits, samples_per_cls, no_of_classes,loss_type, beta, gamma)
+# print(cb_loss)
 
 
 class CenterLoss(nn.Module):
@@ -107,7 +109,20 @@ class CenterLoss(nn.Module):
     """
 
     def __init__(self, num_classes=2, feat_dim=2048, use_gpu=True):
-        super(CenterLoss, self).__init__()
+        """
+        Initialize CenterLoss.
+
+        Parameters
+        ----------
+        num_classes : Any
+            Input argument.
+        feat_dim : Any
+            Input argument.
+        use_gpu : Any
+            Input argument.
+
+        """
+        super().__init__()
         self.num_classes = num_classes
         self.feat_dim = feat_dim
         self.use_gpu = use_gpu
@@ -126,12 +141,18 @@ class CenterLoss(nn.Module):
         assert x.size(0) == labels.size(0), "features.size(0) is not equal to labels.size(0)"
 
         batch_size = x.size(0)
-        distmat = torch.pow(x, 2).sum(dim=1, keepdim=True).expand(batch_size, self.num_classes) + \
-                  torch.pow(self.centers, 2).sum(dim=1, keepdim=True).expand(self.num_classes, batch_size).t()
+        distmat = (
+            torch.pow(x, 2).sum(dim=1, keepdim=True).expand(batch_size, self.num_classes)
+            + torch.pow(self.centers, 2)
+            .sum(dim=1, keepdim=True)
+            .expand(self.num_classes, batch_size)
+            .t()
+        )
         distmat.addmm_(1, -2, x, self.centers.t())
 
         classes = torch.arange(self.num_classes).long()
-        if self.use_gpu: classes = classes.cuda()
+        if self.use_gpu:
+            classes = classes.cuda()
         labels = labels.unsqueeze(1).expand(batch_size, self.num_classes)
         mask = labels.eq(classes.expand(batch_size, self.num_classes))
         print(mask)
@@ -140,7 +161,7 @@ class CenterLoss(nn.Module):
         for i in range(batch_size):
             print(mask[i])
             value = distmat[i][mask[i]]
-            value = value.clamp(min=1e-12, max=1e+12)  # for numerical stability
+            value = value.clamp(min=1e-12, max=1e12)  # for numerical stability
             dist.append(value)
         dist = torch.cat(dist)
         loss = dist.mean()
@@ -148,13 +169,54 @@ class CenterLoss(nn.Module):
 
 
 class TripletCenterLoss(nn.Module):
+    """
+    TripletCenterLoss implementations.
+
+    Parameters
+    ----------
+    margin : Any
+        Initialization argument.
+    num_classes : Any
+        Initialization argument.
+    center_embed : Any
+        Initialization argument.
+    """
+
     def __init__(self, margin=5, num_classes=2, center_embed=2):
-        super(TripletCenterLoss, self).__init__()
+        """
+        Initialize TripletCenterLoss.
+
+        Parameters
+        ----------
+        margin : Any
+            Input argument.
+        num_classes : Any
+            Input argument.
+        center_embed : Any
+            Input argument.
+
+        """
+        super().__init__()
         self.margin = margin
         self.ranking_loss = nn.MarginRankingLoss(margin=margin)
         self.centers = nn.Parameter(torch.randn(num_classes, center_embed)).to("cuda")
 
     def forward(self, inputs, targets):
+        """
+        Run the forward pass.
+
+        Parameters
+        ----------
+        inputs : Any
+            Input argument.
+        targets : Any
+            Input argument.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         targets = targets.to(torch.int64)
         batch_size = inputs.size(0)
         targets_expand = targets.view(batch_size, 1).expand(batch_size, inputs.size(1))
@@ -187,5 +249,6 @@ class TripletCenterLoss(nn.Module):
 
         # prec = (dist_an.data > dist_ap.data).sum() * 1. / y.size(0)  # normalize data by batch size
         return loss
+
 
 # if __name__ == '__main__':

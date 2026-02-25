@@ -1,6 +1,23 @@
+"""Validation metrics used for binary binding-site predictions."""
+
 import numpy as np
-from sklearn.metrics import precision_recall_curve, confusion_matrix, matthews_corrcoef
+from sklearn.metrics import confusion_matrix, matthews_corrcoef, precision_recall_curve
+
+
 def CFM_eval_metrics(CFM):
+    """
+    Cfm eval metrics.
+
+    Parameters
+    ----------
+    CFM : Any
+        Input argument.
+
+    Returns
+    -------
+    Any
+        Function output.
+    """
     CFM = CFM.astype(float)
     tn = CFM[0, 0]
     fp = CFM[0, 1]
@@ -26,35 +43,49 @@ def CFM_eval_metrics(CFM):
         mcc = (tp * tn - fp * fn) / np.sqrt((tp + fp) * (tp + fn) * (tn + fp) * (tn + fn))
     else:
         mcc = -1
-    return rec, pre,F1, spe, mcc
+    return rec, pre, F1, spe, mcc
 
 
 def best_threshold_by_mcc(labels, preds):
-    # 计算 precision, recall 和 阈值
+    # Compute precision, recall, and thresholds.
+    """
+    Best threshold by mcc.
+
+    Parameters
+    ----------
+    labels : Any
+        Input argument.
+    preds : Any
+        Input argument.
+
+    Returns
+    -------
+    Any
+        Function output.
+    """
     precision, recall, thresholds = precision_recall_curve(labels, preds)
 
-    # 初始化最大MCC和最佳阈值
+    # Initialize the best MCC score and threshold.
     best_mcc = -1
     best_threshold = 0
 
-    # 为了包含所有阈值，我们在thresholds的头部添加一个0
+    # Include all operating points by prepending 0 to the thresholds.
     thresholds = np.insert(thresholds, 0, 0)
 
-    # 遍历每个阈值，计算对应的MCC
+    # Iterate over thresholds and compute the corresponding MCC.
     for threshold in thresholds:
-        # 根据阈值将预测概率转换为二进制预测
+        # Convert probabilities to binary predictions at the current threshold.
         binary_preds = (preds >= threshold).astype(int)
 
-        # 计算混淆矩阵
+        # Compute the confusion matrix.
         tn, fp, fn, tp = confusion_matrix(labels, binary_preds).ravel()
 
-        # 计算MCC
+        # Compute MCC for the current threshold.
         mcc = matthews_corrcoef(labels, binary_preds)
 
-        # 更新最大MCC和最佳阈值
+        # Update the best MCC and threshold when improved.
         if mcc > best_mcc:
             best_mcc = mcc
             best_threshold = threshold
 
     return best_threshold, best_mcc
-
