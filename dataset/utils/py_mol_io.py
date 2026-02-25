@@ -10,17 +10,19 @@ r"""
 \author pedro hermosilla (pedro-1.hermosilla-casajus@uni-ulm.de)
 """
 
+from typing import Any
+
 import numpy as np
 
 
 def load_protein_pdb(
-    pDBFilePath,
-    pLoadAnim=True,
-    pLoadHydrogens=False,
-    pLoadH2O=False,
-    pLoadGroups=True,
-    pChainFilter=None,
-):
+    pDBFilePath: str,
+    pLoadAnim: bool = True,
+    pLoadHydrogens: bool = False,
+    pLoadH2O: bool = False,
+    pLoadGroups: bool = True,
+    pChainFilter: str | None = None,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """Method to load a protein from a PDB file.
 
     Args:
@@ -141,7 +143,7 @@ def load_protein_pdb(
     return atomPos, atomTypes, atomNames, atomResidueIndexs, atomResidueType, atomChainName, center
 
 
-def save_protein_pdb(pFilePath, pProtein):
+def save_protein_pdb(pFilePath: str, pProtein: Any) -> None:
     """Method to save a protein to a PDB file.
 
     Args:
@@ -193,7 +195,7 @@ def save_protein_pdb(pFilePath, pProtein):
             )
 
 
-def save_molecule_pdb(pFilePath, pMolecule):
+def save_molecule_pdb(pFilePath: str, pMolecule: Any) -> None:
     """Method to save a molecule to a PDB file.
 
     Args:
@@ -241,8 +243,12 @@ def save_molecule_pdb(pFilePath, pMolecule):
 
 
 def load_protein_mol2(
-    pFilePath, pLoadHydrogens=False, pLoadH2O=False, pLoadGroups=True, pChainFilter=None
-):
+    pFilePath: str,
+    pLoadHydrogens: bool = False,
+    pLoadH2O: bool = False,
+    pLoadGroups: bool = True,
+    pChainFilter: str | None = None,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """Method to load a protein from a Mol2 file.
 
     Args:

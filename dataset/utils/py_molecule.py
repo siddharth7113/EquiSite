@@ -37,6 +37,8 @@
     ""
 )
 
+from typing import Any
+
 import h5py
 import numpy as np
 
@@ -53,7 +55,7 @@ class PyMolecule:
         atomTypes_ (int array n): Atom types.
     """
 
-    def __init__(self, pPeriodicTable):
+    def __init__(self, pPeriodicTable: Any) -> None:
         """Constructor.
 
         Args:
@@ -67,7 +69,7 @@ class PyMolecule:
         self.covBondList_ = None
         self.atomCovBondSIndices_ = None
 
-    def get_num_atoms(self):
+    def get_num_atoms(self) -> int:
         """Method to get the number of atoms.
 
         Return:
@@ -75,7 +77,7 @@ class PyMolecule:
         """
         return len(self.atomPos_[0])
 
-    def compute_covalent_bonds(self):
+    def compute_covalent_bonds(self) -> None:
         """Method to compute the covalent bonds."""
 
         accumBond = 0
@@ -100,7 +102,13 @@ class PyMolecule:
             self.atomCovBondSIndices_[atomIter] = accumBond
         self.covBondList_ = np.concatenate(self.covBondList_, axis=0)
 
-    def load_molecular_file(self, pFilePath, pLoadAnim=True, pFileType="pdb", pLoadHydrogens=False):
+    def load_molecular_file(
+        self,
+        pFilePath: str,
+        pLoadAnim: bool = True,
+        pFileType: str = "pdb",
+        pLoadHydrogens: bool = False,
+    ) -> None:
         """Method to set the content of the protein from a pdb file.
 
         Args:
@@ -137,7 +145,7 @@ class PyMolecule:
         self.atomNames_ = atomNames[maskValidAtoms]
         self.atomTypes_ = auxAtomTypes
 
-    def save_hdf5(self, pFilePath):
+    def save_hdf5(self, pFilePath: str) -> None:
         """Method to save the protein in a hdf5 file.
 
         Args:
@@ -157,7 +165,7 @@ class PyMolecule:
         h5File.create_dataset("cov_bond_list_sindices", data=self.atomCovBondSIndices_)
         h5File.close()
 
-    def load_hdf5(self, pFilePath):
+    def load_hdf5(self, pFilePath: str) -> None:
         """Method to load a protein from a hdf5 file.
 
         Args:

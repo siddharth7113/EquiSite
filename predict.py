@@ -27,8 +27,10 @@ import csv
 import json
 import sys
 import textwrap
+from collections.abc import Iterator
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any, TextIO
 
 import h5py
 import torch
@@ -92,7 +94,7 @@ class _ESMHolder:
     _device: torch.device | None = None
 
     @classmethod
-    def load(cls, device: torch.device):
+    def load(cls, device: torch.device) -> tuple[Any, Any, Any, torch.device | None]:
         """
         Load.
 
@@ -176,13 +178,13 @@ class _ProteinOnlySelect(Select):
         return int(altloc in {"", "A", "1"})
 
 
-def _load_structure(pdb_path: str | Path):
+def _load_structure(pdb_path: str | Path) -> Any:
     """Parse a PDB structure using Bio.PDB."""
     parser = PDBParser(QUIET=True)
     return parser.get_structure("protein", str(pdb_path))
 
 
-def _iter_protein_residues(pdb_path: str | Path):
+def _iter_protein_residues(pdb_path: str | Path) -> Iterator[PDBResidueRecord]:
     """Yield protein residues from a PDB file in structural traversal order."""
     structure = _load_structure(pdb_path)
     for model in structure:
@@ -211,7 +213,7 @@ def _remove_hetatm(src: str | Path, dst: str | Path) -> None:
     io.save(str(dst), select=_ProteinOnlySelect())
 
 
-def _extract_pdb_residue_numbers(pdb_path: str | Path) -> list[dict]:
+def _extract_pdb_residue_numbers(pdb_path: str | Path) -> list[dict[str, int | str]]:
     """Extract residue numbering fields from a protein-only PDB file."""
     return [
         {
@@ -468,7 +470,7 @@ def run_single_inference(
 # ======================================================================== #
 
 
-def _write_csv(results: list[dict], dest) -> None:
+def _write_csv(results: list[dict], dest: TextIO) -> None:
     """Write results to a CSV file or stdout."""
     writer = csv.DictWriter(
         dest,
@@ -484,7 +486,7 @@ def _write_csv(results: list[dict], dest) -> None:
     writer.writerows(results)
 
 
-def _write_json(results: list[dict], dest) -> None:
+def _write_json(results: list[dict], dest: TextIO) -> None:
     """Write results as a JSON array."""
     json.dump(results, dest, indent=2)
     dest.write("\n")
