@@ -14,6 +14,14 @@ from torch.nn import Embedding
 from torch_geometric.nn import MessagePassing, inits, radius_graph
 from torch_sparse import matmul
 
+from equisite.model.layers import (
+    EdgeGraphConv as _LayerEdgeGraphConv,
+    InteractionBlock as _LayerInteractionBlock,
+    Linear as _LayerLinear,
+    TwoLinear as _LayerTwoLinear,
+    swish as _layer_swish,
+)
+
 from .features_equi_t3_pro import d_angle_emb, d_theta_phi_emb
 
 num_aa_type = 26
@@ -503,6 +511,14 @@ class InteractionBlock(torch.nn.Module):
             h = self.act(lin(h))
         h = self.final(h)
         return h
+
+
+# Use decomposed layer implementations for downstream model composition.
+swish = _layer_swish
+Linear = _LayerLinear  # noqa: F811
+TwoLinear = _LayerTwoLinear  # noqa: F811
+EdgeGraphConv = _LayerEdgeGraphConv  # noqa: F811
+InteractionBlock = _LayerInteractionBlock  # noqa: F811
 
 
 class EquiSite(nn.Module):
