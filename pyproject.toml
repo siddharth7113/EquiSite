@@ -61,6 +61,7 @@ dev = [
     "black",
     "ruff",
     "pytest",
+    "pre-commit",
 ]
 
 [tool.setuptools.packages.find]
