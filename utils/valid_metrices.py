@@ -1,3 +1,5 @@
+"""Validation metrics used for binary binding-site predictions."""
+
 import numpy as np
 from sklearn.metrics import precision_recall_curve, confusion_matrix, matthews_corrcoef
 def CFM_eval_metrics(CFM):

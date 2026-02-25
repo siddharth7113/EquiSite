@@ -1,3 +1,5 @@
+"""Gaussian radial basis function layer for edge distances."""
+
 import torch
 
 

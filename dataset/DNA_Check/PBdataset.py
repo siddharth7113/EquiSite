@@ -1,3 +1,5 @@
+"""PyG dataset construction for the DNA benchmark split."""
+
 import os
 import os.path as osp
 import h5py
@@ -166,10 +168,10 @@ class DBdataset(InMemoryDataset):
     # def esm_emb(self):
 
     def compute_dihedrals(self, v1, v2, v3):
-        n1 = torch.cross(v1, v2)
-        n2 = torch.cross(v2, v3)
+        n1 = torch.cross(v1, v2, dim=-1)
+        n2 = torch.cross(v2, v3, dim=-1)
         a = (n1 * n2).sum(dim=-1)
-        b = torch.nan_to_num((torch.cross(n1, n2) * v2).sum(dim=-1) / v2.norm(dim=1))
+        b = torch.nan_to_num((torch.cross(n1, n2, dim=-1) * v2).sum(dim=-1) / v2.norm(dim=1))
         torsion = torch.nan_to_num(torch.atan2(b, a))
         return torsion
 

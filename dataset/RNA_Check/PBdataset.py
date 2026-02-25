@@ -1,3 +1,5 @@
+"""PyG dataset construction for the RNA benchmark split."""
+
 import os
 import os.path as osp
 import h5py

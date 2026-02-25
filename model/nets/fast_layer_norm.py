@@ -1,3 +1,5 @@
+"""Optimized equivariant layer normalization routines."""
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F

@@ -1,3 +1,5 @@
+"""Training entry point for EquiSite binding-site models."""
+
 import os
 import numpy as np
 import time

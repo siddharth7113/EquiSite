@@ -1,3 +1,5 @@
+"""Radial profile networks for tensor product kernels."""
+
 import torch
 import torch.nn as nn
 from torch.nn import init

@@ -1,3 +1,5 @@
+"""Loss functions used by EquiSite training and evaluation."""
+
 import numpy as np
 import torch
 import torch.nn.functional as F

@@ -1,3 +1,5 @@
+"""SE(3)-equivariant graph attention transformer backbone."""
+
 import torch
 import torch.nn.functional as f
 from torch_cluster import radius_graph

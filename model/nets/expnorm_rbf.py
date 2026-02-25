@@ -1,3 +1,5 @@
+"""Exponential-normal radial basis function layers."""
+
 import torch
 import math
 

@@ -1,3 +1,5 @@
+"""Legacy inference entry point for EquiSite predictions."""
+
 import os
 import argparse
 import torch

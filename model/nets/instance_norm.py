@@ -1,3 +1,5 @@
+"""Equivariant instance normalization layers."""
+
 import torch
 import torch.nn as nn
 from torch_geometric.nn import global_mean_pool, global_max_pool

@@ -1,3 +1,5 @@
+"""Equivariant layer normalization implementations."""
+
 import torch
 import torch.nn as nn
 from e3nn import o3
@@ -86,7 +88,7 @@ class EquivariantLayerNormV2(nn.Module):
         return f"{self.__class__.__name__}({self.irreps}, eps={self.eps})"
 
 
-    @torch.cuda.amp.autocast(enabled=False)
+    @torch.amp.autocast('cuda', enabled=False)
     def forward(self, node_input, **kwargs):
         # batch, *size, dim = node_input.shape  # TODO: deal with batch
         # node_input = node_input.reshape(batch, -1, dim)  # [batch, sample, stacked features]
