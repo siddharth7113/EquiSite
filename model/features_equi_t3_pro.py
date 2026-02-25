@@ -4,11 +4,11 @@
 # https://github.com/TUM-DAML/gemnet_pytorch/blob/master/gemnet/model/layers/basis_utils.py
 # https://github.com/TUM-DAML/gemnet_pytorch/blob/master/gemnet/model/layers/basis_layers.py
 
-import torch
-import sympy as sym
 import numpy as np
-from scipy.optimize import brentq
+import sympy as sym
+import torch
 from scipy import special as sp
+from scipy.optimize import brentq
 
 
 def Jn(r, n):
@@ -78,9 +78,7 @@ def bessel_basis(n, k):
         bess_basis_tmp = []
         for i in range(k):
             bess_basis_tmp += [
-                sym.simplify(
-                    normalizer[order][i] * f[order].subs(x, zeros[order, i] * x)
-                )
+                sym.simplify(normalizer[order][i] * f[order].subs(x, zeros[order, i] * x))
             ]
         bess_basis += [bess_basis_tmp]
     return bess_basis
@@ -99,12 +97,7 @@ def sph_harm_prefactor(l, m):
         factor: float
     """
     # sqrt((2*l+1)/4*pi * (l-m)!/(l+m)! )
-    return (
-        (2 * l + 1)
-        / (4 * np.pi)
-        * sp.factorial(l - abs(m))
-        / sp.factorial(l + abs(m))
-    ) ** 0.5
+    return ((2 * l + 1) / (4 * np.pi) * sp.factorial(l - abs(m)) / sp.factorial(l + abs(m))) ** 0.5
 
 
 def associated_legendre_polynomials(L, zero_m_only=True, pos_m_only=True):
@@ -140,7 +133,7 @@ def associated_legendre_polynomials(L, zero_m_only=True, pos_m_only=True):
             # for m >= 0
             for l in range(1, L):
                 P_l_m[l][l] = sym.simplify(
-                    (1 - 2 * l) * (1 - z ** 2) ** 0.5 * P_l_m[l - 1][l - 1]
+                    (1 - 2 * l) * (1 - z**2) ** 0.5 * P_l_m[l - 1][l - 1]
                 )  # P_00, P_11, P_22, P_33
 
             for m in range(0, L - 1):
@@ -151,10 +144,7 @@ def associated_legendre_polynomials(L, zero_m_only=True, pos_m_only=True):
             for l in range(2, L):
                 for m in range(l - 1):  # P_20, P_30, P_31
                     P_l_m[l][m] = sym.simplify(
-                        (
-                            (2 * l - 1) * z * P_l_m[l - 1][m]
-                            - (l + m - 1) * P_l_m[l - 2][m]
-                        )
+                        ((2 * l - 1) * z * P_l_m[l - 1][m] - (l + m - 1) * P_l_m[l - 2][m])
                         / (l - m)
                     )
 
@@ -163,10 +153,7 @@ def associated_legendre_polynomials(L, zero_m_only=True, pos_m_only=True):
                 for l in range(1, L):
                     for m in range(1, l + 1):  # P_1(-1), P_2(-1) P_2(-2)
                         P_l_m[l][-m] = sym.simplify(
-                            (-1) ** m
-                            * sp.factorial(l - m)
-                            / sp.factorial(l + m)
-                            * P_l_m[l][m]
+                            (-1) ** m * sp.factorial(l - m) / sp.factorial(l + m) * P_l_m[l][m]
                         )
 
             return P_l_m
@@ -225,20 +212,12 @@ def real_sph_harm(L, spherical_coordinates, zero_m_only=True):
             # m > 0
             for m in range(1, l + 1):
                 Y_l_m[l][m] = sym.simplify(
-                    2 ** 0.5
-                    * (-1) ** m
-                    * sph_harm_prefactor(l, m)
-                    * P_l_m[l][m]
-                    * sym.cos(m * phi)
+                    2**0.5 * (-1) ** m * sph_harm_prefactor(l, m) * P_l_m[l][m] * sym.cos(m * phi)
                 )
             # m < 0
             for m in range(1, l + 1):
                 Y_l_m[l][-m] = sym.simplify(
-                    2 ** 0.5
-                    * (-1) ** m
-                    * sph_harm_prefactor(l, -m)
-                    * P_l_m[l][m]
-                    * sym.sin(m * phi)
+                    2**0.5 * (-1) ** m * sph_harm_prefactor(l, -m) * P_l_m[l][m] * sym.sin(m * phi)
                 )
 
         # convert expressions to cartesian coordinates
@@ -254,16 +233,14 @@ def real_sph_harm(L, spherical_coordinates, zero_m_only=True):
 
 class d_angle_emb(torch.nn.Module):
     def __init__(self, num_radial, num_spherical, cutoff=8.0):
-        super(d_angle_emb, self).__init__()
+        super().__init__()
         assert num_radial <= 64
         self.num_spherical = num_spherical
         self.num_radial = num_radial
         self.cutoff = cutoff
 
         bessel_formulas = bessel_basis(num_spherical, num_radial)
-        Y_lm = real_sph_harm(
-            num_spherical, spherical_coordinates=True, zero_m_only=True
-        )
+        Y_lm = real_sph_harm(num_spherical, spherical_coordinates=True, zero_m_only=True)
         self.sph_funcs = []
         self.bessel_funcs = []
 
@@ -274,37 +251,31 @@ class d_angle_emb(torch.nn.Module):
         for l in range(len(Y_lm)):
             if l == 0:
                 first_sph = sym.lambdify([theta], Y_lm[l][m], modules)
-                self.sph_funcs.append(
-                    lambda theta: torch.zeros_like(theta) + first_sph(theta)
-                )
+                self.sph_funcs.append(lambda theta: torch.zeros_like(theta) + first_sph(theta))
             else:
                 self.sph_funcs.append(sym.lambdify([theta], Y_lm[l][m], modules))
             for n in range(num_radial):
-                self.bessel_funcs.append(
-                    sym.lambdify([x], bessel_formulas[l][n], modules)
-                )
+                self.bessel_funcs.append(sym.lambdify([x], bessel_formulas[l][n], modules))
 
     def forward(self, dist, angle):
         dist = dist / self.cutoff
         rbf = torch.stack([f(dist) for f in self.bessel_funcs], dim=1)
         sbf = torch.stack([f(angle) for f in self.sph_funcs], dim=1)
         n, k = self.num_spherical, self.num_radial
-        out = (rbf.view(-1, n, k) * sbf.view(-1, n, 1))
+        out = rbf.view(-1, n, k) * sbf.view(-1, n, 1)
         return out
 
 
 class d_theta_phi_emb(torch.nn.Module):
     def __init__(self, num_radial, num_spherical, cutoff=8.0):
-        super(d_theta_phi_emb, self).__init__()
+        super().__init__()
         assert num_radial <= 64
         self.num_radial = num_radial
         self.num_spherical = num_spherical
         self.cutoff = cutoff
 
         bessel_formulas = bessel_basis(num_spherical, num_radial)
-        Y_lm = real_sph_harm(
-            num_spherical, spherical_coordinates=True, zero_m_only=False
-        )
+        Y_lm = real_sph_harm(num_spherical, spherical_coordinates=True, zero_m_only=False)
         self.sph_funcs = []
         self.bessel_funcs = []
 
@@ -314,35 +285,32 @@ class d_theta_phi_emb(torch.nn.Module):
         modules = {"sin": torch.sin, "cos": torch.cos, "sqrt": torch.sqrt}
         for l in range(len(Y_lm)):
             for m in range(len(Y_lm[l])):
-                if (
-                        l == 0
-                ):
+                if l == 0:
                     first_sph = sym.lambdify([theta, phi], Y_lm[l][m], modules)
                     self.sph_funcs.append(
-                        lambda theta, phi: torch.zeros_like(theta)
-                                           + first_sph(theta, phi)
+                        lambda theta, phi: torch.zeros_like(theta) + first_sph(theta, phi)
                     )
                 else:
-                    self.sph_funcs.append(
-                        sym.lambdify([theta, phi], Y_lm[l][m], modules)
-                    )
+                    self.sph_funcs.append(sym.lambdify([theta, phi], Y_lm[l][m], modules))
             for j in range(num_radial):
-                self.bessel_funcs.append(
-                    sym.lambdify([x], bessel_formulas[l][j], modules)
-                )
+                self.bessel_funcs.append(sym.lambdify([x], bessel_formulas[l][j], modules))
 
-        self.register_buffer(
-            "degreeInOrder", torch.arange(num_spherical) * 2 + 1, persistent=False
-        )
+        self.register_buffer("degreeInOrder", torch.arange(num_spherical) * 2 + 1, persistent=False)
 
     def forward(self, dist, theta, phi):
         dist = dist / self.cutoff
-        rbf = torch.stack([f(dist) for f in self.bessel_funcs], dim=1)   #torch.Size([num_edge, 3*6])
-        sbf = torch.stack([f(theta, phi) for f in self.sph_funcs], dim=1) #torch.Size([num_edge, 1+3+5])
+        rbf = torch.stack(
+            [f(dist) for f in self.bessel_funcs], dim=1
+        )  # torch.Size([num_edge, 3*6])
+        sbf = torch.stack(
+            [f(theta, phi) for f in self.sph_funcs], dim=1
+        )  # torch.Size([num_edge, 1+3+5])
 
-        n, k = self.num_spherical, self.num_radial #k=6 n=3
+        n, k = self.num_spherical, self.num_radial  # k=6 n=3
         # [num_edge, 3, 6] --> [num_edge, 1*1+1*3+1*5, 6] --> [num_edge, 9*6]
-        rbf = rbf.view((-1, n, k)).repeat_interleave(self.degreeInOrder, dim=1).view((-1, n ** 2 * k)) #torch.Size([num_edge, 18*6])
-        sbf_r = sbf.repeat_interleave(k, dim=1) #torch.Size([num_edge, 9*6])
+        rbf = (
+            rbf.view((-1, n, k)).repeat_interleave(self.degreeInOrder, dim=1).view((-1, n**2 * k))
+        )  # torch.Size([num_edge, 18*6])
+        sbf_r = sbf.repeat_interleave(k, dim=1)  # torch.Size([num_edge, 9*6])
         out = rbf * sbf_r
         return sbf, out

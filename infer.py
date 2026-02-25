@@ -1,17 +1,18 @@
 """Legacy inference entry point for EquiSite predictions."""
 
-import os
 import argparse
-import torch
-from tqdm import tqdm
-from torch_geometric.data import Data
+import os
+
 import esm
 import h5py
-import numpy as np
+import torch
+from torch_geometric.data import Data
+from tqdm import tqdm
+
+from dataset.utils.PyPeriodicTable import PyPeriodicTable
 
 # Dependencies
 from dataset.utils.PyProtein import PyProtein
-from dataset.utils.PyPeriodicTable import PyPeriodicTable
 from model.equisite_t3_pro import EquiSite
 
 # Global ESM Load
@@ -23,8 +24,9 @@ esm_model = esm_model.eval().cuda()
 
 # ================= Helpers =================
 
+
 def remove_hetatm(src, dst):
-    with open(src, "r") as f:
+    with open(src) as f:
         lines = [L for L in f.readlines() if not L.startswith("HETATM")]
     with open(dst, "w") as f:
         f.writelines(lines)
@@ -52,22 +54,41 @@ def get_seq_from_hdf5(hdf5_path):
         ids = h5["atom_amino_id"][()]
 
     mapping = {
-        'GLY': 'G', 'ALA': 'A', 'VAL': 'V', 'ILE': 'I', 'LEU': 'L', 'PHE': 'F', 'PRO': 'P', 'MET': 'M',
-        'TRP': 'W', 'CYS': 'C', 'SER': 'S', 'THR': 'T', 'ASN': 'N', 'GLN': 'Q', 'TYR': 'Y', 'HIS': 'H',
-        'ASP': 'D', 'GLU': 'E', 'LYS': 'K', 'ARG': 'R', 'UNK': 'X'
+        "GLY": "G",
+        "ALA": "A",
+        "VAL": "V",
+        "ILE": "I",
+        "LEU": "L",
+        "PHE": "F",
+        "PRO": "P",
+        "MET": "M",
+        "TRP": "W",
+        "CYS": "C",
+        "SER": "S",
+        "THR": "T",
+        "ASN": "N",
+        "GLN": "Q",
+        "TYR": "Y",
+        "HIS": "H",
+        "ASP": "D",
+        "GLU": "E",
+        "LYS": "K",
+        "ARG": "R",
+        "UNK": "X",
     }
 
     seq = []
     prev = None
     for n, i in zip(names, ids):
         if i != prev:
-            seq.append(mapping.get(n, 'X'))
+            seq.append(mapping.get(n, "X"))
         prev = i
     return "".join(seq)
 
 
 class DummyDB:
     from dataset.DNA_Check.PBdataset import DBdataset as _DB
+
     side_chain_embs = _DB.side_chain_embs
     bb_embs = _DB.bb_embs
     get_atom_pos = _DB.get_atom_pos
@@ -94,7 +115,9 @@ def build_graph(hdf5_path, seq, db):
         at, names, ids, pos
     )
 
-    data.side_chain_embs = db.side_chain_embs(pos_n, pos_ca, pos_c, pos_cb, pos_g, pos_d, pos_e, pos_z, pos_h)
+    data.side_chain_embs = db.side_chain_embs(
+        pos_n, pos_ca, pos_c, pos_cb, pos_g, pos_d, pos_e, pos_z, pos_h
+    )
     data.side_chain_embs[torch.isnan(data.side_chain_embs)] = 0
 
     bb = db.bb_embs(torch.cat((pos_n.unsqueeze(1), pos_ca.unsqueeze(1), pos_c.unsqueeze(1)), 1))
@@ -112,6 +135,7 @@ def build_graph(hdf5_path, seq, db):
 
 # ================= Inference =================
 
+
 def run_inference(model_path, pdb_dir, out_dir, device):
     os.makedirs(out_dir, exist_ok=True)
     temp_dir = os.path.join(out_dir, "temp_processed")
@@ -127,7 +151,7 @@ def run_inference(model_path, pdb_dir, out_dir, device):
         cutoff=11.5,
         dropout=0.25,
         level="allatom+esm",
-        args=None
+        args=None,
     ).to(device)
 
     model.load_state_dict(ckpt["model_state_dict"])
@@ -156,7 +180,8 @@ def run_inference(model_path, pdb_dir, out_dir, device):
 
             # Save
             scores = pred.squeeze().cpu().tolist()
-            if isinstance(scores, float): scores = [scores]
+            if isinstance(scores, float):
+                scores = [scores]
 
             with open(out_txt, "w") as f:
                 for s in scores:
@@ -174,7 +199,9 @@ if __name__ == "__main__":
     DEFAULT_RNA_PATH = "model/checkpoints/RNA/best_val.pt"
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--type", type=str, choices=["DNA", "RNA"], default="DNA", help="Predict binding type")
+    parser.add_argument(
+        "--type", type=str, choices=["DNA", "RNA"], default="DNA", help="Predict binding type"
+    )
     parser.add_argument("--model_path", type=str, default=None, help="Override default model path")
     parser.add_argument("--pdb_dir", type=str, required=True)
     parser.add_argument("--out_dir", type=str, default="inference_results")

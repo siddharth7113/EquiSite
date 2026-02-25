@@ -1,0 +1,80 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "equisite"
+version = "0.1.0"
+description = "EquiSite: Multi-Scale Equivariant Graph Learning for Robust Nucleic Acid Binding Site Prediction"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.9,<3.12"
+dependencies = [
+    # Core ML
+    "torch>=2.2.0",
+    "torchvision",
+    "torchaudio",
+
+    # PyTorch Geometric + extensions
+    # NOTE: PyTorch/PyG likely don't have cu131 wheels yet. Use cu124 wheels
+    # instead — your CUDA 13.1 driver is backward compatible.
+    #
+    # Install PyTorch first:
+    #   pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
+    #
+    # Then install PyG extensions with matching wheels:
+    #   pip install torch-scatter torch-sparse torch-cluster torch-spline-conv \
+    #       -f https://data.pyg.org/whl/torch-2.6.0+cu124.html
+    "torch-geometric>=2.5",
+    "torch-scatter",
+    "torch-sparse",
+    "torch-cluster",
+    "torch-spline-conv",
+
+    # Equivariant neural networks
+    "e3nn>=0.4.4",
+
+    # Protein language model (ESM-2)
+    "fair-esm>=2.0",
+
+    # Scientific computing
+    "numpy>=1.24",
+    "scipy>=1.10",
+    "sympy>=1.12",
+    "scikit-learn>=1.3",
+
+    # Data I/O
+    "h5py>=3.10",
+
+    # Training utilities
+    "tensorboard>=2.14",
+    "tqdm>=4.65",
+
+    # Misc
+    "matplotlib>=3.7",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ipython",
+    "black",
+    "ruff",
+]
+
+[tool.setuptools.packages.find]
+include = ["model*", "utils*", "dataset*"]
+
+[tool.black]
+line-length = 100
+target-version = ["py39"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B"]
+ignore = ["E203", "E501", "E741", "B005", "B006", "B007", "B023", "B904", "UP031"]
+
+[tool.ruff.lint.isort]
+combine-as-imports = true

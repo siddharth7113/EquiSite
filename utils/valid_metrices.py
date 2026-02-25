@@ -1,7 +1,9 @@
 """Validation metrics used for binary binding-site predictions."""
 
 import numpy as np
-from sklearn.metrics import precision_recall_curve, confusion_matrix, matthews_corrcoef
+from sklearn.metrics import confusion_matrix, matthews_corrcoef, precision_recall_curve
+
+
 def CFM_eval_metrics(CFM):
     CFM = CFM.astype(float)
     tn = CFM[0, 0]
@@ -28,7 +30,7 @@ def CFM_eval_metrics(CFM):
         mcc = (tp * tn - fp * fn) / np.sqrt((tp + fp) * (tp + fn) * (tn + fp) * (tn + fn))
     else:
         mcc = -1
-    return rec, pre,F1, spe, mcc
+    return rec, pre, F1, spe, mcc
 
 
 def best_threshold_by_mcc(labels, preds):
@@ -59,4 +61,3 @@ def best_threshold_by_mcc(labels, preds):
             best_threshold = threshold
 
     return best_threshold, best_mcc
-
