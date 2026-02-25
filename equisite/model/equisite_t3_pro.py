@@ -14,15 +14,14 @@ from torch.nn import Embedding
 from torch_geometric.nn import MessagePassing, inits, radius_graph
 from torch_sparse import matmul
 
-from equisite.model.layers import (
+from .features_equi_t3_pro import d_angle_emb, d_theta_phi_emb
+from .layers import (
     EdgeGraphConv as _LayerEdgeGraphConv,
     InteractionBlock as _LayerInteractionBlock,
     Linear as _LayerLinear,
     TwoLinear as _LayerTwoLinear,
     swish as _layer_swish,
 )
-
-from .features_equi_t3_pro import d_angle_emb, d_theta_phi_emb
 
 num_aa_type = 26
 num_side_chain_embs = 8
@@ -622,7 +621,7 @@ class EquiSite(nn.Module):
             print("No supported model!")
 
         if "equiformer":
-            from model.nets.graph_attention_transformer_t3_pro import GraphAttentionTransformer
+            from .nets.graph_attention_transformer_t3_pro import GraphAttentionTransformer
 
             self.model_E = GraphAttentionTransformer(
                 irreps_in=None,

@@ -9,8 +9,7 @@ from e3nn import o3
 from e3nn.util.jit import compile_mode
 from torch_scatter import scatter
 
-from utils.padding import fea1_sphere_padding, sphere_padding
-
+from ...utils.padding import fea1_sphere_padding, sphere_padding
 from .drop import EquivariantDropout, GraphDropPath
 from .fast_activation import Activation, Gate
 from .fast_layer_norm import EquivariantLayerNormFast

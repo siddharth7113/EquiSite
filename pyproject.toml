@@ -68,7 +68,7 @@ dev = [
 equisite-predict = "predict:main"
 
 [tool.setuptools.packages.find]
-include = ["equisite*", "model*", "utils*", "dataset*"]
+include = ["equisite*", "dataset*"]
 
 [tool.black]
 line-length = 100

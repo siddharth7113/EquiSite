@@ -7,14 +7,13 @@ from typing import Any
 
 import torch
 
-from model.equisite_t3_pro import EquiSite as _LegacyEquiSite
-
 from .._constants import DEFAULT_CHECKPOINTS
 from .._device import resolve_device
 from .._model_loader import load_checkpoint_weights
+from .equisite_t3_pro import EquiSite as _CoreEquiSite
 
 
-class EquiSite(_LegacyEquiSite):
+class EquiSite(_CoreEquiSite):
     """Public EquiSite model class for programmatic usage."""
 
     def __init__(

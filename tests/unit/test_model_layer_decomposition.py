@@ -5,24 +5,24 @@ from __future__ import annotations
 import pytest
 
 
-def test_legacy_model_uses_decomposed_linear_layers() -> None:
-    """Expose decomposed layer classes through the legacy model module."""
+def test_core_model_uses_decomposed_linear_layers() -> None:
+    """Expose decomposed layer classes through the core model module."""
     pytest.importorskip("torch")
 
-    from equisite.model.layers import EdgeGraphConv, InteractionBlock, Linear, TwoLinear, swish
-    from model.equisite_t3_pro import (
-        EdgeGraphConv as LegacyEdgeGraphConv,
-        InteractionBlock as LegacyInteractionBlock,
-        Linear as LegacyLinear,
-        TwoLinear as LegacyTwoLinear,
-        swish as legacy_swish,
+    from equisite.model.equisite_t3_pro import (
+        EdgeGraphConv as CoreEdgeGraphConv,
+        InteractionBlock as CoreInteractionBlock,
+        Linear as CoreLinear,
+        TwoLinear as CoreTwoLinear,
+        swish as core_swish,
     )
+    from equisite.model.layers import EdgeGraphConv, InteractionBlock, Linear, TwoLinear, swish
 
-    assert LegacyLinear is Linear
-    assert LegacyTwoLinear is TwoLinear
-    assert LegacyEdgeGraphConv is EdgeGraphConv
-    assert LegacyInteractionBlock is InteractionBlock
-    assert legacy_swish is swish
+    assert CoreLinear is Linear
+    assert CoreTwoLinear is TwoLinear
+    assert CoreEdgeGraphConv is EdgeGraphConv
+    assert CoreInteractionBlock is InteractionBlock
+    assert core_swish is swish
 
 
 def test_two_linear_forward_shape() -> None:

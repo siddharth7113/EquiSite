@@ -30,8 +30,8 @@ from sklearn.metrics import (
 )
 from torch_geometric.data import DataLoader
 
-from model.equisite_t3_pro import EquiSite
-from utils.loss import CB_loss, TripletCenterLoss
+from equisite.model.equisite_t3_pro import EquiSite
+from equisite.utils.loss import CB_loss, TripletCenterLoss
 
 warnings.filterwarnings("ignore")
 
