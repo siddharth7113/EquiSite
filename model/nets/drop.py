@@ -9,7 +9,7 @@ import torch.nn.functional as F
 from e3nn import o3
 
 
-def drop_path(x, drop_prob: float = 0.0, training: bool = False):
+def drop_path(x: torch.Tensor, drop_prob: float = 0.0, training: bool = False) -> torch.Tensor:
     """Drop paths (Stochastic Depth) per sample (when applied in main path of residual blocks).
     This is the same as the DropConnect impl I created for EfficientNet, etc networks, however,
     the original name is misleading as 'Drop Connect' is a different form of dropout in a separate paper...
@@ -30,7 +30,7 @@ def drop_path(x, drop_prob: float = 0.0, training: bool = False):
 class DropPath(nn.Module):
     """Drop paths (Stochastic Depth) per sample  (when applied in main path of residual blocks)."""
 
-    def __init__(self, drop_prob=None):
+    def __init__(self, drop_prob: float | None = None) -> None:
         """
         Initialize DropPath.
 
@@ -43,7 +43,7 @@ class DropPath(nn.Module):
         super().__init__()
         self.drop_prob = drop_prob
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
         Run the forward pass.
 
@@ -57,9 +57,10 @@ class DropPath(nn.Module):
         Any
             Function output.
         """
-        return drop_path(x, self.drop_prob, self.training)
+        drop_prob = 0.0 if self.drop_prob is None else self.drop_prob
+        return drop_path(x, float(drop_prob), self.training)
 
-    def extra_repr(self):
+    def extra_repr(self) -> str:
         """
         Extra repr.
 
@@ -76,7 +77,7 @@ class GraphDropPath(nn.Module):
     Consider batch for graph data when dropping paths.
     """
 
-    def __init__(self, drop_prob=None):
+    def __init__(self, drop_prob: float | None = None) -> None:
         """
         Initialize GraphDropPath.
 
@@ -89,7 +90,7 @@ class GraphDropPath(nn.Module):
         super().__init__()
         self.drop_prob = drop_prob
 
-    def forward(self, x, batch):
+    def forward(self, x: torch.Tensor, batch: torch.Tensor) -> torch.Tensor:
         """
         Run the forward pass.
 
@@ -110,11 +111,12 @@ class GraphDropPath(nn.Module):
             x.ndim - 1
         )  # work with diff dim tensors, not just 2D ConvNets
         ones = torch.ones(shape, dtype=x.dtype, device=x.device)
-        drop = drop_path(ones, self.drop_prob, self.training)
+        drop_prob = 0.0 if self.drop_prob is None else self.drop_prob
+        drop = drop_path(ones, float(drop_prob), self.training)
         out = x * drop[batch]
         return out
 
-    def extra_repr(self):
+    def extra_repr(self) -> str:
         """
         Extra repr.
 
@@ -138,7 +140,7 @@ class EquivariantDropout(nn.Module):
         Initialization argument.
     """
 
-    def __init__(self, irreps, drop_prob):
+    def __init__(self, irreps: o3.Irreps, drop_prob: float) -> None:
         """
         Initialize EquivariantDropout.
 
@@ -157,7 +159,7 @@ class EquivariantDropout(nn.Module):
         self.drop = torch.nn.Dropout(drop_prob, True)
         self.mul = o3.ElementwiseTensorProduct(irreps, o3.Irreps(f"{self.num_irreps}x0e"))
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
         Run the forward pass.
 
@@ -192,7 +194,7 @@ class EquivariantScalarsDropout(nn.Module):
         Initialization argument.
     """
 
-    def __init__(self, irreps, drop_prob):
+    def __init__(self, irreps: o3.Irreps, drop_prob: float) -> None:
         """
         Initialize EquivariantScalarsDropout.
 
@@ -208,7 +210,7 @@ class EquivariantScalarsDropout(nn.Module):
         self.irreps = irreps
         self.drop_prob = drop_prob
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
         Run the forward pass.
 
@@ -235,7 +237,7 @@ class EquivariantScalarsDropout(nn.Module):
         out = torch.cat(out, dim=-1)
         return out
 
-    def extra_repr(self):
+    def extra_repr(self) -> str:
         """
         Extra repr.
 

@@ -4,6 +4,9 @@ Functions directly copied from e3nn library.
 Speed up some special cases used in GIN and GAT.
 """
 
+from collections.abc import Callable, Sequence
+from typing import Any
+
 import torch
 from e3nn import o3
 from e3nn.math import normalize2mom
@@ -16,7 +19,11 @@ class Activation(torch.nn.Module):
     Directly apply activation when irreps is type-0.
     """
 
-    def __init__(self, irreps_in, acts):
+    def __init__(
+        self,
+        irreps_in: o3.Irreps | str,
+        acts: Sequence[Callable[[torch.Tensor], torch.Tensor] | None],
+    ) -> None:
         """
         Initialize Activation.
 
@@ -73,7 +80,7 @@ class Activation(torch.nn.Module):
     # def __repr__(self):
     #    acts = "".join(["x" if a is not None else " " for a in self.acts])
     #    return f"{self.__class__.__name__} [{self.acts}] ({self.irreps_in} -> {self.irreps_out})"
-    def extra_repr(self):
+    def extra_repr(self) -> str:
         """
         Extra repr.
 
@@ -86,7 +93,7 @@ class Activation(torch.nn.Module):
         output_str = output_str + f"{self.irreps_in} -> {self.irreps_out}, "
         return output_str
 
-    def forward(self, features, dim=-1):
+    def forward(self, features: torch.Tensor, dim: int = -1) -> torch.Tensor:
         # directly apply activation without narrow
         """
         Run the forward pass.
@@ -130,7 +137,14 @@ class Gate(torch.nn.Module):
     2. Use `Activation` in this file.
     """
 
-    def __init__(self, irreps_scalars, act_scalars, irreps_gates, act_gates, irreps_gated):
+    def __init__(
+        self,
+        irreps_scalars: o3.Irreps | str,
+        act_scalars: Sequence[Callable[[torch.Tensor], torch.Tensor] | None],
+        irreps_gates: o3.Irreps | str,
+        act_gates: Sequence[Callable[[torch.Tensor], torch.Tensor] | None],
+        irreps_gated: o3.Irreps | str,
+    ) -> None:
         """
         Initialize Gate.
 
@@ -184,7 +198,7 @@ class Gate(torch.nn.Module):
 
         self._irreps_out = irreps_scalars + irreps_gated
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return a readable string representation.
 
@@ -195,7 +209,7 @@ class Gate(torch.nn.Module):
         """
         return f"{self.__class__.__name__} ({self.irreps_in} -> {self.irreps_out})"
 
-    def forward(self, features):
+    def forward(self, features: torch.Tensor) -> torch.Tensor:
         """
         Run the forward pass.
 
@@ -228,11 +242,11 @@ class Gate(torch.nn.Module):
         return features
 
     @property
-    def irreps_in(self):
+    def irreps_in(self) -> Any:
         """Input representations."""
         return self._irreps_in
 
     @property
-    def irreps_out(self):
+    def irreps_out(self) -> Any:
         """Output representations."""
         return self._irreps_out
