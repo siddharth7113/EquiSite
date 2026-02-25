@@ -1,0 +1,46 @@
+# Python bytecode and extension artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Packaging/build outputs
+build/
+dist/
+*.egg
+*.egg-info/
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# Tool caches
+.pytest_cache/
+.ruff_cache/
+.pre-commit-cache/
+.ipynb_checkpoints/
+
+# IDE/editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Runtime outputs and temporary files
+.equisite_tmp/
+examples/*.csv
+*.h5
+*.hdf5
+*.out
+
+# Local model weights
+*.pt
+*.pth
+*.ckpt
