@@ -11,7 +11,8 @@ It explicitly models multi-scale protein geometry (backbone *and* side-chain
 orientations) and **eliminates the need for evolutionary profiles (MSAs)**,
 making it fast enough for high-throughput use on AlphaFold2 models.
 
-![Graphical Abstract](graphical_abstract.png)
+<!-- ![Graphical Abstract](graphical_abstract.png) -->
+<img src="graphical_abstract.png" alt="Graphical Abstract" width="40%">
 
 ---
 
