@@ -3,6 +3,7 @@ Rescale output and weights of tensor product.
 """
 
 import collections
+from typing import Any
 
 import e3nn
 import torch
@@ -38,16 +39,16 @@ class TensorProductRescale(torch.nn.Module):
 
     def __init__(
         self,
-        irreps_in1,
-        irreps_in2,
-        irreps_out,
-        instructions,
-        bias=True,
-        rescale=True,
-        internal_weights=None,
-        shared_weights=None,
-        normalization=None,
-    ):
+        irreps_in1: Any,
+        irreps_in2: Any,
+        irreps_out: Any,
+        instructions: Any,
+        bias: bool = True,
+        rescale: bool = True,
+        internal_weights: Any = None,
+        shared_weights: Any = None,
+        normalization: Any = None,
+    ) -> None:
         """
         Initialize TensorProductRescale.
 
@@ -96,7 +97,7 @@ class TensorProductRescale(torch.nn.Module):
 
         self.init_rescale_bias()
 
-    def calculate_fan_in(self, ins):
+    def calculate_fan_in(self, ins: Any) -> int:
         """
         Calculate fan in.
 
@@ -210,7 +211,9 @@ class TensorProductRescale(torch.nn.Module):
             #    sqrt_k = 1 / slices_fan_in[out_slice_idx] ** 0.5
             #    out_bias.uniform_(-sqrt_k, sqrt_k)
 
-    def forward_tp_rescale_bias(self, x, y, weight=None):
+    def forward_tp_rescale_bias(
+        self, x: torch.Tensor, y: torch.Tensor, weight: torch.Tensor | None = None
+    ) -> torch.Tensor:
         """
         Forward tp rescale bias.
 
@@ -239,7 +242,9 @@ class TensorProductRescale(torch.nn.Module):
                 out.narrow(1, slice.start, slice.stop - slice.start).add_(bias)
         return out
 
-    def forward(self, x, y, weight=None):
+    def forward(
+        self, x: torch.Tensor, y: torch.Tensor, weight: torch.Tensor | None = None
+    ) -> torch.Tensor:
         """
         Run the forward pass.
 
@@ -287,15 +292,15 @@ class FullyConnectedTensorProductRescale(TensorProductRescale):
 
     def __init__(
         self,
-        irreps_in1,
-        irreps_in2,
-        irreps_out,
-        bias=True,
-        rescale=True,
-        internal_weights=None,
-        shared_weights=None,
-        normalization=None,
-    ):
+        irreps_in1: Any,
+        irreps_in2: Any,
+        irreps_out: Any,
+        bias: bool = True,
+        rescale: bool = True,
+        internal_weights: Any = None,
+        shared_weights: Any = None,
+        normalization: Any = None,
+    ) -> None:
         """
         Initialize FullyConnectedTensorProductRescale.
 
@@ -355,7 +360,9 @@ class LinearRS(FullyConnectedTensorProductRescale):
         Initialization argument.
     """
 
-    def __init__(self, irreps_in, irreps_out, bias=True, rescale=True):
+    def __init__(
+        self, irreps_in: Any, irreps_out: Any, bias: bool = True, rescale: bool = True
+    ) -> None:
         """
         Initialize LinearRS.
 
@@ -382,7 +389,7 @@ class LinearRS(FullyConnectedTensorProductRescale):
             normalization=None,
         )
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
         Run the forward pass.
 
@@ -401,7 +408,7 @@ class LinearRS(FullyConnectedTensorProductRescale):
         return out
 
 
-def irreps2gate(irreps):
+def irreps2gate(irreps: Any) -> tuple[o3.Irreps, o3.Irreps, o3.Irreps]:
     """
     Irreps2gate.
 
@@ -458,15 +465,15 @@ class FullyConnectedTensorProductRescaleSwishGate(FullyConnectedTensorProductRes
 
     def __init__(
         self,
-        irreps_in1,
-        irreps_in2,
-        irreps_out,
-        bias=True,
-        rescale=True,
-        internal_weights=None,
-        shared_weights=None,
-        normalization=None,
-    ):
+        irreps_in1: Any,
+        irreps_in2: Any,
+        irreps_out: Any,
+        bias: bool = True,
+        rescale: bool = True,
+        internal_weights: Any = None,
+        shared_weights: Any = None,
+        normalization: Any = None,
+    ) -> None:
         """
         Initialize FullyConnectedTensorProductRescaleSwishGate.
 
@@ -513,7 +520,9 @@ class FullyConnectedTensorProductRescaleSwishGate(FullyConnectedTensorProductRes
         )
         self.gate = gate
 
-    def forward(self, x, y, weight=None):
+    def forward(
+        self, x: torch.Tensor, y: torch.Tensor, weight: torch.Tensor | None = None
+    ) -> torch.Tensor:
         """
         Run the forward pass.
 
@@ -536,7 +545,7 @@ class FullyConnectedTensorProductRescaleSwishGate(FullyConnectedTensorProductRes
         return out
 
 
-def sort_irreps_even_first(irreps):
+def sort_irreps_even_first(irreps: Any) -> Any:
     """
     Sort irreps even first.
 
@@ -560,7 +569,6 @@ def sort_irreps_even_first(irreps):
 
 
 if __name__ == "__main__":
-
     irreps_1 = o3.Irreps("32x0e+16x1o+8x2e")
     irreps_2 = o3.Irreps("4x0e+4x1o+4x2e")
     irreps_out = o3.Irreps("16x0e+8x1o+4x2e")

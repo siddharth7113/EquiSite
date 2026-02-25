@@ -1,5 +1,7 @@
 """Equivariant layer normalization implementations."""
 
+from typing import Any
+
 import torch
 import torch.nn as nn
 from e3nn import o3
@@ -25,7 +27,7 @@ class EquivariantLayerNorm(torch.nn.Module):
 
     NORM_CLAMP = 2**-24  # Minimum positive subnormal for FP16
 
-    def __init__(self, irreps_in, eps=1e-5):
+    def __init__(self, irreps_in: Any, eps: float = 1e-5) -> None:
         """
         Initialize EquivariantLayerNorm.
 
@@ -48,7 +50,7 @@ class EquivariantLayerNorm(torch.nn.Module):
 
         # self.relu = torch.nn.ReLU()
 
-    def forward(self, f_in, **kwargs):
+    def forward(self, f_in: torch.Tensor, **kwargs: object) -> torch.Tensor:
         """
         Assume `f_in` is of shape [N, C].
         """
@@ -75,7 +77,7 @@ class EquivariantLayerNorm(torch.nn.Module):
         f_out = torch.cat(f_out, dim=-1)
         return f_out
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return a readable string representation.
 
@@ -103,7 +105,13 @@ class EquivariantLayerNormV2(nn.Module):
         Initialization argument.
     """
 
-    def __init__(self, irreps, eps=1e-5, affine=True, normalization="component"):
+    def __init__(
+        self,
+        irreps: Irreps | str,
+        eps: float = 1e-5,
+        affine: bool = True,
+        normalization: str = "component",
+    ) -> None:
         """
         Initialize EquivariantLayerNormV2.
 
@@ -141,7 +149,7 @@ class EquivariantLayerNormV2(nn.Module):
         ], "normalization needs to be 'norm' or 'component'"
         self.normalization = normalization
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return a readable string representation.
 
@@ -153,7 +161,7 @@ class EquivariantLayerNormV2(nn.Module):
         return f"{self.__class__.__name__}({self.irreps}, eps={self.eps})"
 
     @torch.amp.autocast("cuda", enabled=False)
-    def forward(self, node_input, **kwargs):
+    def forward(self, node_input: torch.Tensor, **kwargs: object) -> torch.Tensor:
         # batch, *size, dim = node_input.shape  # TODO: deal with batch
         # node_input = node_input.reshape(batch, -1, dim)  # [batch, sample, stacked features]
         # node_input has shape [batch * nodes, dim], but with variable nr of nodes.
@@ -241,7 +249,13 @@ class EquivariantLayerNormV3(nn.Module):
     V2 + Centering for vectors of all degrees
     """
 
-    def __init__(self, irreps, eps=1e-5, affine=True, normalization="component"):
+    def __init__(
+        self,
+        irreps: Irreps | str,
+        eps: float = 1e-5,
+        affine: bool = True,
+        normalization: str = "component",
+    ) -> None:
         """
         Initialize EquivariantLayerNormV3.
 
@@ -279,7 +293,7 @@ class EquivariantLayerNormV3(nn.Module):
         ], "normalization needs to be 'norm' or 'component'"
         self.normalization = normalization
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return a readable string representation.
 
@@ -291,7 +305,7 @@ class EquivariantLayerNormV3(nn.Module):
         return f"{self.__class__.__name__} ({self.irreps}, eps={self.eps})"
 
     # @torch.autocast(device_type='cuda', enabled=False)
-    def forward(self, node_input, **kwargs):
+    def forward(self, node_input: torch.Tensor, **kwargs: object) -> torch.Tensor:
         """
         Run the forward pass.
 
@@ -360,7 +374,13 @@ class EquivariantLayerNormV4(nn.Module):
     V3 + Learnable mean shift
     """
 
-    def __init__(self, irreps, eps=1e-5, affine=True, normalization="component"):
+    def __init__(
+        self,
+        irreps: Irreps | str,
+        eps: float = 1e-5,
+        affine: bool = True,
+        normalization: str = "component",
+    ) -> None:
         """
         Initialize EquivariantLayerNormV4.
 
@@ -407,7 +427,7 @@ class EquivariantLayerNormV4(nn.Module):
         ], "normalization needs to be 'norm' or 'component'"
         self.normalization = normalization
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return a readable string representation.
 
@@ -419,7 +439,7 @@ class EquivariantLayerNormV4(nn.Module):
         return f"{self.__class__.__name__} ({self.irreps}, eps={self.eps})"
 
     # @torch.autocast(device_type='cuda', enabled=False)
-    def forward(self, node_input, **kwargs):
+    def forward(self, node_input: torch.Tensor, **kwargs: object) -> torch.Tensor:
         """
         Run the forward pass.
 
@@ -488,7 +508,6 @@ class EquivariantLayerNormV4(nn.Module):
 
 
 if __name__ == "__main__":
-
     torch.manual_seed(10)
 
     irreps_in = o3.Irreps("4x0e+2x1o+1x2e")

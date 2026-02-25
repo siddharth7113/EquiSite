@@ -113,7 +113,7 @@ class SphericalBesselBasis(torch.nn.Module):
         self,
         num_radial: int,
         cutoff: float,
-    ):
+    ) -> None:
         """
         Initialize SphericalBesselBasis.
 
@@ -175,7 +175,7 @@ class BernsteinBasis(torch.nn.Module):
         self,
         num_radial: int,
         pregamma_initial: float = 0.45264,
-    ):
+    ) -> None:
         """
         Initialize BernsteinBasis.
 

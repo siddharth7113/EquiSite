@@ -162,7 +162,7 @@ class PDBResidueRecord:
 class _ProteinOnlySelect(Select):
     """Bio.PDB selector that keeps only protein residues and canonical altlocs."""
 
-    def accept_residue(self, residue) -> int:
+    def accept_residue(self, residue: Any) -> int:
         """Accept only standard amino-acid residues and UNK residues."""
         hetfield, _, _ = residue.id
         if hetfield.strip():
@@ -170,7 +170,7 @@ class _ProteinOnlySelect(Select):
         resname = residue.get_resname().strip()
         return int(is_aa(residue, standard=True) or resname == "UNK")
 
-    def accept_atom(self, atom) -> int:
+    def accept_atom(self, atom: Any) -> int:
         """Keep non-disordered atoms and the primary altloc for disordered atoms."""
         altloc = atom.get_altloc().strip()
         if not atom.is_disordered():
