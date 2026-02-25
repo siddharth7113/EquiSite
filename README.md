@@ -240,6 +240,8 @@ Checkpoints and full evaluation outputs are available on
 EquiSite/
 ├── predict.py              # ← User-friendly inference CLI (start here!)
 ├── train.py                # Training script
+├── notebooks/              # Example Jupyter workflows
+│   └── inference.ipynb
 ├── pyproject.toml          # pip-installable package metadata
 ├── checkpoints/            # Pretrained weights (DNA / RNA)
 ├── examples/               # Sample PDBs and output CSVs
@@ -251,25 +253,16 @@ EquiSite/
 │   │   ├── _pipeline.py
 │   │   ├── _result.py
 │   │   └── layers/         # Decomposed model building blocks
-│   ├── predictor.py        # Backward-compatible wrapper
+│   ├── utils/              # Shared loss/padding/metrics helpers
+│   ├── data/
+│   └── datasets/
 │   └── _*.py               # Other private inference internals
-│
-├── model/
-│   ├── equisite_t3_pro.py  # EquiSite model definition
-│   ├── features_equi_t3_pro.py  # Geometric feature encoders
-│   ├── nets/               # Equiformer + attention transformer layers
-│   └── ...
 │
 ├── dataset/
 │   ├── DNA_Check/          # DNA dataset + data loader (PBdataset.py)
 │   ├── RNA_Check/          # RNA dataset
 │   ├── PATP/, PCA/, …      # Additional benchmark datasets
 │   └── utils/              # PDB/HDF5 parsing (PyProtein, PyPeriodicTable)
-│
-└── utils/
-    ├── loss.py             # Loss functions
-    ├── padding.py          # Batching utilities
-    └── valid_metrices.py   # Validation metrics (ROC-AUC, MCC, etc.)
 ```
 
 ---
@@ -296,7 +289,7 @@ pip install torch-scatter torch-sparse torch-cluster torch-spline-conv \
 
 Replace `torch-2.6.0+cu124` with your actual PyTorch version and CUDA tag.
 
-### `ModuleNotFoundError: No module named 'model'` or `'dataset'`
+### `ModuleNotFoundError: No module named 'equisite'` or `'dataset'`
 
 Make sure you installed the package in development mode:
 
@@ -304,7 +297,7 @@ Make sure you installed the package in development mode:
 uv pip install -e .
 ```
 
-This registers `model/`, `dataset/`, and `utils/` as importable packages.
+This registers `equisite/` and `dataset/` as importable packages.
 
 ### How do I use this for docking (e.g. HADDOCK)?
 

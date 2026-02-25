@@ -18,6 +18,8 @@ EquiSite predicts protein nucleic-acid binding residues using:
 EquiSite/
 ├── predict.py                 # Main inference CLI
 ├── train.py                   # Training entry point
+├── notebooks/                 # Example notebook workflows
+│   └── inference.ipynb
 ├── pyproject.toml             # Packaging + black/ruff configuration
 ├── checkpoints/               # Pretrained model weights
 │   ├── DNA/best_val.pt
@@ -30,18 +32,14 @@ EquiSite/
 │   │   ├── _model.py
 │   │   ├── _pipeline.py
 │   │   ├── _result.py
-│   │   └── layers/
-│   ├── predictor.py           # Backward-compatible predictor wrapper
+│   │   ├── equisite_t3_pro.py
+│   │   ├── features_equi_t3_pro.py
+│   │   ├── layers/
+│   │   └── nets/
+│   ├── utils/
 │   ├── data/
-│   └── datasets/
+│   ├── datasets/
 │   └── _*.py
-├── model/
-│   ├── __init__.py
-│   ├── equisite_t3_pro.py
-│   ├── features_equi_t3_pro.py
-│   └── nets/
-│       ├── __init__.py
-│       └── *.py
 ├── dataset/
 │   ├── __init__.py
 │   ├── DNA_Check/, RNA_Check/, PATP/, PCA/, PHEM/, PMG/, PMN/
@@ -51,11 +49,6 @@ EquiSite/
 │   └── utils/
 │       ├── __init__.py
 │       └── PyProtein.py, PyMolecule.py, PyMolIO.py, PyPeriodicTable.py
-└── utils/
-    ├── __init__.py
-    ├── loss.py
-    ├── padding.py
-    └── valid_metrices.py
 ```
 
 ## Environment Management (uv only)
