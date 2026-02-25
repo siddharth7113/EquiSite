@@ -17,7 +17,7 @@ class CosineCutoff(torch.nn.Module):
         Initialization argument.
     """
 
-    def __init__(self, cutoff_lower=0.0, cutoff_upper=5.0):
+    def __init__(self, cutoff_lower: float = 0.0, cutoff_upper: float = 5.0) -> None:
         """
         Initialize CosineCutoff.
 
@@ -33,7 +33,7 @@ class CosineCutoff(torch.nn.Module):
         self.cutoff_lower = cutoff_lower
         self.cutoff_upper = cutoff_upper
 
-    def forward(self, distances):
+    def forward(self, distances: torch.Tensor) -> torch.Tensor:
         """
         Run the forward pass.
 
@@ -88,7 +88,13 @@ class ExpNormalSmearing(torch.nn.Module):
         Initialization argument.
     """
 
-    def __init__(self, cutoff_lower=0.0, cutoff_upper=5.0, num_rbf=50, trainable=False):
+    def __init__(
+        self,
+        cutoff_lower: float = 0.0,
+        cutoff_upper: float = 5.0,
+        num_rbf: int = 50,
+        trainable: bool = False,
+    ) -> None:
         """
         Initialize ExpNormalSmearing.
 
@@ -121,7 +127,7 @@ class ExpNormalSmearing(torch.nn.Module):
             self.register_buffer("means", means)
             self.register_buffer("betas", betas)
 
-    def _initial_params(self):
+    def _initial_params(self) -> tuple[torch.Tensor, torch.Tensor]:
         # initialize means and betas according to the default values in PhysNet
         # https://pubs.acs.org/doi/10.1021/acs.jctc.9b00181
         """
@@ -137,7 +143,7 @@ class ExpNormalSmearing(torch.nn.Module):
         betas = torch.tensor([(2 / self.num_rbf * (1 - start_value)) ** -2] * self.num_rbf)
         return means, betas
 
-    def reset_parameters(self):
+    def reset_parameters(self) -> None:
         """
         Reset parameters.
 
@@ -150,7 +156,7 @@ class ExpNormalSmearing(torch.nn.Module):
         self.means.data.copy_(means)
         self.betas.data.copy_(betas)
 
-    def forward(self, dist):
+    def forward(self, dist: torch.Tensor) -> torch.Tensor:
         """
         Run the forward pass.
 

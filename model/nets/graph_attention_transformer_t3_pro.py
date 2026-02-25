@@ -1,5 +1,7 @@
 """SE(3)-equivariant graph attention transformer backbone."""
 
+from typing import Any
+
 import torch
 import torch.nn.functional as f
 import torch_geometric
@@ -39,7 +41,7 @@ _AVG_NUM_NODES = 18.03065905448718
 _AVG_DEGREE = 15.57930850982666
 
 
-def get_norm_layer(norm_type):
+def get_norm_layer(norm_type: Any) -> Any:
     """
     Get norm layer.
 
@@ -77,7 +79,7 @@ class SmoothLeakyReLU(torch.nn.Module):
         Initialization argument.
     """
 
-    def __init__(self, negative_slope=0.2):
+    def __init__(self, negative_slope: Any = 0.2) -> Any:
         """
         Initialize SmoothLeakyReLU.
 
@@ -90,7 +92,7 @@ class SmoothLeakyReLU(torch.nn.Module):
         super().__init__()
         self.alpha = negative_slope
 
-    def forward(self, x):
+    def forward(self, x: Any) -> Any:
         """
         Run the forward pass.
 
@@ -108,7 +110,7 @@ class SmoothLeakyReLU(torch.nn.Module):
         x2 = ((1 - self.alpha) / 2) * x * (2 * torch.sigmoid(x) - 1)
         return x1 + x2
 
-    def extra_repr(self):
+    def extra_repr(self) -> Any:
         """
         Extra repr.
 
@@ -120,7 +122,7 @@ class SmoothLeakyReLU(torch.nn.Module):
         return f"negative_slope={self.alpha}"
 
 
-def get_mul_0(irreps):
+def get_mul_0(irreps: Any) -> Any:
     """
     Get mul 0.
 
@@ -169,16 +171,16 @@ class FullyConnectedTensorProductRescaleNorm(FullyConnectedTensorProductRescale)
 
     def __init__(
         self,
-        irreps_in1,
-        irreps_in2,
-        irreps_out,
-        bias=True,
-        rescale=True,
-        internal_weights=None,
-        shared_weights=None,
-        normalization=None,
-        norm_layer="graph",
-    ):
+        irreps_in1: Any,
+        irreps_in2: Any,
+        irreps_out: Any,
+        bias: Any = True,
+        rescale: Any = True,
+        internal_weights: Any = None,
+        shared_weights: Any = None,
+        normalization: Any = None,
+        norm_layer: Any = "graph",
+    ) -> Any:
         """
         Initialize FullyConnectedTensorProductRescaleNorm.
 
@@ -216,7 +218,7 @@ class FullyConnectedTensorProductRescaleNorm(FullyConnectedTensorProductRescale)
         )
         self.norm = get_norm_layer(norm_layer)(self.irreps_out)
 
-    def forward(self, x, y, batch, weight=None):
+    def forward(self, x: Any, y: Any, batch: Any, weight: Any = None) -> Any:
         """
         Run the forward pass.
 
@@ -269,16 +271,16 @@ class FullyConnectedTensorProductRescaleNormSwishGate(FullyConnectedTensorProduc
 
     def __init__(
         self,
-        irreps_in1,
-        irreps_in2,
-        irreps_out,
-        bias=True,
-        rescale=True,
-        internal_weights=None,
-        shared_weights=None,
-        normalization=None,
-        norm_layer="graph",
-    ):
+        irreps_in1: Any,
+        irreps_in2: Any,
+        irreps_out: Any,
+        bias: Any = True,
+        rescale: Any = True,
+        internal_weights: Any = None,
+        shared_weights: Any = None,
+        normalization: Any = None,
+        norm_layer: Any = "graph",
+    ) -> Any:
         """
         Initialize FullyConnectedTensorProductRescaleNormSwishGate.
 
@@ -328,7 +330,7 @@ class FullyConnectedTensorProductRescaleNormSwishGate(FullyConnectedTensorProduc
         )
         self.gate = gate
 
-    def forward(self, x, y, batch, weight=None):
+    def forward(self, x: Any, y: Any, batch: Any, weight: Any = None) -> Any:
         """
         Run the forward pass.
 
@@ -380,15 +382,15 @@ class FullyConnectedTensorProductRescaleSwishGate(FullyConnectedTensorProductRes
 
     def __init__(
         self,
-        irreps_in1,
-        irreps_in2,
-        irreps_out,
-        bias=True,
-        rescale=True,
-        internal_weights=None,
-        shared_weights=None,
-        normalization=None,
-    ):
+        irreps_in1: Any,
+        irreps_in2: Any,
+        irreps_out: Any,
+        bias: Any = True,
+        rescale: Any = True,
+        internal_weights: Any = None,
+        shared_weights: Any = None,
+        normalization: Any = None,
+    ) -> Any:
         """
         Initialize FullyConnectedTensorProductRescaleSwishGate.
 
@@ -435,7 +437,7 @@ class FullyConnectedTensorProductRescaleSwishGate(FullyConnectedTensorProductRes
         )
         self.gate = gate
 
-    def forward(self, x, y, weight=None):
+    def forward(self, x: Any, y: Any, weight: Any = None) -> Any:
         """
         Run the forward pass.
 
@@ -459,8 +461,12 @@ class FullyConnectedTensorProductRescaleSwishGate(FullyConnectedTensorProductRes
 
 
 def DepthwiseTensorProduct(
-    irreps_node_input, irreps_edge_attr, irreps_node_output, internal_weights=False, bias=True
-):
+    irreps_node_input: Any,
+    irreps_edge_attr: Any,
+    irreps_node_output: Any,
+    internal_weights: Any = False,
+    bias: Any = True,
+) -> Any:
     """
     The irreps of output is pre-determined.
     `irreps_node_output` is used to get certain types of vectors.
@@ -501,14 +507,14 @@ class SeparableFCTP(torch.nn.Module):
 
     def __init__(
         self,
-        irreps_node_input,
-        irreps_edge_attr,
-        irreps_node_output,
-        fc_neurons,
-        use_activation=False,
-        norm_layer="graph",
-        internal_weights=False,
-    ):
+        irreps_node_input: Any,
+        irreps_edge_attr: Any,
+        irreps_node_output: Any,
+        fc_neurons: Any,
+        use_activation: Any = False,
+        norm_layer: Any = "graph",
+        internal_weights: Any = False,
+    ) -> Any:
         """
         Initialize SeparableFCTP.
 
@@ -576,7 +582,9 @@ class SeparableFCTP(torch.nn.Module):
                 )
             self.gate = gate
 
-    def forward(self, node_input, edge_attr, edge_scalars, batch=None, **kwargs):
+    def forward(
+        self, node_input: Any, edge_attr: Any, edge_scalars: Any, batch: Any = None, **kwargs: Any
+    ) -> Any:
         """
         Depthwise TP: `node_input` TP `edge_attr`, with TP parametrized by
         self.dtp_rad(`edge_scalars`).
@@ -600,7 +608,7 @@ class Vec2AttnHeads(torch.nn.Module):
     [N, num_heads, irreps_head].
     """
 
-    def __init__(self, irreps_head, num_heads):
+    def __init__(self, irreps_head: Any, num_heads: Any) -> Any:
         """
         Initialize Vec2AttnHeads.
 
@@ -625,7 +633,7 @@ class Vec2AttnHeads(torch.nn.Module):
             self.mid_in_indices.append((start_idx, start_idx + mul * ir.dim))
             start_idx = start_idx + mul * ir.dim
 
-    def forward(self, x):
+    def forward(self, x: Any) -> Any:
         """
         Run the forward pass.
 
@@ -648,7 +656,7 @@ class Vec2AttnHeads(torch.nn.Module):
         out = torch.cat(out, dim=2)
         return out
 
-    def __repr__(self):
+    def __repr__(self) -> Any:
         """
         Return a readable string representation.
 
@@ -669,7 +677,7 @@ class AttnHeads2Vec(torch.nn.Module):
     vectors of shape [N, irreps_head * num_heads].
     """
 
-    def __init__(self, irreps_head):
+    def __init__(self, irreps_head: Any) -> Any:
         """
         Initialize AttnHeads2Vec.
 
@@ -687,7 +695,7 @@ class AttnHeads2Vec(torch.nn.Module):
             self.head_indices.append((start_idx, start_idx + mul * ir.dim))
             start_idx = start_idx + mul * ir.dim
 
-    def forward(self, x):
+    def forward(self, x: Any) -> Any:
         """
         Run the forward pass.
 
@@ -710,7 +718,7 @@ class AttnHeads2Vec(torch.nn.Module):
         out = torch.cat(out, dim=1)
         return out
 
-    def __repr__(self):
+    def __repr__(self) -> Any:
         """
         Return a readable string representation.
 
@@ -734,7 +742,7 @@ class ConcatIrrepsTensor(torch.nn.Module):
         Initialization argument.
     """
 
-    def __init__(self, irreps_1, irreps_2):
+    def __init__(self, irreps_1: Any, irreps_2: Any) -> Any:
         """
         Initialize ConcatIrrepsTensor.
 
@@ -780,7 +788,7 @@ class ConcatIrrepsTensor(torch.nn.Module):
             start_idx_1 = start_idx_1 + dim_1 if dim_1 is not None else start_idx_1
             start_idx_2 = start_idx_2 + dim_2 if dim_2 is not None else start_idx_2
 
-    def get_irreps_dim(self, irreps):
+    def get_irreps_dim(self, irreps: Any) -> Any:
         """
         Get irreps dim.
 
@@ -799,7 +807,7 @@ class ConcatIrrepsTensor(torch.nn.Module):
             muls.append(mul * ir.dim)
         return muls
 
-    def check_sorted(self, irreps):
+    def check_sorted(self, irreps: Any) -> Any:
         """
         Check sorted.
 
@@ -824,7 +832,7 @@ class ConcatIrrepsTensor(torch.nn.Module):
                 assert p < ir.p, f"Parity order error: {irreps}"
             assert lmax <= ir.l
 
-    def get_ir_index(self, ir, irreps):
+    def get_ir_index(self, ir: Any, irreps: Any) -> Any:
         """
         Get ir index.
 
@@ -845,7 +853,7 @@ class ConcatIrrepsTensor(torch.nn.Module):
                 return index
         return -1
 
-    def forward(self, feature_1, feature_2):
+    def forward(self, feature_1: Any, feature_2: Any) -> Any:
         """
         Run the forward pass.
 
@@ -871,7 +879,7 @@ class ConcatIrrepsTensor(torch.nn.Module):
         output = torch.cat(output, dim=-1)
         return output
 
-    def __repr__(self):
+    def __repr__(self) -> Any:
         """
         Return a readable string representation.
 
@@ -894,19 +902,19 @@ class GraphAttention(torch.nn.Module):
 
     def __init__(
         self,
-        irreps_node_input,
-        irreps_node_attr,
-        irreps_edge_attr,
-        irreps_node_output,
-        fc_neurons,
-        irreps_head,
-        num_heads,
-        irreps_pre_attn=None,
-        rescale_degree=False,
-        nonlinear_message=False,
-        alpha_drop=0.1,
-        proj_drop=0.1,
-    ):
+        irreps_node_input: Any,
+        irreps_node_attr: Any,
+        irreps_edge_attr: Any,
+        irreps_node_output: Any,
+        fc_neurons: Any,
+        irreps_head: Any,
+        num_heads: Any,
+        irreps_pre_attn: Any = None,
+        rescale_degree: Any = False,
+        nonlinear_message: Any = False,
+        alpha_drop: Any = 0.1,
+        proj_drop: Any = 0.1,
+    ) -> Any:
         """
         Initialize GraphAttention.
 
@@ -1019,8 +1027,16 @@ class GraphAttention(torch.nn.Module):
             self.proj_drop = EquivariantDropout(self.irreps_node_input, drop_prob=proj_drop)
 
     def forward(
-        self, node_input, node_attr, edge_src, edge_dst, edge_attr, edge_scalars, batch, **kwargs
-    ):
+        self,
+        node_input: Any,
+        node_attr: Any,
+        edge_src: Any,
+        edge_dst: Any,
+        edge_attr: Any,
+        edge_scalars: Any,
+        batch: Any,
+        **kwargs: Any,
+    ) -> Any:
         """
         Run the forward pass.
 
@@ -1098,7 +1114,7 @@ class GraphAttention(torch.nn.Module):
 
         return node_output
 
-    def extra_repr(self):
+    def extra_repr(self) -> Any:
         """
         Extra repr.
 
@@ -1120,12 +1136,12 @@ class FeedForwardNetwork(torch.nn.Module):
 
     def __init__(
         self,
-        irreps_node_input,
-        irreps_node_attr,
-        irreps_node_output,
-        irreps_mlp_mid=None,
-        proj_drop=0.1,
-    ):
+        irreps_node_input: Any,
+        irreps_node_attr: Any,
+        irreps_node_output: Any,
+        irreps_mlp_mid: Any = None,
+        proj_drop: Any = 0.1,
+    ) -> Any:
         """
         Initialize FeedForwardNetwork.
 
@@ -1170,7 +1186,7 @@ class FeedForwardNetwork(torch.nn.Module):
         if proj_drop != 0.0:
             self.proj_drop = EquivariantDropout(self.irreps_node_output, drop_prob=proj_drop)
 
-    def forward(self, node_input, node_attr, **kwargs):
+    def forward(self, node_input: Any, node_attr: Any, **kwargs: Any) -> Any:
         """
         Run the forward pass.
 
@@ -1204,22 +1220,22 @@ class TransBlock(torch.nn.Module):
 
     def __init__(
         self,
-        irreps_node_input,
-        irreps_node_attr,
-        irreps_edge_attr,
-        irreps_node_output,
-        fc_neurons,
-        irreps_head,
-        num_heads,
-        irreps_pre_attn=None,
-        rescale_degree=False,
-        nonlinear_message=False,
-        alpha_drop=0.1,
-        proj_drop=0.1,
-        drop_path_rate=0.0,
-        irreps_mlp_mid=None,
-        norm_layer="layer",
-    ):
+        irreps_node_input: Any,
+        irreps_node_attr: Any,
+        irreps_edge_attr: Any,
+        irreps_node_output: Any,
+        fc_neurons: Any,
+        irreps_head: Any,
+        num_heads: Any,
+        irreps_pre_attn: Any = None,
+        rescale_degree: Any = False,
+        nonlinear_message: Any = False,
+        alpha_drop: Any = 0.1,
+        proj_drop: Any = 0.1,
+        drop_path_rate: Any = 0.0,
+        irreps_mlp_mid: Any = None,
+        norm_layer: Any = "layer",
+    ) -> Any:
         """
         Initialize TransBlock.
 
@@ -1312,8 +1328,16 @@ class TransBlock(torch.nn.Module):
             )
 
     def forward(
-        self, node_input, node_attr, edge_src, edge_dst, edge_attr, edge_scalars, batch, **kwargs
-    ):
+        self,
+        node_input: Any,
+        node_attr: Any,
+        edge_src: Any,
+        edge_dst: Any,
+        edge_attr: Any,
+        edge_scalars: Any,
+        batch: Any,
+        **kwargs: Any,
+    ) -> Any:
         """
         Run the forward pass.
 
@@ -1387,7 +1411,9 @@ class NodeEmbeddingNetwork(torch.nn.Module):
         Initialization argument.
     """
 
-    def __init__(self, irreps_node_embedding, max_atom_type=_MAX_ATOM_TYPE, bias=True):
+    def __init__(
+        self, irreps_node_embedding: Any, max_atom_type: Any = _MAX_ATOM_TYPE, bias: Any = True
+    ) -> Any:
         """
         Initialize NodeEmbeddingNetwork.
 
@@ -1409,7 +1435,7 @@ class NodeEmbeddingNetwork(torch.nn.Module):
         )
         self.atom_type_lin.tp.weight.data.mul_(self.max_atom_type**0.5)
 
-    def forward(self, node_atom):
+    def forward(self, node_atom: Any) -> Any:
         """
         `node_atom` is a LongTensor.
         """
@@ -1430,7 +1456,7 @@ class ScaledScatter(torch.nn.Module):
         Initialization argument.
     """
 
-    def __init__(self, avg_aggregate_num):
+    def __init__(self, avg_aggregate_num: Any) -> Any:
         """
         Initialize ScaledScatter.
 
@@ -1443,7 +1469,7 @@ class ScaledScatter(torch.nn.Module):
         super().__init__()
         self.avg_aggregate_num = avg_aggregate_num + 0.0
 
-    def forward(self, x, index, **kwargs):
+    def forward(self, x: Any, index: Any, **kwargs: Any) -> Any:
         """
         Run the forward pass.
 
@@ -1465,7 +1491,7 @@ class ScaledScatter(torch.nn.Module):
         out = out.div(self.avg_aggregate_num**0.5)
         return out
 
-    def extra_repr(self):
+    def extra_repr(self) -> Any:
         """
         Extra repr.
 
@@ -1493,7 +1519,13 @@ class EdgeDegreeEmbeddingNetwork(torch.nn.Module):
         Initialization argument.
     """
 
-    def __init__(self, irreps_node_embedding, irreps_edge_attr, fc_neurons, avg_aggregate_num):
+    def __init__(
+        self,
+        irreps_node_embedding: Any,
+        irreps_edge_attr: Any,
+        fc_neurons: Any,
+        avg_aggregate_num: Any,
+    ) -> Any:
         """
         Initialize EdgeDegreeEmbeddingNetwork.
 
@@ -1527,7 +1559,15 @@ class EdgeDegreeEmbeddingNetwork(torch.nn.Module):
         self.proj = LinearRS(self.dw.irreps_out.simplify(), irreps_node_embedding)
         self.scale_scatter = ScaledScatter(avg_aggregate_num)
 
-    def forward(self, node_input, edge_attr, edge_scalars, edge_src, edge_dst, batch):
+    def forward(
+        self,
+        node_input: Any,
+        edge_attr: Any,
+        edge_scalars: Any,
+        edge_src: Any,
+        edge_dst: Any,
+        batch: Any,
+    ) -> Any:
         """
         Run the forward pass.
 
@@ -1622,32 +1662,32 @@ class GraphAttentionTransformer(torch.nn.Module):
 
     def __init__(
         self,
-        irreps_in="5x0e",
-        irreps_node_embedding="128x0e+64x1e+32x2e",
-        num_layers=6,
-        irreps_node_attr="1x0e",
-        irreps_sh="1x0e+1x1e+1x2e",
-        max_radius=5.0,
-        number_of_basis=128,
-        basis_type="gaussian",
-        fc_neurons=[64, 64],
-        irreps_feature="512x0e",
-        irreps_head="32x0e+16x1o+8x2e",
-        num_heads=4,
-        irreps_pre_attn=None,
-        rescale_degree=False,
-        nonlinear_message=False,
-        irreps_mlp_mid="128x0e+64x1e+32x2e",
-        norm_layer="layer",
-        alpha_drop=0.2,
-        proj_drop=0.0,
-        out_drop=0.0,
-        drop_path_rate=0.0,
-        mean=None,
-        std=None,
-        scale=None,
-        atomref=None,
-    ):
+        irreps_in: Any = "5x0e",
+        irreps_node_embedding: Any = "128x0e+64x1e+32x2e",
+        num_layers: Any = 6,
+        irreps_node_attr: Any = "1x0e",
+        irreps_sh: Any = "1x0e+1x1e+1x2e",
+        max_radius: Any = 5.0,
+        number_of_basis: Any = 128,
+        basis_type: Any = "gaussian",
+        fc_neurons: Any = [64, 64],
+        irreps_feature: Any = "512x0e",
+        irreps_head: Any = "32x0e+16x1o+8x2e",
+        num_heads: Any = 4,
+        irreps_pre_attn: Any = None,
+        rescale_degree: Any = False,
+        nonlinear_message: Any = False,
+        irreps_mlp_mid: Any = "128x0e+64x1e+32x2e",
+        norm_layer: Any = "layer",
+        alpha_drop: Any = 0.2,
+        proj_drop: Any = 0.0,
+        out_drop: Any = 0.0,
+        drop_path_rate: Any = 0.0,
+        mean: Any = None,
+        std: Any = None,
+        scale: Any = None,
+        atomref: Any = None,
+    ) -> Any:
         """
         Initialize GraphAttentionTransformer.
 
@@ -1768,7 +1808,7 @@ class GraphAttentionTransformer(torch.nn.Module):
 
         self.apply(self._init_weights)
 
-    def build_blocks(self):
+    def build_blocks(self) -> Any:
         """
         Build blocks.
 
@@ -1801,7 +1841,7 @@ class GraphAttentionTransformer(torch.nn.Module):
             )
             self.blocks.append(blk)
 
-    def _init_weights(self, m):
+    def _init_weights(self, m: Any) -> Any:
         """
          init weights.
 
@@ -1823,7 +1863,7 @@ class GraphAttentionTransformer(torch.nn.Module):
             torch.nn.init.constant_(m.weight, 1.0)
 
     @torch.jit.ignore
-    def no_weight_decay(self):
+    def no_weight_decay(self) -> Any:
         """
         No weight decay.
 
@@ -1854,9 +1894,17 @@ class GraphAttentionTransformer(torch.nn.Module):
         return set(no_wd_list)
 
     def forward(
-        self, f_in, pos, batch, node_atom, feature0, feature1, pos_emb, edge_index, **kwargs
+        self,
+        f_in: Any,
+        pos: Any,
+        batch: Any,
+        node_atom: Any,
+        feature0: Any,
+        feature1: Any,
+        pos_emb: Any,
+        edge_index: Any,
+        **kwargs: Any,
     ) -> torch.Tensor:
-
         # edge_src_t, edge_dst_t = radius_graph(pos, r=self.max_radius, batch=batch,
         #     max_num_neighbors=32)
         """
@@ -1939,8 +1987,14 @@ class GraphAttentionTransformer(torch.nn.Module):
 
 @register_model
 def graph_attention_transformer_l2(
-    irreps_in, radius, num_basis=128, atomref=None, task_mean=None, task_std=None, **kwargs
-):
+    irreps_in: Any,
+    radius: Any,
+    num_basis: Any = 128,
+    atomref: Any = None,
+    task_mean: Any = None,
+    task_std: Any = None,
+    **kwargs: Any,
+) -> Any:
     """
     Graph attention transformer l2.
 
@@ -1997,8 +2051,14 @@ def graph_attention_transformer_l2(
 
 @register_model
 def graph_attention_transformer_nonlinear_l2(
-    irreps_in, radius, num_basis=128, atomref=None, task_mean=None, task_std=None, **kwargs
-):
+    irreps_in: Any,
+    radius: Any,
+    num_basis: Any = 128,
+    atomref: Any = None,
+    task_mean: Any = None,
+    task_std: Any = None,
+    **kwargs: Any,
+) -> Any:
     """
     Graph attention transformer nonlinear l2.
 
@@ -2055,8 +2115,14 @@ def graph_attention_transformer_nonlinear_l2(
 
 @register_model
 def graph_attention_transformer_nonlinear_l2_e3(
-    irreps_in, radius, num_basis=128, atomref=None, task_mean=None, task_std=None, **kwargs
-):
+    irreps_in: Any,
+    radius: Any,
+    num_basis: Any = 128,
+    atomref: Any = None,
+    task_mean: Any = None,
+    task_std: Any = None,
+    **kwargs: Any,
+) -> Any:
     """
     Graph attention transformer nonlinear l2 e3.
 
@@ -2114,8 +2180,14 @@ def graph_attention_transformer_nonlinear_l2_e3(
 # Equiformer, L_max = 2, Bessel radial basis, dropout = 0.2
 @register_model
 def graph_attention_transformer_nonlinear_bessel_l2(
-    irreps_in, radius, num_basis=128, atomref=None, task_mean=None, task_std=None, **kwargs
-):
+    irreps_in: Any,
+    radius: Any,
+    num_basis: Any = 128,
+    atomref: Any = None,
+    task_mean: Any = None,
+    task_std: Any = None,
+    **kwargs: Any,
+) -> Any:
     """
     Graph attention transformer nonlinear bessel l2.
 
@@ -2174,8 +2246,14 @@ def graph_attention_transformer_nonlinear_bessel_l2(
 # Equiformer, L_max = 2, Bessel radial basis, dropout = 0.1
 @register_model
 def graph_attention_transformer_nonlinear_bessel_l2_drop01(
-    irreps_in, radius, num_basis=128, atomref=None, task_mean=None, task_std=None, **kwargs
-):
+    irreps_in: Any,
+    radius: Any,
+    num_basis: Any = 128,
+    atomref: Any = None,
+    task_mean: Any = None,
+    task_std: Any = None,
+    **kwargs: Any,
+) -> Any:
     """
     Graph attention transformer nonlinear bessel l2 drop01.
 
@@ -2234,8 +2312,14 @@ def graph_attention_transformer_nonlinear_bessel_l2_drop01(
 # Equiformer, L_max = 2, Bessel radial basis, dropout = 0.0
 @register_model
 def graph_attention_transformer_nonlinear_bessel_l2_drop00(
-    irreps_in, radius, num_basis=128, atomref=None, task_mean=None, task_std=None, **kwargs
-):
+    irreps_in: Any,
+    radius: Any,
+    num_basis: Any = 128,
+    atomref: Any = None,
+    task_mean: Any = None,
+    task_std: Any = None,
+    **kwargs: Any,
+) -> Any:
     """
     Graph attention transformer nonlinear bessel l2 drop00.
 

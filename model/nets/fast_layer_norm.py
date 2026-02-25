@@ -22,7 +22,13 @@ class EquivariantLayerNormFast(nn.Module):
         Initialization argument.
     """
 
-    def __init__(self, irreps, eps=1e-5, affine=True, normalization="component"):
+    def __init__(
+        self,
+        irreps: Irreps | str,
+        eps: float = 1e-5,
+        affine: bool = True,
+        normalization: str = "component",
+    ) -> None:
         """
         Initialize EquivariantLayerNormFast.
 
@@ -60,7 +66,7 @@ class EquivariantLayerNormFast(nn.Module):
         ], "normalization needs to be 'norm' or 'component'"
         self.normalization = normalization
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return a readable string representation.
 
@@ -71,7 +77,7 @@ class EquivariantLayerNormFast(nn.Module):
         """
         return f"{self.__class__.__name__} ({self.irreps}, eps={self.eps})"
 
-    def forward(self, node_input, **kwargs):
+    def forward(self, node_input: torch.Tensor, **kwargs: object) -> torch.Tensor:
         """
         Use torch layer norm for scalar features.
         """

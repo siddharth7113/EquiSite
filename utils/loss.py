@@ -6,7 +6,12 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-def focal_loss(labels, logits, alpha, gamma):
+def focal_loss(
+    labels: torch.Tensor,
+    logits: torch.Tensor,
+    alpha: torch.Tensor,
+    gamma: float,
+) -> torch.Tensor:
     """Compute the focal loss between `logits` and the ground truth `labels`.
     Focal loss = -alpha_t * (1-pt)^gamma * log(pt)
     where pt is the probability of being classified to the true class.
@@ -39,7 +44,15 @@ def focal_loss(labels, logits, alpha, gamma):
     return focal_loss
 
 
-def CB_loss(labels, logits, samples_per_cls, no_of_classes, loss_type, beta, gamma):
+def CB_loss(
+    labels: torch.Tensor,
+    logits: torch.Tensor,
+    samples_per_cls: list[int],
+    no_of_classes: int,
+    loss_type: str,
+    beta: float,
+    gamma: float,
+) -> torch.Tensor:
     """Compute the Class Balanced Loss between `logits` and the ground truth `labels`.
     Class Balanced Loss: ((1-beta)/(1-beta^n))*Loss(labels, logits)
     where Loss is one of the standard losses used for Neural Networks.
@@ -108,7 +121,7 @@ class CenterLoss(nn.Module):
         feat_dim (int): feature dimension.
     """
 
-    def __init__(self, num_classes=2, feat_dim=2048, use_gpu=True):
+    def __init__(self, num_classes: int = 2, feat_dim: int = 2048, use_gpu: bool = True) -> None:
         """
         Initialize CenterLoss.
 
@@ -132,7 +145,7 @@ class CenterLoss(nn.Module):
         else:
             self.centers = nn.Parameter(torch.randn(self.num_classes, self.feat_dim))
 
-    def forward(self, x, labels):
+    def forward(self, x: torch.Tensor, labels: torch.Tensor) -> torch.Tensor:
         """
         Args:
             x: feature matrix with shape (batch_size, feat_dim).
@@ -182,7 +195,7 @@ class TripletCenterLoss(nn.Module):
         Initialization argument.
     """
 
-    def __init__(self, margin=5, num_classes=2, center_embed=2):
+    def __init__(self, margin: float = 5, num_classes: int = 2, center_embed: int = 2) -> None:
         """
         Initialize TripletCenterLoss.
 
@@ -201,7 +214,7 @@ class TripletCenterLoss(nn.Module):
         self.ranking_loss = nn.MarginRankingLoss(margin=margin)
         self.centers = nn.Parameter(torch.randn(num_classes, center_embed)).to("cuda")
 
-    def forward(self, inputs, targets):
+    def forward(self, inputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
         """
         Run the forward pass.
 

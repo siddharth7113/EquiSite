@@ -3,6 +3,9 @@ This is an implementation of EquiSite model
 
 """
 
+from collections.abc import Callable
+from typing import Any
+
 import numpy as np
 import torch
 import torch.nn.functional as F
@@ -19,7 +22,7 @@ num_bb_embs = 6
 num_esm_embs = 1280
 
 
-def swish(x):
+def swish(x: torch.Tensor) -> torch.Tensor:
     """
     Swish.
 
@@ -48,7 +51,13 @@ class Linear(torch.nn.Module):
     weight_initializer (string): (glorot or zeros)
     """
 
-    def __init__(self, in_channels, out_channels, bias=True, weight_initializer="glorot"):
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        bias: bool = True,
+        weight_initializer: str = "glorot",
+    ) -> None:
         """
         Initialize Linear.
 
@@ -78,7 +87,7 @@ class Linear(torch.nn.Module):
 
         self.reset_parameters()
 
-    def reset_parameters(self):
+    def reset_parameters(self) -> None:
         """
         Reset parameters.
 
@@ -94,7 +103,7 @@ class Linear(torch.nn.Module):
         if self.bias is not None:
             inits.zeros(self.bias)
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         """"""
         return F.linear(x, self.weight, self.bias)
 
@@ -112,7 +121,14 @@ class TwoLinear(torch.nn.Module):
     act (bool)
     """
 
-    def __init__(self, in_channels, middle_channels, out_channels, bias=False, act=False):
+    def __init__(
+        self,
+        in_channels: int,
+        middle_channels: int,
+        out_channels: int,
+        bias: bool = False,
+        act: bool = False,
+    ) -> None:
         """
         Initialize TwoLinear.
 
@@ -135,7 +151,7 @@ class TwoLinear(torch.nn.Module):
         self.lin2 = Linear(middle_channels, out_channels, bias=bias)
         self.act = act
 
-    def reset_parameters(self):
+    def reset_parameters(self) -> None:
         """
         Reset parameters.
 
@@ -147,7 +163,7 @@ class TwoLinear(torch.nn.Module):
         self.lin1.reset_parameters()
         self.lin2.reset_parameters()
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
         Run the forward pass.
 
@@ -182,7 +198,7 @@ class EdgeGraphConv(MessagePassing):
     out_channels (int)
     """
 
-    def __init__(self, in_channels, out_channels):
+    def __init__(self, in_channels: int, out_channels: int) -> None:
         """
         Initialize EdgeGraphConv.
 
@@ -204,7 +220,7 @@ class EdgeGraphConv(MessagePassing):
 
         self.reset_parameters()
 
-    def reset_parameters(self):
+    def reset_parameters(self) -> None:
         """
         Reset parameters.
 
@@ -216,7 +232,13 @@ class EdgeGraphConv(MessagePassing):
         self.lin_l.reset_parameters()
         self.lin_r.reset_parameters()
 
-    def forward(self, x, edge_index, edge_weight, size=None):
+    def forward(
+        self,
+        x: torch.Tensor,
+        edge_index: torch.Tensor,
+        edge_weight: torch.Tensor,
+        size: Any = None,
+    ) -> torch.Tensor:
         """
         Run the forward pass.
 
@@ -241,7 +263,7 @@ class EdgeGraphConv(MessagePassing):
         out = self.lin_l(out)
         return out + self.lin_r(x[1])
 
-    def message(self, x_j, edge_weight):
+    def message(self, x_j: torch.Tensor, edge_weight: torch.Tensor) -> torch.Tensor:
         """
         Message.
 
@@ -259,7 +281,9 @@ class EdgeGraphConv(MessagePassing):
         """
         return edge_weight * x_j
 
-    def message_and_aggregate(self, adj_t, x):
+    def message_and_aggregate(
+        self, adj_t: Any, x: tuple[torch.Tensor, torch.Tensor]
+    ) -> torch.Tensor:
         """
         Message and aggregate.
 
@@ -308,17 +332,17 @@ class InteractionBlock(torch.nn.Module):
 
     def __init__(
         self,
-        hidden_channels,
-        output_channels,
-        num_radial,
-        num_spherical,
-        num_layers,
-        mid_emb,
-        act=swish,
-        num_pos_emb=16,
-        dropout=0,
-        level="allatom",
-    ):
+        hidden_channels: int,
+        output_channels: int,
+        num_radial: int,
+        num_spherical: int,
+        num_layers: int,
+        mid_emb: int,
+        act: Callable[[torch.Tensor], torch.Tensor] = swish,
+        num_pos_emb: int = 16,
+        dropout: float = 0,
+        level: str = "allatom",
+    ) -> None:
         """
         Initialize InteractionBlock.
 
@@ -385,7 +409,7 @@ class InteractionBlock(torch.nn.Module):
 
         self.reset_parameters()
 
-    def reset_parameters(self):
+    def reset_parameters(self) -> None:
         """
         Reset parameters.
 
@@ -416,7 +440,15 @@ class InteractionBlock(torch.nn.Module):
 
         self.final.reset_parameters()
 
-    def forward(self, x, feature0, feature1, pos_emb, edge_index, batch):
+    def forward(
+        self,
+        x: torch.Tensor,
+        feature0: torch.Tensor,
+        feature1: torch.Tensor,
+        pos_emb: torch.Tensor,
+        edge_index: torch.Tensor,
+        batch: torch.Tensor,
+    ) -> torch.Tensor:
         """
         Run the forward pass.
 
@@ -481,23 +513,23 @@ class EquiSite(nn.Module):
 
     def __init__(
         self,
-        args,
-        level="aminoacid",
-        num_blocks=4,
-        hidden_channels=128,
-        out_channels=2,
-        mid_emb=64,
-        num_radial=6,
-        num_spherical=3,
-        cutoff=10.0,
-        max_num_neighbors=32,
-        int_emb_layers=3,
-        out_layers=2,
-        num_pos_emb=16,
-        dropout=0,
-        data_augment_eachlayer=False,
-        euler_noise=False,
-    ):
+        args: Any,
+        level: str = "aminoacid",
+        num_blocks: int = 4,
+        hidden_channels: int = 128,
+        out_channels: int = 2,
+        mid_emb: int = 64,
+        num_radial: int = 6,
+        num_spherical: int = 3,
+        cutoff: float = 10.0,
+        max_num_neighbors: int = 32,
+        int_emb_layers: int = 3,
+        out_layers: int = 2,
+        num_pos_emb: int = 16,
+        dropout: float = 0,
+        data_augment_eachlayer: bool = False,
+        euler_noise: bool = False,
+    ) -> None:
         """
         Initialize EquiSite.
 
@@ -614,7 +646,7 @@ class EquiSite(nn.Module):
         self.reset_parameters()
         self.args = args
 
-    def reset_parameters(self):
+    def reset_parameters(self) -> None:
         """
         Reset parameters.
 
@@ -630,7 +662,7 @@ class EquiSite(nn.Module):
             lin.reset_parameters()
         self.lin_out.reset_parameters()
 
-    def pos_emb(self, edge_index, num_pos_emb=16):
+    def pos_emb(self, edge_index: torch.Tensor, num_pos_emb: int = 16) -> torch.Tensor:
         # From https://github.com/jingraham/neurips19-graph-protein-design
         """
         Pos emb.
@@ -657,7 +689,7 @@ class EquiSite(nn.Module):
         E = torch.cat((torch.cos(angles), torch.sin(angles)), -1)
         return E
 
-    def forward(self, batch_data):
+    def forward(self, batch_data: Any) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         """
         Run the forward pass.
 
@@ -854,7 +886,7 @@ class EquiSite(nn.Module):
             return out, x, emb
 
     @property
-    def num_params(self):
+    def num_params(self) -> int:
         """
         Num params.
 
@@ -866,7 +898,7 @@ class EquiSite(nn.Module):
         return sum(p.numel() for p in self.parameters())
 
 
-def batchgraph2batch(x, batch):
+def batchgraph2batch(x: torch.Tensor, batch: torch.Tensor) -> torch.Tensor:
     """
     Batchgraph2batch.
 

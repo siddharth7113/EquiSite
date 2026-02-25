@@ -4,6 +4,8 @@
 # https://github.com/TUM-DAML/gemnet_pytorch/blob/master/gemnet/model/layers/basis_utils.py
 # https://github.com/TUM-DAML/gemnet_pytorch/blob/master/gemnet/model/layers/basis_layers.py
 
+from typing import Any
+
 import numpy as np
 import sympy as sym
 import torch
@@ -11,14 +13,14 @@ from scipy import special as sp
 from scipy.optimize import brentq
 
 
-def Jn(r, n):
+def Jn(r: Any, n: int) -> Any:
     """
     numerical spherical bessel functions of order n
     """
     return sp.spherical_jn(n, r)
 
 
-def Jn_zeros(n, k):
+def Jn_zeros(n: int, k: int) -> np.ndarray:
     """
     Compute the first k zeros of the spherical bessel functions up to order n (excluded)
     """
@@ -36,7 +38,7 @@ def Jn_zeros(n, k):
     return zerosj
 
 
-def spherical_bessel_formulas(n):
+def spherical_bessel_formulas(n: int) -> list[Any]:
     """
     Computes the sympy formulas for the spherical bessel functions up to order n (excluded)
     """
@@ -51,7 +53,7 @@ def spherical_bessel_formulas(n):
     return j
 
 
-def bessel_basis(n, k):
+def bessel_basis(n: int, k: int) -> list[list[Any]]:
     """
     Compute the sympy formulas for the normalized and rescaled spherical bessel functions up to
     order n (excluded) and maximum frequency k (excluded).
@@ -84,7 +86,7 @@ def bessel_basis(n, k):
     return bess_basis
 
 
-def sph_harm_prefactor(l, m):
+def sph_harm_prefactor(l: int, m: int) -> float:
     """Computes the constant pre-factor for the spherical harmonic of degree l and order m.
     Parameters
     ----------
@@ -100,7 +102,9 @@ def sph_harm_prefactor(l, m):
     return ((2 * l + 1) / (4 * np.pi) * sp.factorial(l - abs(m)) / sp.factorial(l + abs(m))) ** 0.5
 
 
-def associated_legendre_polynomials(L, zero_m_only=True, pos_m_only=True):
+def associated_legendre_polynomials(
+    L: int, zero_m_only: bool = True, pos_m_only: bool = True
+) -> list[list[Any]]:
     """Computes string formulas of the associated legendre polynomials up to degree L (excluded).
     Parameters
     ----------
@@ -159,7 +163,7 @@ def associated_legendre_polynomials(L, zero_m_only=True, pos_m_only=True):
             return P_l_m
 
 
-def real_sph_harm(L, spherical_coordinates, zero_m_only=True):
+def real_sph_harm(L: int, spherical_coordinates: bool, zero_m_only: bool = True) -> list[list[Any]]:
     """
     Computes formula strings of the the real part of the spherical harmonics up to degree L (excluded).
     Variables are either spherical coordinates phi and theta (or cartesian coordinates x,y,z) on the UNIT SPHERE.
@@ -245,7 +249,7 @@ class d_angle_emb(torch.nn.Module):
         Initialization argument.
     """
 
-    def __init__(self, num_radial, num_spherical, cutoff=8.0):
+    def __init__(self, num_radial: int, num_spherical: int, cutoff: float = 8.0) -> None:
         """
         Initialize d_angle_emb.
 
@@ -283,7 +287,7 @@ class d_angle_emb(torch.nn.Module):
             for n in range(num_radial):
                 self.bessel_funcs.append(sym.lambdify([x], bessel_formulas[l][n], modules))
 
-    def forward(self, dist, angle):
+    def forward(self, dist: torch.Tensor, angle: torch.Tensor) -> torch.Tensor:
         """
         Run the forward pass.
 
@@ -321,7 +325,7 @@ class d_theta_phi_emb(torch.nn.Module):
         Initialization argument.
     """
 
-    def __init__(self, num_radial, num_spherical, cutoff=8.0):
+    def __init__(self, num_radial: int, num_spherical: int, cutoff: float = 8.0) -> None:
         """
         Initialize d_theta_phi_emb.
 
@@ -364,7 +368,9 @@ class d_theta_phi_emb(torch.nn.Module):
 
         self.register_buffer("degreeInOrder", torch.arange(num_spherical) * 2 + 1, persistent=False)
 
-    def forward(self, dist, theta, phi):
+    def forward(
+        self, dist: torch.Tensor, theta: torch.Tensor, phi: torch.Tensor
+    ) -> tuple[torch.Tensor, torch.Tensor]:
         """
         Run the forward pass.
 

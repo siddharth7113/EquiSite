@@ -1,4 +1,17 @@
-"""""" """""" """""" """""" """""" """""" """""" """""" """""" """""" """""" """""" """''
+(
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """''
     \file PyPeriodicTable.py
 
     \brief Object to represent a periodic table.
@@ -8,7 +21,21 @@
                 this distribution.
 
     \author pedro hermosilla (pedro-1.hermosilla-casajus@uni-ulm.de)
-""" """""" """""" """""" """""" """""" """""" """""" """""" """""" """""" """""" """""" ""
+"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    ""
+)
 
 import numpy as np
 
@@ -581,11 +608,11 @@ class PyPeriodicTable:
 
     nucleotidesLabels_ = np.array(["DA", "DC", "DG", "DT", "DI", "A", "C", "G", "U", "I"])
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Constructor."""
         pass
 
-    def get_num_atoms(self):
+    def get_num_atoms(self) -> int:
         """Method to get the number of atoms.
 
         Returns:
@@ -593,7 +620,7 @@ class PyPeriodicTable:
         """
         return len(self.labels_)
 
-    def get_atom_index(self, pAtomType):
+    def get_atom_index(self, pAtomType: str) -> int:
         """Method to get the index of the atom based on its type.
 
         Args:
@@ -612,7 +639,7 @@ class PyPeriodicTable:
 
         return index
 
-    def get_atom_label(self, pAtomIndex):
+    def get_atom_label(self, pAtomIndex: int) -> str:
         """Method to get the atom label at position atomIndex.
 
         Args:
@@ -626,7 +653,7 @@ class PyPeriodicTable:
 
         return self.labels_[pAtomIndex]
 
-    def get_atom_mass(self, pAtomIndex):
+    def get_atom_mass(self, pAtomIndex: int) -> float:
         """Method to get the atom mass at position pAtomIndex.
 
         Args:
@@ -640,7 +667,7 @@ class PyPeriodicTable:
 
         return self.mass_[pAtomIndex]
 
-    def get_atom_covalent_radius(self, pAtomIndex):
+    def get_atom_covalent_radius(self, pAtomIndex: int) -> float:
         """Method to get the atom convalent radius at position pAtomIndex.
 
         Args:
@@ -654,7 +681,7 @@ class PyPeriodicTable:
 
         return self.covRadius_[pAtomIndex]
 
-    def get_atom_vdw_radius(self, pAtomIndex):
+    def get_atom_vdw_radius(self, pAtomIndex: int) -> float:
         """Method to get the atom vdw radius at position atomIndex.
 
         Args:
@@ -668,7 +695,7 @@ class PyPeriodicTable:
 
         return self.vdwRadius_[pAtomIndex]
 
-    def get_num_aminoacids(self):
+    def get_num_aminoacids(self) -> int:
         """Method to get the number of aminoacids.
 
         Returns:
@@ -676,7 +703,7 @@ class PyPeriodicTable:
         """
         return len(self.aLabels_)
 
-    def get_aminoacid_index(self, pALabel):
+    def get_aminoacid_index(self, pALabel: str) -> int:
         """Method to get the index of the aminoacid based on its label.
 
         Args:
@@ -694,7 +721,7 @@ class PyPeriodicTable:
                     index = it
         return index
 
-    def get_aminoacid_label(self, pAIndex):
+    def get_aminoacid_label(self, pAIndex: int) -> str:
         """Method to get the aminoacid label at position aIndex.
 
         Args:
@@ -708,7 +735,7 @@ class PyPeriodicTable:
 
         return self.aLabels_[pAIndex]
 
-    def get_aminoacid_letter(self, pAIndex):
+    def get_aminoacid_letter(self, pAIndex: int) -> str:
         """Method to get the aminoacid letter at position pAIndex.
 
         Args:
@@ -722,7 +749,7 @@ class PyPeriodicTable:
 
         return self.aLetters_[pAIndex]
 
-    def get_nucleotide_index(self, pNLabel):
+    def get_nucleotide_index(self, pNLabel: str) -> int:
         """Method to get the index of the nucleotide based on its label.
 
         Args:

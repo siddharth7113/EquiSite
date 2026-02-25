@@ -4,7 +4,7 @@ import numpy as np
 from sklearn.metrics import confusion_matrix, matthews_corrcoef, precision_recall_curve
 
 
-def CFM_eval_metrics(CFM):
+def CFM_eval_metrics(CFM: np.ndarray) -> tuple[float, float, float, float, float]:
     """
     Cfm eval metrics.
 
@@ -46,7 +46,7 @@ def CFM_eval_metrics(CFM):
     return rec, pre, F1, spe, mcc
 
 
-def best_threshold_by_mcc(labels, preds):
+def best_threshold_by_mcc(labels: np.ndarray, preds: np.ndarray) -> tuple[float, float]:
     # Compute precision, recall, and thresholds.
     """
     Best threshold by mcc.

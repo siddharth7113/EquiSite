@@ -1,4 +1,17 @@
-("""""" """""" """""" """""" """""" """""" """""" """""" """""" """""" """""" """""" """''
+(
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """''
     \file PyProtein.py
 
     \brief Protein object.
@@ -8,14 +21,30 @@
                 this distribution.
 
     \author pedro hermosilla (pedro-1.hermosilla-casajus@uni-ulm.de)
-""" """""" """""" """""" """""" """""" """""" """""" """""" """""" """""" """""" """""" "")
+"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    ""
+)
+
+from typing import Any
 
 import h5py
 import numpy as np
 from sklearn.cluster import SpectralClustering
 
-from dataset.utils.PyMolecule import PyMolecule
-from dataset.utils.PyMolIO import load_protein_mol2, load_protein_pdb
+from dataset.utils.py_mol_io import load_protein_mol2, load_protein_pdb
+from dataset.utils.py_molecule import PyMolecule
 
 
 class PyProtein(PyMolecule):
@@ -33,7 +62,7 @@ class PyProtein(PyMolecule):
         aminoNeighs_ (int array dx2): List of aminoacid neighbors.
     """
 
-    def __init__(self, pPeriodicTable):
+    def __init__(self, pPeriodicTable: Any) -> None:
         """Constructor.
 
         Args:
@@ -69,7 +98,7 @@ class PyProtein(PyMolecule):
         self.poolStartNeighsHB_ = []
         self.poolNeighsHB_ = []
 
-    def compute_min_dists_to_atoms(self, pAtomPosition):
+    def compute_min_dists_to_atoms(self, pAtomPosition: np.ndarray) -> np.ndarray:
         """Method to compute the minimum distances of the atoms of the protein
             to a set of given atoms.
 
@@ -88,7 +117,7 @@ class PyProtein(PyMolecule):
 
         return outDists
 
-    def create_segmentation(self, pAtomPosition, pDistance=0.0):
+    def create_segmentation(self, pAtomPosition: np.ndarray, pDistance: float = 0.0) -> bool:
         """Method to create a segmentation of the protein from a list of atom positions.
 
         Args:
@@ -114,7 +143,7 @@ class PyProtein(PyMolecule):
             return False
         return True
 
-    def get_residue_segmentation(self):
+    def get_residue_segmentation(self) -> np.ndarray:
         """Method to get the segmentation at residue level.
 
         Return:
@@ -128,7 +157,7 @@ class PyProtein(PyMolecule):
         index[:-1] = auxResidueIds[1:] != auxResidueIds[:-1]
         return auxSegmentation[index]
 
-    def get_aminoacid_segmentation(self):
+    def get_aminoacid_segmentation(self) -> np.ndarray:
         """Method to get the segmentation at aminoacid level.
 
         Return:
@@ -146,7 +175,7 @@ class PyProtein(PyMolecule):
         else:
             return auxSegmentation
 
-    def compute_hydrogen_bonds(self):
+    def compute_hydrogen_bonds(self) -> None:
         """Method to compute the hydrogen bonds in the protein."""
 
         # Select the backbone atoms for each aminoacid.
@@ -323,7 +352,12 @@ class PyProtein(PyMolecule):
         self.aminoNeighsHB_ = np.array(self.aminoNeighsHB_)
         self.aminoNeighsSIndicesHB_ = np.array(self.aminoNeighsSIndicesHB_)
 
-    def __update_neighborhood__(self, pNewIndices, pGraphNeighs, pGraphStartNeighs):
+    def __update_neighborhood__(
+        self,
+        pNewIndices: np.ndarray,
+        pGraphNeighs: np.ndarray,
+        pGraphStartNeighs: np.ndarray,
+    ) -> tuple[np.ndarray, np.ndarray]:
         """
         Update neighborhood.
 
@@ -372,13 +406,13 @@ class PyProtein(PyMolecule):
 
     def __compute_side_chain_pooling__(
         self,
-        pAtomAminoIds,
-        pGraphNeighs1,
-        pGraphStartNeighs1,
-        pGraphNeighs2,
-        pGraphStartNeighs2,
-        pCacheGraph,
-    ):
+        pAtomAminoIds: np.ndarray,
+        pGraphNeighs1: np.ndarray,
+        pGraphStartNeighs1: np.ndarray,
+        pGraphNeighs2: np.ndarray,
+        pGraphStartNeighs2: np.ndarray,
+        pCacheGraph: dict[bytes, np.ndarray],
+    ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
         # Reduce by half the number of atoms for each aminoacid using spectral clustering on
         # the graph defined by the covalent bonds.
         """
@@ -477,13 +511,13 @@ class PyProtein(PyMolecule):
 
     def __compute_side_chain_pooling_rosetta_cen__(
         self,
-        pAtomNames,
-        pAtomAminoIds,
-        pGraphNeighs1,
-        pGraphStartNeighs1,
-        pGraphNeighs2,
-        pGraphStartNeighs2,
-    ):
+        pAtomNames: np.ndarray,
+        pAtomAminoIds: np.ndarray,
+        pGraphNeighs1: np.ndarray,
+        pGraphStartNeighs1: np.ndarray,
+        pGraphNeighs2: np.ndarray,
+        pGraphStartNeighs2: np.ndarray,
+    ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
         # Reduce by half the number of atoms for each aminoacid using spectral clustering on
         # the graph defined by the covalent bonds.
         """
@@ -565,7 +599,9 @@ class PyProtein(PyMolecule):
 
         return newIndices, newNeighs1, newStartNeighs1, newNeighs2, newStartNeighs2, newAminoIds
 
-    def create_pooling(self, pCacheGraph, pMethod="spec_clust"):
+    def create_pooling(
+        self, pCacheGraph: dict[bytes, np.ndarray], pMethod: str = "spec_clust"
+    ) -> None:
         """Method to compute the pooling indices.
 
         Args:
@@ -625,14 +661,14 @@ class PyProtein(PyMolecule):
 
     def load_molecular_file(
         self,
-        pFilePath,
-        pLoadAnim=True,
-        pFileType="pdb",
-        pLoadHydrogens=False,
-        pLoadH2O=False,
-        pBackBoneOnly=False,
-        pChainFilter=None,
-    ):
+        pFilePath: str,
+        pLoadAnim: bool = True,
+        pFileType: str = "pdb",
+        pLoadHydrogens: bool = False,
+        pLoadH2O: bool = False,
+        pBackBoneOnly: bool = False,
+        pChainFilter: Any = None,
+    ) -> None:
         """Method to set the content of the protein from a molecular file.
 
         Args:
@@ -780,7 +816,7 @@ class PyProtein(PyMolecule):
             print(aminoOrigIds)
             print("")
 
-    def get_fasta_seq(self):
+    def get_fasta_seq(self) -> tuple[list[str], str]:
         """Method to get the FASTA sequence of the protein.
 
         Returns:
@@ -817,7 +853,7 @@ class PyProtein(PyMolecule):
 
         return retSequences, seq
 
-    def save_hdf5(self, pFilePath):
+    def save_hdf5(self, pFilePath: str) -> None:
         """Method to save the protein in a hdf5 file.
 
         Args:
@@ -861,7 +897,13 @@ class PyProtein(PyMolecule):
 
         h5File.close()
 
-    def load_hdf5(self, pFilePath, pLoadAtom=True, pLoadAmino=True, pLoadText=True):
+    def load_hdf5(
+        self,
+        pFilePath: str,
+        pLoadAtom: bool = True,
+        pLoadAmino: bool = True,
+        pLoadText: bool = True,
+    ) -> None:
         """Method to load a protein from a hdf5 file.
 
         Args:
@@ -947,7 +989,7 @@ class PyProtein(PyMolecule):
 
         h5File.close()
 
-    def save_pooling_hdf5(self, pFilePath):
+    def save_pooling_hdf5(self, pFilePath: str) -> None:
         """Method to save the protein pooling in a hdf5 file.
 
         Args:
@@ -973,7 +1015,7 @@ class PyProtein(PyMolecule):
 
         h5File.close()
 
-    def load_pooling_hdf5(self, pFilePath):
+    def load_pooling_hdf5(self, pFilePath: str) -> None:
         """Method to load a protein pooling from a hdf5 file.
 
         Args:

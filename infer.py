@@ -1,7 +1,10 @@
 """Legacy inference entry point for EquiSite predictions."""
 
+from __future__ import annotations
+
 import argparse
 import os
+from pathlib import Path
 
 import esm
 import h5py
@@ -9,10 +12,10 @@ import torch
 from torch_geometric.data import Data
 from tqdm import tqdm
 
-from dataset.utils.PyPeriodicTable import PyPeriodicTable
+from dataset.utils.py_periodic_table import PyPeriodicTable
 
 # Dependencies
-from dataset.utils.PyProtein import PyProtein
+from dataset.utils.py_protein import PyProtein
 from model.equisite_t3_pro import EquiSite
 
 # Global ESM Load
@@ -25,7 +28,7 @@ esm_model = esm_model.eval().cuda()
 # ================= Helpers =================
 
 
-def remove_hetatm(src, dst):
+def remove_hetatm(src: str | Path, dst: str | Path) -> None:
     """
     Remove hetatm.
 
@@ -47,7 +50,7 @@ def remove_hetatm(src, dst):
         f.writelines(lines)
 
 
-def pdb_to_hdf5(pdb_path, hdf5_path):
+def pdb_to_hdf5(pdb_path: str | Path, hdf5_path: str | Path) -> None:
     """
     Pdb to hdf5.
 
@@ -70,7 +73,7 @@ def pdb_to_hdf5(pdb_path, hdf5_path):
     prot.save_hdf5(hdf5_path)
 
 
-def compute_esm(seq):
+def compute_esm(seq: str) -> torch.Tensor:
     """
     Compute esm.
 
@@ -91,7 +94,7 @@ def compute_esm(seq):
     return rep[1:-1, :].cpu()
 
 
-def get_seq_from_hdf5(hdf5_path):
+def get_seq_from_hdf5(hdf5_path: str | Path) -> str:
     """
     Get seq from hdf5.
 
@@ -147,7 +150,7 @@ class DummyDB:
     DummyDB implementation.
     """
 
-    from dataset.DNA_Check.PBdataset import DBdataset as _DB
+    from dataset.dna_check.protein_binding_dataset import DBdataset as _DB
 
     side_chain_embs = _DB.side_chain_embs
     bb_embs = _DB.bb_embs
@@ -156,7 +159,7 @@ class DummyDB:
     _normalize = _DB._normalize
 
 
-def build_graph(hdf5_path, seq, db):
+def build_graph(hdf5_path: str | Path, seq: str, db: DummyDB) -> Data:
     """
     Build graph.
 
@@ -213,7 +216,12 @@ def build_graph(hdf5_path, seq, db):
 # ================= Inference =================
 
 
-def run_inference(model_path, pdb_dir, out_dir, device):
+def run_inference(
+    model_path: str | Path,
+    pdb_dir: str | Path,
+    out_dir: str | Path,
+    device: torch.device,
+) -> None:
     """
     Run inference.
 

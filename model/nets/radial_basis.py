@@ -6,6 +6,7 @@ LICENSE file in the root directory of this source tree.
 """
 
 import math
+from typing import Any
 
 import numpy as np
 import torch
@@ -23,7 +24,7 @@ class PolynomialEnvelope(torch.nn.Module):
             Exponent of the envelope function.
     """
 
-    def __init__(self, exponent):
+    def __init__(self, exponent: int) -> None:
         """
         Initialize PolynomialEnvelope.
 
@@ -40,7 +41,7 @@ class PolynomialEnvelope(torch.nn.Module):
         self.b = self.p * (self.p + 2)
         self.c = -self.p * (self.p + 1) / 2
 
-    def forward(self, d_scaled):
+    def forward(self, d_scaled: torch.Tensor) -> torch.Tensor:
         """
         Run the forward pass.
 
@@ -71,14 +72,14 @@ class ExponentialEnvelope(torch.nn.Module):
     and Nonlocal Effects
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initialize ExponentialEnvelope.
 
         """
         super().__init__()
 
-    def forward(self, d_scaled):
+    def forward(self, d_scaled: torch.Tensor) -> torch.Tensor:
         """
         Run the forward pass.
 
@@ -112,7 +113,7 @@ class SphericalBesselBasis(torch.nn.Module):
         self,
         num_radial: int,
         cutoff: float,
-    ):
+    ) -> None:
         """
         Initialize SphericalBesselBasis.
 
@@ -134,7 +135,7 @@ class SphericalBesselBasis(torch.nn.Module):
             requires_grad=True,
         )
 
-    def forward(self, d_scaled):
+    def forward(self, d_scaled: torch.Tensor) -> torch.Tensor:
         """
         Run the forward pass.
 
@@ -174,7 +175,7 @@ class BernsteinBasis(torch.nn.Module):
         self,
         num_radial: int,
         pregamma_initial: float = 0.45264,
-    ):
+    ) -> None:
         """
         Initialize BernsteinBasis.
 
@@ -205,7 +206,7 @@ class BernsteinBasis(torch.nn.Module):
         exp2 = num_radial - 1 - exp1
         self.register_buffer("exp2", exp2[None, :], persistent=False)
 
-    def forward(self, d_scaled):
+    def forward(self, d_scaled: torch.Tensor) -> torch.Tensor:
         """
         Run the forward pass.
 
@@ -243,9 +244,9 @@ class RadialBasis(torch.nn.Module):
         self,
         num_radial: int,
         cutoff: float,
-        rbf: dict = {"name": "gaussian"},
-        envelope: dict = {"name": "polynomial", "exponent": 5},
-    ):
+        rbf: dict[str, Any] = {"name": "gaussian"},
+        envelope: dict[str, Any] = {"name": "polynomial", "exponent": 5},
+    ) -> None:
         """
         Initialize RadialBasis.
 
@@ -289,7 +290,7 @@ class RadialBasis(torch.nn.Module):
         else:
             raise ValueError(f"Unknown radial basis function '{rbf_name}'.")
 
-    def forward(self, d):
+    def forward(self, d: torch.Tensor) -> torch.Tensor:
         """
         Run the forward pass.
 

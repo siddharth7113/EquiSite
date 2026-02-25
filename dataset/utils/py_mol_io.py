@@ -1,26 +1,28 @@
-"""""" """""" """""" """""" """""" """""" """""" """""" """""" """""" """""" """""" """''
-    \file PyMolIO.py
+r"""
+\file PyMolIO.py
 
-    \brief Functions to load protein files.
+\brief Functions to load protein files.
 
-    \\copyright Copyright (c) 2021 Visual Computing group of Ulm University,
-                Germany. See the LICENSE file at the top-level directory of
-                this distribution.
+\copyright Copyright (c) 2021 Visual Computing group of Ulm University,
+            Germany. See the LICENSE file at the top-level directory of
+            this distribution.
 
-    \author pedro hermosilla (pedro-1.hermosilla-casajus@uni-ulm.de)
-""" """""" """""" """""" """""" """""" """""" """""" """""" """""" """""" """""" """""" ""
+\author pedro hermosilla (pedro-1.hermosilla-casajus@uni-ulm.de)
+"""
+
+from typing import Any
 
 import numpy as np
 
 
 def load_protein_pdb(
-    pDBFilePath,
-    pLoadAnim=True,
-    pLoadHydrogens=False,
-    pLoadH2O=False,
-    pLoadGroups=True,
-    pChainFilter=None,
-):
+    pDBFilePath: str,
+    pLoadAnim: bool = True,
+    pLoadHydrogens: bool = False,
+    pLoadH2O: bool = False,
+    pLoadGroups: bool = True,
+    pChainFilter: str | None = None,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """Method to load a protein from a PDB file.
 
     Args:
@@ -38,9 +40,8 @@ def load_protein_pdb(
     # Parse the PDB file.
     with open(pDBFilePath) as pdbFile:
         auxAltLoc = ""
-        dictInsCodes = {}
+        residueIdMap = {}
         for line in pdbFile:
-
             # Start of a new model.
             if line.startswith("MODEL"):
                 atomPos.append([])
@@ -58,7 +59,6 @@ def load_protein_pdb(
             if line.startswith("ATOM") or (line.startswith("HETATM") and pLoadGroups):
                 curChainName = line[21:22].strip()
                 if pChainFilter is None or curChainName == pChainFilter:
-
                     curAtomLabel = line[76:78].strip()
 
                     # If the atom type is not provided, use the first letter of the atom name.
@@ -84,16 +84,17 @@ def load_protein_pdb(
                                 else:
                                     validPosAltLoc = curAltLoc == auxAltLoc
 
-                            # Check for the  insertion code of the Residue.
                             curICode = line[26:27]
                             curResidueIndex = int(line[22:26].strip())
-                            if curResidueIndex in dictInsCodes:
-                                validPosICode = dictInsCodes[curResidueIndex] == curICode
-                            else:
-                                dictInsCodes[curResidueIndex] = curICode
-                                validPosICode = True
+                            curResidueKey = (
+                                curChainName if len(curChainName) > 0 else "Z",
+                                curResidueIndex,
+                                curICode,
+                            )
+                            if curResidueKey not in residueIdMap:
+                                residueIdMap[curResidueKey] = len(residueIdMap) + 1
 
-                            if validPosAltLoc and validPosICode:
+                            if validPosAltLoc:
                                 # Save the atom position.
                                 atomXCoord = float(line[30:38].strip())
                                 atomYCoord = float(line[38:46].strip())
@@ -106,7 +107,7 @@ def load_protein_pdb(
                                     atomResidueType.append(curResidueLabel)
 
                                     # Save the Residue index.
-                                    atomResidueIndexs.append(curResidueIndex)
+                                    atomResidueIndexs.append(residueIdMap[curResidueKey])
 
                                     # Save the atom type.
                                     atomTypes.append(curAtomLabel)
@@ -142,7 +143,7 @@ def load_protein_pdb(
     return atomPos, atomTypes, atomNames, atomResidueIndexs, atomResidueType, atomChainName, center
 
 
-def save_protein_pdb(pFilePath, pProtein):
+def save_protein_pdb(pFilePath: str, pProtein: Any) -> None:
     """Method to save a protein to a PDB file.
 
     Args:
@@ -194,7 +195,7 @@ def save_protein_pdb(pFilePath, pProtein):
             )
 
 
-def save_molecule_pdb(pFilePath, pMolecule):
+def save_molecule_pdb(pFilePath: str, pMolecule: Any) -> None:
     """Method to save a molecule to a PDB file.
 
     Args:
@@ -242,8 +243,12 @@ def save_molecule_pdb(pFilePath, pMolecule):
 
 
 def load_protein_mol2(
-    pFilePath, pLoadHydrogens=False, pLoadH2O=False, pLoadGroups=True, pChainFilter=None
-):
+    pFilePath: str,
+    pLoadHydrogens: bool = False,
+    pLoadH2O: bool = False,
+    pLoadGroups: bool = True,
+    pChainFilter: str | None = None,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """Method to load a protein from a Mol2 file.
 
     Args:
@@ -266,7 +271,6 @@ def load_protein_mol2(
         atomSection = False
         structureSection = False
         for curLine in lines:
-
             # Check if it is the start of a new section.
             if curLine.startswith("@<TRIPOS>ATOM"):
                 atomSection = True
@@ -278,7 +282,6 @@ def load_protein_mol2(
                 atomSection = False
                 structureSection = False
             else:
-
                 # If we are in the atom section.
                 if atomSection:
                     lineElements = curLine.rstrip().split()
@@ -305,7 +308,6 @@ def load_protein_mol2(
                                 len(curVector) == 0 or curVector[-1] != "-1"
                             ):
                                 if curAtomType != "DU":
-
                                     # Update the temporal dictionary.
                                     residueIndexDict[curResidueIndex].append(curAtomName)
 

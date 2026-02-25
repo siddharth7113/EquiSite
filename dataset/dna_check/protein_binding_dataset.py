@@ -1,8 +1,9 @@
-"""PyG dataset construction for the calcium benchmark split."""
+"""PyG dataset construction for the DNA benchmark split."""
 
 import os.path as osp
 import warnings
 from pathlib import Path
+from typing import Any
 
 import esm
 import h5py
@@ -35,7 +36,14 @@ class DBdataset(InMemoryDataset):
         Initialization argument.
     """
 
-    def __init__(self, root, transform=None, pre_transform=None, pre_filter=None, split="train"):
+    def __init__(
+        self,
+        root: str,
+        transform: Any = None,
+        pre_transform: Any = None,
+        pre_filter: Any = None,
+        split: str = "train",
+    ) -> None:
         """
         Initialize DBdataset.
 
@@ -62,7 +70,7 @@ class DBdataset(InMemoryDataset):
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
-    def processed_dir(self):
+    def processed_dir(self) -> str:
         """
         Processed dir.
 
@@ -75,7 +83,7 @@ class DBdataset(InMemoryDataset):
         return osp.join(self.root, name, self.split)
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> str:
         """
         Raw file names.
 
@@ -88,7 +96,7 @@ class DBdataset(InMemoryDataset):
         return name
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> str:
         """
         Processed file names.
 
@@ -99,13 +107,29 @@ class DBdataset(InMemoryDataset):
         """
         return "data.pt"
 
-    def _normalize(self, tensor, dim=-1):
+    def _normalize(self, tensor: torch.Tensor, dim: int = -1) -> torch.Tensor:
         """
         Normalizes a `torch.Tensor` along dimension `dim` without `nan`s.
         """
         return torch.nan_to_num(torch.div(tensor, torch.norm(tensor, dim=dim, keepdim=True)))
 
-    def get_atom_pos(self, amino_types, atom_names, atom_amino_id, atom_pos):
+    def get_atom_pos(
+        self,
+        amino_types: np.ndarray,
+        atom_names: np.ndarray,
+        atom_amino_id: np.ndarray,
+        atom_pos: np.ndarray,
+    ) -> tuple[
+        torch.Tensor,
+        torch.Tensor,
+        torch.Tensor,
+        torch.Tensor,
+        torch.Tensor,
+        torch.Tensor,
+        torch.Tensor,
+        torch.Tensor,
+        torch.Tensor,
+    ]:
         # atoms to compute side chain torsion angles: N, CA, CB, _G/_G1, _D/_D1, _E/_E1, _Z, NH1
         """
         Get atom pos.
@@ -194,7 +218,18 @@ class DBdataset(InMemoryDataset):
 
         return pos_n, pos_ca, pos_c, pos_cb, pos_g, pos_d, pos_e, pos_z, pos_h
 
-    def side_chain_embs(self, pos_n, pos_ca, pos_c, pos_cb, pos_g, pos_d, pos_e, pos_z, pos_h):
+    def side_chain_embs(
+        self,
+        pos_n: torch.Tensor,
+        pos_ca: torch.Tensor,
+        pos_c: torch.Tensor,
+        pos_cb: torch.Tensor,
+        pos_g: torch.Tensor,
+        pos_d: torch.Tensor,
+        pos_e: torch.Tensor,
+        pos_z: torch.Tensor,
+        pos_h: torch.Tensor,
+    ) -> torch.Tensor:
         """
         Side chain embs.
 
@@ -245,7 +280,7 @@ class DBdataset(InMemoryDataset):
 
         return side_chain_embs
 
-    def esm_embs(self, aa_seq):
+    def esm_embs(self, aa_seq: str) -> torch.Tensor:
         """
         Esm embs.
 
@@ -267,7 +302,7 @@ class DBdataset(InMemoryDataset):
         esm_fea_o = esm_fea[1:-1, :].cpu()
         return esm_fea_o
 
-    def bb_embs(self, X):
+    def bb_embs(self, X: torch.Tensor) -> torch.Tensor:
         # X should be a num_residues x 3 x 3, order N, C-alpha, and C atoms of each residue
         # N coords: X[:,0,:]
         # CA coords: X[:,1,:]
@@ -305,7 +340,9 @@ class DBdataset(InMemoryDataset):
 
     # def esm_emb(self):
 
-    def compute_dihedrals(self, v1, v2, v3):
+    def compute_dihedrals(
+        self, v1: torch.Tensor, v2: torch.Tensor, v3: torch.Tensor
+    ) -> torch.Tensor:
         """
         Compute dihedrals.
 
@@ -323,14 +360,14 @@ class DBdataset(InMemoryDataset):
         Any
             Function output.
         """
-        n1 = torch.cross(v1, v2)
-        n2 = torch.cross(v2, v3)
+        n1 = torch.cross(v1, v2, dim=-1)
+        n2 = torch.cross(v2, v3, dim=-1)
         a = (n1 * n2).sum(dim=-1)
-        b = torch.nan_to_num((torch.cross(n1, n2) * v2).sum(dim=-1) / v2.norm(dim=1))
+        b = torch.nan_to_num((torch.cross(n1, n2, dim=-1) * v2).sum(dim=-1) / v2.norm(dim=1))
         torsion = torch.nan_to_num(torch.atan2(b, a))
         return torsion
 
-    def protein_to_graph(self, pFilePath, seq, anno):
+    def protein_to_graph(self, pFilePath: str | Path, seq: str, anno: Any) -> Data:
         """
         Protein to graph.
 
@@ -447,7 +484,7 @@ class DBdataset(InMemoryDataset):
         h5File.close()
         return data
 
-    def process(self):
+    def process(self) -> None:
 
         # Load the file with the list of functions.
 
@@ -461,9 +498,11 @@ class DBdataset(InMemoryDataset):
             Function output.
         """
         if self.split == "Train":
-            splitFile = "/CA-1022_Train.txt"
+            splitFile = "/DNA-573_Train.txt"
         elif self.split == "Test":
-            splitFile = "/CA-515_Test.txt"
+            splitFile = "/DNA-129_Test.txt"
+        elif self.split == "Test-181":
+            splitFile = "/DNA-181_Test.txt"
 
         proteinNames_ = []
         fileList_ = []
@@ -486,7 +525,7 @@ class DBdataset(InMemoryDataset):
         if self.split == "Train":
             with open(self.root + splitFile) as f:
                 train_text = f.readlines()
-            for i in range(0, len(train_text), 3):
+            for i in range(0, len(train_text), 4):
                 query_id = train_text[i].strip()[1:]
                 # if query_id[-1].islower():
                 #     query_id+=query_id[-1]
@@ -546,7 +585,7 @@ class DBdataset(InMemoryDataset):
 
 
 if __name__ == "__main__":
-    for split in ["Train"]:
+    for split in ["Test-181"]:
         print(f"#### Now processing {split} data ####")
         dataset = DBdataset(root=".", split=split)
         print(dataset)
