@@ -11,40 +11,7 @@ import textwrap
 from pathlib import Path
 from typing import TextIO
 
-import torch
-
 from equisite import EquiSitePredictor
-from equisite._pipeline import (
-    DEFAULT_CHECKPOINTS,
-    load_model as _internal_load_model,
-    run_single_inference as _internal_run_single_inference,
-)
-from model.equisite_t3_pro import EquiSite
-
-
-def _resolve_device(device_arg: str) -> torch.device:
-    """Resolve CLI device string into a torch device."""
-    if device_arg.lower() == "cpu":
-        return torch.device("cpu")
-
-    index = int(device_arg)
-    return torch.device(f"cuda:{index}" if torch.cuda.is_available() else "cpu")
-
-
-def _load_model(model_path: str | Path, device: torch.device) -> EquiSite:
-    """Backward-compatible wrapper around internal model loading."""
-    return _internal_load_model(model_path, device)
-
-
-def run_single_inference(
-    pdb_path: str | Path,
-    model: EquiSite,
-    device: torch.device,
-    *,
-    sequence: str | None = None,
-) -> list[dict[str, int | str | float]]:
-    """Backward-compatible wrapper around internal single-file inference."""
-    return _internal_run_single_inference(pdb_path, model, device, sequence=sequence)
 
 
 def _write_csv(results: list[dict[str, int | str | float]], destination: TextIO) -> None:
@@ -191,19 +158,18 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 def main(argv: list[str] | None = None) -> None:
     """CLI entrypoint."""
     args = _parse_args(argv)
-    device = _resolve_device(args.device)
-    print(f"Using device: {device}", file=sys.stderr)
-
-    model_path = Path(args.model_path) if args.model_path else Path(DEFAULT_CHECKPOINTS[args.type])
-    if not model_path.exists():
-        sys.exit(
-            f"Error: checkpoint not found at {model_path}\n"
-            "Download it from the Zenodo release and place it in the expected location."
+    try:
+        predictor = EquiSitePredictor.from_pretrained(
+            binding_type=args.type,
+            model_path=args.model_path,
+            device=args.device,
         )
+    except (FileNotFoundError, ValueError) as exc:
+        sys.exit(f"Error: {exc}")
 
-    print(f"Loading model: {model_path}", file=sys.stderr)
-    model = _load_model(model_path, device)
-    predictor = EquiSitePredictor(model=model, device=device, model_path=model_path)
+    print(f"Using device: {predictor.device}", file=sys.stderr)
+    if predictor.model_path is not None:
+        print(f"Loading model: {predictor.model_path}", file=sys.stderr)
 
     if args.pdb:
         pdb_files = [Path(args.pdb)]
