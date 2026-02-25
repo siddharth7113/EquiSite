@@ -4,7 +4,7 @@ import torch
 
 
 @torch.jit.script
-def gaussian(x, mean, std):
+def gaussian(x: torch.Tensor, mean: torch.Tensor, std: torch.Tensor) -> torch.Tensor:
     """
     Gaussian.
 
@@ -40,7 +40,7 @@ class GaussianRadialBasisLayer(torch.nn.Module):
         Initialization argument.
     """
 
-    def __init__(self, num_basis, cutoff):
+    def __init__(self, num_basis: int, cutoff: float) -> None:
         """
         Initialize GaussianRadialBasisLayer.
 
@@ -69,7 +69,13 @@ class GaussianRadialBasisLayer(torch.nn.Module):
         torch.nn.init.constant_(self.weight, 1)
         torch.nn.init.constant_(self.bias, 0)
 
-    def forward(self, dist, node_atom=None, edge_src=None, edge_dst=None):
+    def forward(
+        self,
+        dist: torch.Tensor,
+        node_atom: torch.Tensor | None = None,
+        edge_src: torch.Tensor | None = None,
+        edge_dst: torch.Tensor | None = None,
+    ) -> torch.Tensor:
         """
         Run the forward pass.
 
@@ -98,7 +104,7 @@ class GaussianRadialBasisLayer(torch.nn.Module):
         x = gaussian(x, mean, std)
         return x
 
-    def extra_repr(self):
+    def extra_repr(self) -> str:
         """
         Extra repr.
 

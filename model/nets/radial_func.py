@@ -1,6 +1,7 @@
 """Radial profile networks for tensor product kernels."""
 
 import math
+from collections.abc import Sequence
 
 import torch
 import torch.nn as nn
@@ -21,7 +22,12 @@ class RadialProfile(nn.Module):
         Initialization argument.
     """
 
-    def __init__(self, ch_list, use_layer_norm=True, use_offset=True):
+    def __init__(
+        self,
+        ch_list: Sequence[int],
+        use_layer_norm: bool = True,
+        use_offset: bool = True,
+    ) -> None:
         """
         Initialize RadialProfile.
 
@@ -69,7 +75,7 @@ class RadialProfile(nn.Module):
             bound = 1 / math.sqrt(fan_in) if fan_in > 0 else 0
             init.uniform_(self.offset, -bound, bound)
 
-    def forward(self, f_in):
+    def forward(self, f_in: torch.Tensor) -> torch.Tensor:
         """
         Run the forward pass.
 

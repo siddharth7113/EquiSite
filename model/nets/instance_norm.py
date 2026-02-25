@@ -24,7 +24,14 @@ class EquivariantInstanceNorm(nn.Module):
         method used to reduce
     """
 
-    def __init__(self, irreps, eps=1e-5, affine=True, reduce="mean", normalization="component"):
+    def __init__(
+        self,
+        irreps: Irreps | str,
+        eps: float = 1e-5,
+        affine: bool = True,
+        reduce: str = "mean",
+        normalization: str = "component",
+    ) -> None:
         """
         Initialize EquivariantInstanceNorm.
 
@@ -68,7 +75,7 @@ class EquivariantInstanceNorm(nn.Module):
         ], "normalization needs to be 'norm' or 'component'"
         self.normalization = normalization
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return a readable string representation.
 
@@ -80,7 +87,9 @@ class EquivariantInstanceNorm(nn.Module):
         return f"{self.__class__.__name__} ({self.irreps}, eps={self.eps})"
 
     # @torch.autocast(device_type='cuda', enabled=False)
-    def forward(self, node_input, batch, **kwargs):
+    def forward(
+        self, node_input: torch.Tensor, batch: torch.Tensor, **kwargs: object
+    ) -> torch.Tensor:
         """evaluate
         Parameters
         ----------

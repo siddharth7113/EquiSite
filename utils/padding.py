@@ -1,10 +1,12 @@
 """Padding helpers for spherical irreducible features."""
 
+from collections.abc import Sequence
+
 import torch
 import torch.nn.functional as F
 
 
-def sphere_padding(x, pad_list, l):  # correct
+def sphere_padding(x: torch.Tensor, pad_list: Sequence[int], l: int) -> torch.Tensor:  # correct
     """
     :param x: [n, n_w]
     :param pad_list: [128, 64, 32]
@@ -22,7 +24,7 @@ def sphere_padding(x, pad_list, l):  # correct
     return out_tensor
 
 
-def fea1_sphere_padding(x, pad_list, l):
+def fea1_sphere_padding(x: torch.Tensor, pad_list: Sequence[int], l: int) -> torch.Tensor:
     """
     :param x: [n, n_w]
     :param pad_list: [128, 64, 32]

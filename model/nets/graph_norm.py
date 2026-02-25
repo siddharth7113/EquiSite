@@ -24,7 +24,14 @@ class EquivariantGraphNorm(nn.Module):
         method used to reduce
     """
 
-    def __init__(self, irreps, eps=1e-5, affine=True, reduce="mean", normalization="component"):
+    def __init__(
+        self,
+        irreps: Irreps | str,
+        eps: float = 1e-5,
+        affine: bool = True,
+        reduce: str = "mean",
+        normalization: str = "component",
+    ) -> None:
         """
         Initialize EquivariantGraphNorm.
 
@@ -69,7 +76,7 @@ class EquivariantGraphNorm(nn.Module):
         ], "normalization needs to be 'norm' or 'component'"
         self.normalization = normalization
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return a readable string representation.
 
@@ -81,7 +88,9 @@ class EquivariantGraphNorm(nn.Module):
         return f"{self.__class__.__name__} ({self.irreps}, eps={self.eps})"
 
     # @torch.autocast(device_type='cuda', enabled=False)
-    def forward(self, node_input, batch, **kwargs):
+    def forward(
+        self, node_input: torch.Tensor, batch: torch.Tensor, **kwargs: object
+    ) -> torch.Tensor:
         """evaluate
         Parameters
         ----------
@@ -182,7 +191,14 @@ class EquivariantGraphNormV2(nn.Module):
         Initialization argument.
     """
 
-    def __init__(self, irreps, eps=1e-5, affine=True, reduce="mean", normalization="component"):
+    def __init__(
+        self,
+        irreps: Irreps | str,
+        eps: float = 1e-5,
+        affine: bool = True,
+        reduce: str = "mean",
+        normalization: str = "component",
+    ) -> None:
         """
         Initialize EquivariantGraphNormV2.
 
@@ -235,7 +251,7 @@ class EquivariantGraphNormV2(nn.Module):
         ], "normalization needs to be 'norm' or 'component'"
         self.normalization = normalization
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return a readable string representation.
 
@@ -247,7 +263,9 @@ class EquivariantGraphNormV2(nn.Module):
         return f"{self.__class__.__name__} ({self.irreps}, eps={self.eps})"
 
     # @torch.autocast(device_type='cuda', enabled=False)
-    def forward(self, node_input, batch, **kwargs):
+    def forward(
+        self, node_input: torch.Tensor, batch: torch.Tensor, **kwargs: object
+    ) -> torch.Tensor:
         """
         Run the forward pass.
 
@@ -275,7 +293,6 @@ class EquivariantGraphNormV2(nn.Module):
 
         node_input_mean = global_mean_pool(node_input, batch)
         for mul, ir in self.irreps:
-
             d = ir.dim
             field = node_input.narrow(1, ix, mul * d)
             field = field.reshape(-1, mul, d)  # [batch * sample, mul, repr]

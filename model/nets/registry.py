@@ -4,6 +4,7 @@ Following timm implementation
 
 import sys
 from collections import defaultdict
+from collections.abc import Callable
 
 __all__ = ["model_entrypoint"]
 
@@ -13,7 +14,7 @@ _model_to_module = {}  # mapping of model names to module names
 _model_entrypoints = {}  # mapping of model names to entrypoint fns
 
 
-def register_model(fn):
+def register_model(fn: Callable[..., object]) -> Callable[..., object]:
     # lookup containing module
     """
     Register model.
@@ -47,6 +48,6 @@ def register_model(fn):
     return fn
 
 
-def model_entrypoint(model_name):
+def model_entrypoint(model_name: str) -> Callable[..., object]:
     """Fetch a model entrypoint for specified model name"""
     return _model_entrypoints[model_name]
