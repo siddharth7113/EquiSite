@@ -8,26 +8,11 @@ import torch
 
 from model.equisite_t3_pro import EquiSite
 
-from ._pipeline import DEFAULT_CHECKPOINTS, load_model, run_single_inference
-
-
-def _resolve_device(device: str | int | torch.device | None) -> torch.device:
-    """Resolve a user-provided device value to a ``torch.device``."""
-    if isinstance(device, torch.device):
-        return device
-    if device is None:
-        return torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    if isinstance(device, int):
-        return torch.device(f"cuda:{device}" if torch.cuda.is_available() else "cpu")
-
-    value = device.strip().lower()
-    if value == "cpu":
-        return torch.device("cpu")
-    if value.startswith("cuda"):
-        return torch.device(value if torch.cuda.is_available() else "cpu")
-
-    index = int(value)
-    return torch.device(f"cuda:{index}" if torch.cuda.is_available() else "cpu")
+from ._constants import DEFAULT_CHECKPOINTS
+from ._device import resolve_device
+from ._inference_runner import run_single_inference
+from ._model_loader import load_model
+from ._types import PredictionRow
 
 
 class EquiSitePredictor:
@@ -56,7 +41,7 @@ class EquiSitePredictor:
                 f"Unsupported binding_type '{binding_type}'. Expected one of: DNA, RNA."
             )
 
-        resolved_device = _resolve_device(device)
+        resolved_device = resolve_device(device)
         checkpoint_path = (
             Path(model_path)
             if model_path is not None
@@ -76,7 +61,7 @@ class EquiSitePredictor:
         pdb_path: str | Path,
         *,
         sequence: str | None = None,
-    ) -> list[dict[str, int | str | float]]:
+    ) -> list[PredictionRow]:
         """Return per-residue binding probabilities for a single PDB."""
         return run_single_inference(pdb_path, self.model, self.device, sequence=sequence)
 
@@ -92,7 +77,7 @@ class EquiSitePredictor:
         return [
             {
                 **row,
-                "is_binding": row["binding_probability"] >= threshold,
+                "is_binding": float(row["binding_probability"]) >= threshold,
             }
             for row in probabilities
         ]
