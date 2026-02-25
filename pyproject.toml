@@ -45,6 +45,7 @@ dependencies = [
 
     # Data I/O
     "h5py>=3.10",
+    "biopython>=1.83",
 
     # Training utilities
     "tensorboard>=2.14",
@@ -59,6 +60,7 @@ dev = [
     "ipython",
     "black",
     "ruff",
+    "pytest",
 ]
 
 [tool.setuptools.packages.find]
