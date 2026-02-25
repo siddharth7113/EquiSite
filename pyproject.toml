@@ -64,8 +64,11 @@ dev = [
     "pre-commit",
 ]
 
+[project.scripts]
+equisite-predict = "predict:main"
+
 [tool.setuptools.packages.find]
-include = ["model*", "utils*", "dataset*"]
+include = ["equisite*", "model*", "utils*", "dataset*"]
 
 [tool.black]
 line-length = 100
