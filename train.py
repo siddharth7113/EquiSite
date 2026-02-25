@@ -1,5 +1,7 @@
 """Training entry point for EquiSite binding-site models."""
 
+from __future__ import annotations
+
 import argparse
 import os
 import sys
@@ -33,6 +35,8 @@ from utils.loss import CB_loss, TripletCenterLoss
 
 warnings.filterwarnings("ignore")
 
+MetricTuple = tuple[float, float, float, float, float, float, float, float, float]
+
 
 # def set_seed(seed):
 #     np.random.seed(seed)
@@ -42,7 +46,13 @@ warnings.filterwarnings("ignore")
 #     if torch.cuda.is_available():
 #        torch.cuda.manual_seed(seed)
 #        torch.cuda.manual_seed_all(seed)
-def train(args, model, loader, optimizer, device):
+def train(
+    args: argparse.Namespace,
+    model: nn.Module,
+    loader: DataLoader,
+    optimizer: optim.Optimizer,
+    device: torch.device,
+) -> MetricTuple:
     """
     Train.
 
@@ -141,7 +151,13 @@ def train(args, model, loader, optimizer, device):
     )
 
 
-def evaluation(args, model, loader, val_th, device):
+def evaluation(
+    args: argparse.Namespace,
+    model: nn.Module,
+    loader: DataLoader,
+    val_th: float | None,
+    device: torch.device,
+) -> MetricTuple:
     """
     Evaluation.
 
@@ -260,7 +276,7 @@ def evaluation(args, model, loader, val_th, device):
     )
 
 
-def main():
+def main() -> None:
     ### Args
     """
     Main.
