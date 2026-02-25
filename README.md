@@ -222,7 +222,7 @@ Checkpoints and TensorBoard logs are saved to `./saves/`. The best model
 
 ## Checkpoints
 
-Pretrained weights are included in the repository:
+Pretrained weights are not included in the repository:
 
 | Checkpoint | Task | Path |
 |---|---|---|
@@ -230,7 +230,7 @@ Pretrained weights are included in the repository:
 | DNA (181 test) | DNA-binding | `checkpoints/DNA_181/best_val.pt` |
 | RNA | RNA-binding | `checkpoints/RNA/best_val.pt` |
 
-Additional checkpoints and full evaluation outputs are available on
+Checkpoints and full evaluation outputs are available on
 [Zenodo (DOI: 10.5281/zenodo.18617058)](https://doi.org/10.5281/zenodo.18617058).
 
 ---
