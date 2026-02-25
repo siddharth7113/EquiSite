@@ -5,12 +5,9 @@ from __future__ import annotations
 import csv
 import math
 from pathlib import Path
+from typing import Any
 
 import pytest
-import torch
-
-from predict import _load_model, run_single_inference
-
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 EXAMPLE_PDB = PROJECT_ROOT / "examples" / "3HXQ-protein.pdb"
@@ -26,21 +23,26 @@ def _read_reference_row_count(csv_path: Path) -> int:
 
 
 @pytest.fixture(scope="session")
-def loaded_model() -> tuple[torch.nn.Module, torch.device]:
+def loaded_model() -> tuple[Any, Any]:
     """Load the DNA model once for the integration test session."""
+    torch = pytest.importorskip("torch")
     pytest.importorskip("esm")
     if not EXAMPLE_PDB.exists():
         pytest.skip(f"Example PDB not found: {EXAMPLE_PDB}")
     if not DNA_CHECKPOINT.exists():
         pytest.skip(f"DNA checkpoint not found: {DNA_CHECKPOINT}")
 
+    from predict import _load_model
+
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     model = _load_model(DNA_CHECKPOINT, device)
     return model, device
 
 
-def test_predict_pipeline_contract(loaded_model: tuple[torch.nn.Module, torch.device]) -> None:
+def test_predict_pipeline_contract(loaded_model: tuple[Any, Any]) -> None:
     """Run end-to-end inference and validate output mapping and probability contract."""
+    from predict import run_single_inference
+
     model, device = loaded_model
     results = run_single_inference(EXAMPLE_PDB, model, device)
 
