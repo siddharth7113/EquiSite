@@ -1,4 +1,17 @@
-"""""" """""" """""" """""" """""" """""" """""" """""" """""" """""" """""" """""" """''
+(
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """''
     \file PyMolecule.py
 
     \brief Molecule object.
@@ -8,12 +21,26 @@
                 this distribution.
 
     \author pedro hermosilla (pedro-1.hermosilla-casajus@uni-ulm.de)
-""" """""" """""" """""" """""" """""" """""" """""" """""" """""" """""" """""" """""" ""
+"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    ""
+)
 
 import h5py
 import numpy as np
 
-from dataset.utils.PyMolIO import load_protein_mol2, load_protein_pdb
+from dataset.utils.py_mol_io import load_protein_mol2, load_protein_pdb
 
 
 class PyMolecule:

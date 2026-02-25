@@ -1,4 +1,17 @@
-("""""" """""" """""" """""" """""" """""" """""" """""" """""" """""" """""" """""" """''
+(
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """''
     \file PyProtein.py
 
     \brief Protein object.
@@ -8,14 +21,28 @@
                 this distribution.
 
     \author pedro hermosilla (pedro-1.hermosilla-casajus@uni-ulm.de)
-""" """""" """""" """""" """""" """""" """""" """""" """""" """""" """""" """""" """""" "")
+"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    """"""
+    ""
+)
 
 import h5py
 import numpy as np
 from sklearn.cluster import SpectralClustering
 
-from dataset.utils.PyMolecule import PyMolecule
-from dataset.utils.PyMolIO import load_protein_mol2, load_protein_pdb
+from dataset.utils.py_mol_io import load_protein_mol2, load_protein_pdb
+from dataset.utils.py_molecule import PyMolecule
 
 
 class PyProtein(PyMolecule):

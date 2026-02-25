@@ -36,12 +36,12 @@ from Bio.PDB import PDBIO, PDBParser, Select
 from Bio.PDB.Polypeptide import is_aa
 from torch_geometric.data import Data
 
-from dataset.utils.PyPeriodicTable import PyPeriodicTable
+from dataset.utils.py_periodic_table import PyPeriodicTable
 
 # ---------------------------------------------------------------------------
 # Internal imports
 # ---------------------------------------------------------------------------
-from dataset.utils.PyProtein import PyProtein
+from dataset.utils.py_protein import PyProtein
 from model.equisite_t3_pro import EquiSite
 
 # ---------------------------------------------------------------------------
@@ -275,11 +275,11 @@ def _compute_esm(seq: str, device: torch.device) -> torch.Tensor:
 class _DummyDB:
     """
     Lightweight shim that exposes the geometry helpers from
-    ``dataset.DNA_Check.PBdataset.DBdataset`` without instantiating
+    ``dataset.dna_check.protein_binding_dataset.DBdataset`` without instantiating
     the full dataset machinery.
     """
 
-    from dataset.DNA_Check.PBdataset import DBdataset as _DB
+    from dataset.dna_check.protein_binding_dataset import DBdataset as _DB
 
     side_chain_embs = _DB.side_chain_embs
     bb_embs = _DB.bb_embs
@@ -543,20 +543,24 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """
     parser = argparse.ArgumentParser(
         prog="predict.py",
-        description=textwrap.dedent("""\
+        description=textwrap.dedent(
+            """\
             EquiSite: Predict per-residue nucleic-acid binding probabilities
             from protein PDB structures.
 
             Provide either --pdb (single file) or --pdb_dir (batch).
-        """),
+        """
+        ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog=textwrap.dedent("""\
+        epilog=textwrap.dedent(
+            """\
             Examples:
               python predict.py --pdb protein.pdb --type DNA
               python predict.py --pdb protein.pdb --type RNA --device cpu
               python predict.py --pdb_dir ./pdbs/ --type DNA --output results/
               python predict.py --pdb protein.pdb --format json --output out.json
-        """),
+        """
+        ),
     )
 
     input_group = parser.add_mutually_exclusive_group(required=True)

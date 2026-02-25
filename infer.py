@@ -9,10 +9,10 @@ import torch
 from torch_geometric.data import Data
 from tqdm import tqdm
 
-from dataset.utils.PyPeriodicTable import PyPeriodicTable
+from dataset.utils.py_periodic_table import PyPeriodicTable
 
 # Dependencies
-from dataset.utils.PyProtein import PyProtein
+from dataset.utils.py_protein import PyProtein
 from model.equisite_t3_pro import EquiSite
 
 # Global ESM Load
@@ -147,7 +147,7 @@ class DummyDB:
     DummyDB implementation.
     """
 
-    from dataset.DNA_Check.PBdataset import DBdataset as _DB
+    from dataset.dna_check.protein_binding_dataset import DBdataset as _DB
 
     side_chain_embs = _DB.side_chain_embs
     bb_embs = _DB.bb_embs

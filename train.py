@@ -350,26 +350,40 @@ def main():
         else torch.device("cpu")
     )
 
-    if args.dataset == "DNA_Check":
-        from dataset.DNA_Check.PBdataset import DBdataset
-    elif args.dataset == "RNA_Check":
-        from dataset.RNA_Check.PBdataset import DBdataset
-    elif args.dataset == "PATP":
-        from dataset.PATP.PBdataset import DBdataset
-    elif args.dataset == "PCA":
-        from dataset.PCA.PBdataset import DBdataset
-    elif args.dataset == "PHEM":
-        from dataset.PHEM.PBdataset import DBdataset
-    elif args.dataset == "PMG":
-        from dataset.PMG.PBdataset import DBdataset
-    elif args.dataset == "PMN":
-        from dataset.PMN.PBdataset import DBdataset
+    if args.dataset in {"DNA_Check", "dna_check"}:
+        from dataset.dna_check.protein_binding_dataset import DBdataset
+
+        dataset_dir = "dna_check"
+    elif args.dataset in {"RNA_Check", "rna_check"}:
+        from dataset.rna_check.protein_binding_dataset import DBdataset
+
+        dataset_dir = "rna_check"
+    elif args.dataset in {"PATP", "patp"}:
+        from dataset.patp.protein_binding_dataset import DBdataset
+
+        dataset_dir = "patp"
+    elif args.dataset in {"PCA", "pca"}:
+        from dataset.pca.protein_binding_dataset import DBdataset
+
+        dataset_dir = "pca"
+    elif args.dataset in {"PHEM", "phem"}:
+        from dataset.phem.protein_binding_dataset import DBdataset
+
+        dataset_dir = "phem"
+    elif args.dataset in {"PMG", "pmg"}:
+        from dataset.pmg.protein_binding_dataset import DBdataset
+
+        dataset_dir = "pmg"
+    elif args.dataset in {"PMN", "pmn"}:
+        from dataset.pmn.protein_binding_dataset import DBdataset
+
+        dataset_dir = "pmn"
     else:
         raise ValueError(f"Invalid dataset name: {args.dataset}")
 
     try:
-        train_set = DBdataset(root=args.dataset_path + args.dataset, split="Train")
-        test_set = DBdataset(root=args.dataset_path + args.dataset, split="Test")
+        train_set = DBdataset(root=args.dataset_path + dataset_dir, split="Train")
+        test_set = DBdataset(root=args.dataset_path + dataset_dir, split="Test")
     except FileNotFoundError:
         print(
             "\n Please download data firstly, following https://github.com/divelab/DIG/tree/dig-stable/dig/threedgraph/dataset#ecdataset-and-folddataset and https://github.com/phermosilla/IEConv_proteins#download-the-preprocessed-datasets \n"
