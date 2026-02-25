@@ -29,7 +29,8 @@ EquiSite/
 │   ├── model/
 │   │   ├── _model.py
 │   │   ├── _pipeline.py
-│   │   └── _result.py
+│   │   ├── _result.py
+│   │   └── layers/
 │   ├── predictor.py           # Backward-compatible predictor wrapper
 │   ├── data/
 │   └── datasets/

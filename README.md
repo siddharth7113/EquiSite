@@ -249,7 +249,8 @@ EquiSite/
 │   ├── model/              # Public model + pipeline API
 │   │   ├── _model.py
 │   │   ├── _pipeline.py
-│   │   └── _result.py
+│   │   ├── _result.py
+│   │   └── layers/         # Decomposed model building blocks
 │   ├── predictor.py        # Backward-compatible wrapper
 │   └── _*.py               # Other private inference internals
 │
