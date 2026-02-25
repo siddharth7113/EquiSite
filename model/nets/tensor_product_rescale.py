@@ -11,6 +11,31 @@ from e3nn.math import perm
 
 
 class TensorProductRescale(torch.nn.Module):
+    """
+    TensorProductRescale implementation.
+
+    Parameters
+    ----------
+    irreps_in1 : Any
+        Initialization argument.
+    irreps_in2 : Any
+        Initialization argument.
+    irreps_out : Any
+        Initialization argument.
+    instructions : Any
+        Initialization argument.
+    bias : Any
+        Initialization argument.
+    rescale : Any
+        Initialization argument.
+    internal_weights : Any
+        Initialization argument.
+    shared_weights : Any
+        Initialization argument.
+    normalization : Any
+        Initialization argument.
+    """
+
     def __init__(
         self,
         irreps_in1,
@@ -23,7 +48,31 @@ class TensorProductRescale(torch.nn.Module):
         shared_weights=None,
         normalization=None,
     ):
+        """
+        Initialize TensorProductRescale.
 
+        Parameters
+        ----------
+        irreps_in1 : Any
+            Input argument.
+        irreps_in2 : Any
+            Input argument.
+        irreps_out : Any
+            Input argument.
+        instructions : Any
+            Input argument.
+        bias : Any
+            Input argument.
+        rescale : Any
+            Input argument.
+        internal_weights : Any
+            Input argument.
+        shared_weights : Any
+            Input argument.
+        normalization : Any
+            Input argument.
+
+        """
         super().__init__()
 
         self.irreps_in1 = irreps_in1
@@ -48,6 +97,19 @@ class TensorProductRescale(torch.nn.Module):
         self.init_rescale_bias()
 
     def calculate_fan_in(self, ins):
+        """
+        Calculate fan in.
+
+        Parameters
+        ----------
+        ins : Any
+            Input argument.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         return {
             "uvw": (self.irreps_in1[ins.i_in1].mul * self.irreps_in2[ins.i_in2].mul),
             "uvu": self.irreps_in2[ins.i_in2].mul,
@@ -60,7 +122,14 @@ class TensorProductRescale(torch.nn.Module):
         }[ins.connection_mode]
 
     def init_rescale_bias(self) -> None:
+        """
+        Init rescale bias.
 
+        Returns
+        -------
+        None
+            Function output.
+        """
         irreps_out = self.irreps_out
         # For each zeroth order output irrep we need a bias
         # Determine the order for each output tensor and their dims
@@ -142,7 +211,23 @@ class TensorProductRescale(torch.nn.Module):
             #    out_bias.uniform_(-sqrt_k, sqrt_k)
 
     def forward_tp_rescale_bias(self, x, y, weight=None):
+        """
+        Forward tp rescale bias.
 
+        Parameters
+        ----------
+        x : Any
+            Input argument.
+        y : Any
+            Input argument.
+        weight : Any
+            Input argument.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         out = self.tp(x, y, weight)
 
         # if self.rescale and self.tp.internal_weights:
@@ -155,11 +240,51 @@ class TensorProductRescale(torch.nn.Module):
         return out
 
     def forward(self, x, y, weight=None):
+        """
+        Run the forward pass.
+
+        Parameters
+        ----------
+        x : Any
+            Input argument.
+        y : Any
+            Input argument.
+        weight : Any
+            Input argument.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         out = self.forward_tp_rescale_bias(x, y, weight)
         return out
 
 
 class FullyConnectedTensorProductRescale(TensorProductRescale):
+    """
+    FullyConnectedTensorProductRescale implementation.
+
+    Parameters
+    ----------
+    irreps_in1 : Any
+        Initialization argument.
+    irreps_in2 : Any
+        Initialization argument.
+    irreps_out : Any
+        Initialization argument.
+    bias : Any
+        Initialization argument.
+    rescale : Any
+        Initialization argument.
+    internal_weights : Any
+        Initialization argument.
+    shared_weights : Any
+        Initialization argument.
+    normalization : Any
+        Initialization argument.
+    """
+
     def __init__(
         self,
         irreps_in1,
@@ -171,7 +296,29 @@ class FullyConnectedTensorProductRescale(TensorProductRescale):
         shared_weights=None,
         normalization=None,
     ):
+        """
+        Initialize FullyConnectedTensorProductRescale.
 
+        Parameters
+        ----------
+        irreps_in1 : Any
+            Input argument.
+        irreps_in2 : Any
+            Input argument.
+        irreps_out : Any
+            Input argument.
+        bias : Any
+            Input argument.
+        rescale : Any
+            Input argument.
+        internal_weights : Any
+            Input argument.
+        shared_weights : Any
+            Input argument.
+        normalization : Any
+            Input argument.
+
+        """
         instructions = [
             (i_1, i_2, i_out, "uvw", True, 1.0)
             for i_1, (_, ir_1) in enumerate(irreps_in1)
@@ -193,7 +340,37 @@ class FullyConnectedTensorProductRescale(TensorProductRescale):
 
 
 class LinearRS(FullyConnectedTensorProductRescale):
+    """
+    LinearRS implementation.
+
+    Parameters
+    ----------
+    irreps_in : Any
+        Initialization argument.
+    irreps_out : Any
+        Initialization argument.
+    bias : Any
+        Initialization argument.
+    rescale : Any
+        Initialization argument.
+    """
+
     def __init__(self, irreps_in, irreps_out, bias=True, rescale=True):
+        """
+        Initialize LinearRS.
+
+        Parameters
+        ----------
+        irreps_in : Any
+            Input argument.
+        irreps_out : Any
+            Input argument.
+        bias : Any
+            Input argument.
+        rescale : Any
+            Input argument.
+
+        """
         super().__init__(
             irreps_in,
             o3.Irreps("1x0e"),
@@ -206,12 +383,38 @@ class LinearRS(FullyConnectedTensorProductRescale):
         )
 
     def forward(self, x):
+        """
+        Run the forward pass.
+
+        Parameters
+        ----------
+        x : Any
+            Input argument.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         y = torch.ones_like(x[:, 0:1])
         out = self.forward_tp_rescale_bias(x, y)
         return out
 
 
 def irreps2gate(irreps):
+    """
+    Irreps2gate.
+
+    Parameters
+    ----------
+    irreps : Any
+        Input argument.
+
+    Returns
+    -------
+    Any
+        Function output.
+    """
     irreps_scalars = []
     irreps_gated = []
     for mul, ir in irreps:
@@ -230,6 +433,29 @@ def irreps2gate(irreps):
 
 
 class FullyConnectedTensorProductRescaleSwishGate(FullyConnectedTensorProductRescale):
+    """
+    FullyConnectedTensorProductRescaleSwishGate implementation.
+
+    Parameters
+    ----------
+    irreps_in1 : Any
+        Initialization argument.
+    irreps_in2 : Any
+        Initialization argument.
+    irreps_out : Any
+        Initialization argument.
+    bias : Any
+        Initialization argument.
+    rescale : Any
+        Initialization argument.
+    internal_weights : Any
+        Initialization argument.
+    shared_weights : Any
+        Initialization argument.
+    normalization : Any
+        Initialization argument.
+    """
+
     def __init__(
         self,
         irreps_in1,
@@ -241,7 +467,29 @@ class FullyConnectedTensorProductRescaleSwishGate(FullyConnectedTensorProductRes
         shared_weights=None,
         normalization=None,
     ):
+        """
+        Initialize FullyConnectedTensorProductRescaleSwishGate.
 
+        Parameters
+        ----------
+        irreps_in1 : Any
+            Input argument.
+        irreps_in2 : Any
+            Input argument.
+        irreps_out : Any
+            Input argument.
+        bias : Any
+            Input argument.
+        rescale : Any
+            Input argument.
+        internal_weights : Any
+            Input argument.
+        shared_weights : Any
+            Input argument.
+        normalization : Any
+            Input argument.
+
+        """
         irreps_scalars, irreps_gates, irreps_gated = irreps2gate(irreps_out)
         if irreps_gated.num_irreps == 0:
             gate = e3nn.nn.Activation(irreps_out, acts=[torch.nn.functional.silu])
@@ -266,12 +514,42 @@ class FullyConnectedTensorProductRescaleSwishGate(FullyConnectedTensorProductRes
         self.gate = gate
 
     def forward(self, x, y, weight=None):
+        """
+        Run the forward pass.
+
+        Parameters
+        ----------
+        x : Any
+            Input argument.
+        y : Any
+            Input argument.
+        weight : Any
+            Input argument.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         out = self.forward_tp_rescale_bias(x, y, weight)
         out = self.gate(out)
         return out
 
 
 def sort_irreps_even_first(irreps):
+    """
+    Sort irreps even first.
+
+    Parameters
+    ----------
+    irreps : Any
+        Input argument.
+
+    Returns
+    -------
+    Any
+        Function output.
+    """
     Ret = collections.namedtuple("sort", ["irreps", "p", "inv"])
     out = [(ir.l, -ir.p, i, mul) for i, (mul, ir) in enumerate(irreps)]
     out = sorted(out)

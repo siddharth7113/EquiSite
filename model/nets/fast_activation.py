@@ -17,6 +17,17 @@ class Activation(torch.nn.Module):
     """
 
     def __init__(self, irreps_in, acts):
+        """
+        Initialize Activation.
+
+        Parameters
+        ----------
+        irreps_in : Any
+            Input argument.
+        acts : Any
+            Input argument.
+
+        """
         super().__init__()
         irreps_in = o3.Irreps(irreps_in)
         assert len(irreps_in) == len(acts), (irreps_in, acts)
@@ -63,12 +74,35 @@ class Activation(torch.nn.Module):
     #    acts = "".join(["x" if a is not None else " " for a in self.acts])
     #    return f"{self.__class__.__name__} [{self.acts}] ({self.irreps_in} -> {self.irreps_out})"
     def extra_repr(self):
+        """
+        Extra repr.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         output_str = super().extra_repr()
         output_str = output_str + f"{self.irreps_in} -> {self.irreps_out}, "
         return output_str
 
     def forward(self, features, dim=-1):
         # directly apply activation without narrow
+        """
+        Run the forward pass.
+
+        Parameters
+        ----------
+        features : Any
+            Input argument.
+        dim : Any
+            Input argument.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         if len(self.acts) == 1:
             return self.acts[0](features)
 
@@ -97,6 +131,23 @@ class Gate(torch.nn.Module):
     """
 
     def __init__(self, irreps_scalars, act_scalars, irreps_gates, act_gates, irreps_gated):
+        """
+        Initialize Gate.
+
+        Parameters
+        ----------
+        irreps_scalars : Any
+            Input argument.
+        act_scalars : Any
+            Input argument.
+        irreps_gates : Any
+            Input argument.
+        act_gates : Any
+            Input argument.
+        irreps_gated : Any
+            Input argument.
+
+        """
         super().__init__()
         irreps_scalars = o3.Irreps(irreps_scalars)
         irreps_gates = o3.Irreps(irreps_gates)
@@ -134,9 +185,30 @@ class Gate(torch.nn.Module):
         self._irreps_out = irreps_scalars + irreps_gated
 
     def __repr__(self):
+        """
+        Return a readable string representation.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         return f"{self.__class__.__name__} ({self.irreps_in} -> {self.irreps_out})"
 
     def forward(self, features):
+        """
+        Run the forward pass.
+
+        Parameters
+        ----------
+        features : Any
+            Input argument.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         scalars_dim = self.irreps_scalars.dim
         gates_dim = self.irreps_gates.dim
         input_dim = self.irreps_in.dim

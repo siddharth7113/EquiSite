@@ -109,6 +109,19 @@ class CenterLoss(nn.Module):
     """
 
     def __init__(self, num_classes=2, feat_dim=2048, use_gpu=True):
+        """
+        Initialize CenterLoss.
+
+        Parameters
+        ----------
+        num_classes : Any
+            Input argument.
+        feat_dim : Any
+            Input argument.
+        use_gpu : Any
+            Input argument.
+
+        """
         super().__init__()
         self.num_classes = num_classes
         self.feat_dim = feat_dim
@@ -156,13 +169,54 @@ class CenterLoss(nn.Module):
 
 
 class TripletCenterLoss(nn.Module):
+    """
+    TripletCenterLoss implementations.
+
+    Parameters
+    ----------
+    margin : Any
+        Initialization argument.
+    num_classes : Any
+        Initialization argument.
+    center_embed : Any
+        Initialization argument.
+    """
+
     def __init__(self, margin=5, num_classes=2, center_embed=2):
+        """
+        Initialize TripletCenterLoss.
+
+        Parameters
+        ----------
+        margin : Any
+            Input argument.
+        num_classes : Any
+            Input argument.
+        center_embed : Any
+            Input argument.
+
+        """
         super().__init__()
         self.margin = margin
         self.ranking_loss = nn.MarginRankingLoss(margin=margin)
         self.centers = nn.Parameter(torch.randn(num_classes, center_embed)).to("cuda")
 
     def forward(self, inputs, targets):
+        """
+        Run the forward pass.
+
+        Parameters
+        ----------
+        inputs : Any
+            Input argument.
+        targets : Any
+            Input argument.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         targets = targets.to(torch.int64)
         batch_size = inputs.size(0)
         targets_expand = targets.view(batch_size, 1).expand(batch_size, inputs.size(1))

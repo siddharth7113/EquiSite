@@ -18,8 +18,41 @@ model.to("cuda")
 
 
 class DBdataset(InMemoryDataset):
-    def __init__(self, root, transform=None, pre_transform=None, pre_filter=None, split="train"):
+    """
+    DBdataset implementation.
 
+    Parameters
+    ----------
+    root : Any
+        Initialization argument.
+    transform : Any
+        Initialization argument.
+    pre_transform : Any
+        Initialization argument.
+    pre_filter : Any
+        Initialization argument.
+    split : Any
+        Initialization argument.
+    """
+
+    def __init__(self, root, transform=None, pre_transform=None, pre_filter=None, split="train"):
+        """
+        Initialize DBdataset.
+
+        Parameters
+        ----------
+        root : Any
+            Input argument.
+        transform : Any
+            Input argument.
+        pre_transform : Any
+            Input argument.
+        pre_filter : Any
+            Input argument.
+        split : Any
+            Input argument.
+
+        """
         self.split = split
         self.root = root
         self.seqerror_list = []
@@ -30,16 +63,40 @@ class DBdataset(InMemoryDataset):
 
     @property
     def processed_dir(self):
+        """
+        Processed dir.
+
+        Returns
+        -------
+        Any
+            Computed property value.
+        """
         name = "processed"
         return osp.join(self.root, name, self.split)
 
     @property
     def raw_file_names(self):
+        """
+        Raw file names.
+
+        Returns
+        -------
+        Any
+            Computed property value.
+        """
         name = self.split + ".txt"
         return name
 
     @property
     def processed_file_names(self):
+        """
+        Processed file names.
+
+        Returns
+        -------
+        Any
+            Computed property value.
+        """
         return "data.pt"
 
     def _normalize(self, tensor, dim=-1):
@@ -50,6 +107,25 @@ class DBdataset(InMemoryDataset):
 
     def get_atom_pos(self, amino_types, atom_names, atom_amino_id, atom_pos):
         # atoms to compute side chain torsion angles: N, CA, CB, _G/_G1, _D/_D1, _E/_E1, _Z, NH1
+        """
+        Get atom pos.
+
+        Parameters
+        ----------
+        amino_types : Any
+            Input argument.
+        atom_names : Any
+            Input argument.
+        atom_amino_id : Any
+            Input argument.
+        atom_pos : Any
+            Input argument.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         mask_n = np.char.equal(atom_names, b"N")
         mask_ca = np.char.equal(atom_names, b"CA")
         mask_c = np.char.equal(atom_names, b"C")
@@ -119,6 +195,35 @@ class DBdataset(InMemoryDataset):
         return pos_n, pos_ca, pos_c, pos_cb, pos_g, pos_d, pos_e, pos_z, pos_h
 
     def side_chain_embs(self, pos_n, pos_ca, pos_c, pos_cb, pos_g, pos_d, pos_e, pos_z, pos_h):
+        """
+        Side chain embs.
+
+        Parameters
+        ----------
+        pos_n : Any
+            Input argument.
+        pos_ca : Any
+            Input argument.
+        pos_c : Any
+            Input argument.
+        pos_cb : Any
+            Input argument.
+        pos_g : Any
+            Input argument.
+        pos_d : Any
+            Input argument.
+        pos_e : Any
+            Input argument.
+        pos_z : Any
+            Input argument.
+        pos_h : Any
+            Input argument.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         v1, v2, v3, v4, v5, v6 = (
             pos_ca - pos_n,
             pos_cb - pos_ca,
@@ -141,6 +246,19 @@ class DBdataset(InMemoryDataset):
         return side_chain_embs
 
     def esm_embs(self, aa_seq):
+        """
+        Esm embs.
+
+        Parameters
+        ----------
+        aa_seq : Any
+            Input argument.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         _, aa_strs, aa_tokens = batch_converter([("_", aa_seq)])
         # batch_lens = (aa_tokens != alphabet.padding_idx).sum(1)
         with torch.no_grad():
@@ -157,6 +275,19 @@ class DBdataset(InMemoryDataset):
         # return num_residues x 6
         # From https://github.com/jingraham/neurips19-graph-protein-design
 
+        """
+        Bb embs.
+
+        Parameters
+        ----------
+        X : Any
+            Input argument.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         X = torch.reshape(X, [3 * X.shape[0], 3])
         dX = X[1:] - X[:-1]
         U = self._normalize(dX, dim=-1)
@@ -175,6 +306,23 @@ class DBdataset(InMemoryDataset):
     # def esm_emb(self):
 
     def compute_dihedrals(self, v1, v2, v3):
+        """
+        Compute dihedrals.
+
+        Parameters
+        ----------
+        v1 : Any
+            Input argument.
+        v2 : Any
+            Input argument.
+        v3 : Any
+            Input argument.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         n1 = torch.cross(v1, v2)
         n2 = torch.cross(v2, v3)
         a = (n1 * n2).sum(dim=-1)
@@ -183,6 +331,23 @@ class DBdataset(InMemoryDataset):
         return torsion
 
     def protein_to_graph(self, pFilePath, seq, anno):
+        """
+        Protein to graph.
+
+        Parameters
+        ----------
+        pFilePath : Any
+            Input argument.
+        seq : Any
+            Input argument.
+        anno : Any
+            Input argument.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         h5File = h5py.File(pFilePath, "r")
         data = Data()
         amino_types = h5File["amino_types"][()]  # size: (n_amino,)
@@ -287,6 +452,14 @@ class DBdataset(InMemoryDataset):
         # Load the file with the list of functions.
 
         # Get the file list.
+        """
+        Process.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         if self.split == "Train":
             splitFile = "/RNA-495_Train.txt"
         elif self.split == "Test":
@@ -354,7 +527,7 @@ class DBdataset(InMemoryDataset):
                     # file_path = './PDB/' + fn + ".pdb"
                     # error_file_path = os.path.join(error_path, fn)
                     # shutil.copy(file_path, error_file_path)
-                    # print("移动{}到{}".format(file_path, error_file_path))
+                    # print("Move {} to {}".format(file_path, error_file_path))
                     print(e)
 
         data, slices = self.collate(data_list)

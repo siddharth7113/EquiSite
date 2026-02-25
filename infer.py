@@ -26,6 +26,21 @@ esm_model = esm_model.eval().cuda()
 
 
 def remove_hetatm(src, dst):
+    """
+    Remove hetatm.
+
+    Parameters
+    ----------
+    src : Any
+        Input argument.
+    dst : Any
+        Input argument.
+
+    Returns
+    -------
+    Any
+        Function output.
+    """
     with open(src) as f:
         lines = [L for L in f.readlines() if not L.startswith("HETATM")]
     with open(dst, "w") as f:
@@ -33,6 +48,21 @@ def remove_hetatm(src, dst):
 
 
 def pdb_to_hdf5(pdb_path, hdf5_path):
+    """
+    Pdb to hdf5.
+
+    Parameters
+    ----------
+    pdb_path : Any
+        Input argument.
+    hdf5_path : Any
+        Input argument.
+
+    Returns
+    -------
+    Any
+        Function output.
+    """
     prot = PyProtein(PyPeriodicTable())
     prot.load_molecular_file(pdb_path)
     prot.compute_covalent_bonds()
@@ -41,6 +71,19 @@ def pdb_to_hdf5(pdb_path, hdf5_path):
 
 
 def compute_esm(seq):
+    """
+    Compute esm.
+
+    Parameters
+    ----------
+    seq : Any
+        Input argument.
+
+    Returns
+    -------
+    Any
+        Function output.
+    """
     _, _, toks = esm_batch_converter([("_", seq)])
     with torch.no_grad():
         res = esm_model(toks.cuda(), repr_layers=[33], return_contacts=False)
@@ -49,6 +92,19 @@ def compute_esm(seq):
 
 
 def get_seq_from_hdf5(hdf5_path):
+    """
+    Get seq from hdf5.
+
+    Parameters
+    ----------
+    hdf5_path : Any
+        Input argument.
+
+    Returns
+    -------
+    Any
+        Function output.
+    """
     with h5py.File(hdf5_path, "r") as h5:
         names = [x.decode("utf-8") for x in h5["atom_residue_names"][()]]
         ids = h5["atom_amino_id"][()]
@@ -87,6 +143,10 @@ def get_seq_from_hdf5(hdf5_path):
 
 
 class DummyDB:
+    """
+    DummyDB implementation.
+    """
+
     from dataset.DNA_Check.PBdataset import DBdataset as _DB
 
     side_chain_embs = _DB.side_chain_embs
@@ -97,6 +157,23 @@ class DummyDB:
 
 
 def build_graph(hdf5_path, seq, db):
+    """
+    Build graph.
+
+    Parameters
+    ----------
+    hdf5_path : Any
+        Input argument.
+    seq : Any
+        Input argument.
+    db : Any
+        Input argument.
+
+    Returns
+    -------
+    Any
+        Function output.
+    """
     h5 = h5py.File(hdf5_path, "r")
     data = Data()
 
@@ -137,6 +214,25 @@ def build_graph(hdf5_path, seq, db):
 
 
 def run_inference(model_path, pdb_dir, out_dir, device):
+    """
+    Run inference.
+
+    Parameters
+    ----------
+    model_path : Any
+        Input argument.
+    pdb_dir : Any
+        Input argument.
+    out_dir : Any
+        Input argument.
+    device : Any
+        Input argument.
+
+    Returns
+    -------
+    Any
+        Function output.
+    """
     os.makedirs(out_dir, exist_ok=True)
     temp_dir = os.path.join(out_dir, "temp_processed")
     os.makedirs(temp_dir, exist_ok=True)

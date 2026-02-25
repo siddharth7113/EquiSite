@@ -43,6 +43,27 @@ warnings.filterwarnings("ignore")
 #        torch.cuda.manual_seed(seed)
 #        torch.cuda.manual_seed_all(seed)
 def train(args, model, loader, optimizer, device):
+    """
+    Train.
+
+    Parameters
+    ----------
+    args : Any
+        Input argument.
+    model : Any
+        Input argument.
+    loader : Any
+        Input argument.
+    optimizer : Any
+        Input argument.
+    device : Any
+        Input argument.
+
+    Returns
+    -------
+    Any
+        Function output.
+    """
     model.train()
     tcl = TripletCenterLoss(margin=5, num_classes=2)
     loss_accum = 0
@@ -121,6 +142,27 @@ def train(args, model, loader, optimizer, device):
 
 
 def evaluation(args, model, loader, val_th, device):
+    """
+    Evaluation.
+
+    Parameters
+    ----------
+    args : Any
+        Input argument.
+    model : Any
+        Input argument.
+    loader : Any
+        Input argument.
+    val_th : Any
+        Input argument.
+    device : Any
+        Input argument.
+
+    Returns
+    -------
+    Any
+        Function output.
+    """
     model.eval()
     loss_accum = 0
     if val_th is not None:
@@ -220,6 +262,14 @@ def evaluation(args, model, loader, val_th, device):
 
 def main():
     ### Args
+    """
+    Main.
+
+    Returns
+    -------
+    Any
+        Function output.
+    """
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--device", type=int, default=0, help="Device to use")

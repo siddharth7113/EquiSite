@@ -232,7 +232,33 @@ def real_sph_harm(L, spherical_coordinates, zero_m_only=True):
 
 
 class d_angle_emb(torch.nn.Module):
+    """
+    d_angle_emb implementation.
+
+    Parameters
+    ----------
+    num_radial : Any
+        Initialization argument.
+    num_spherical : Any
+        Initialization argument.
+    cutoff : Any
+        Initialization argument.
+    """
+
     def __init__(self, num_radial, num_spherical, cutoff=8.0):
+        """
+        Initialize d_angle_emb.
+
+        Parameters
+        ----------
+        num_radial : Any
+            Input argument.
+        num_spherical : Any
+            Input argument.
+        cutoff : Any
+            Input argument.
+
+        """
         super().__init__()
         assert num_radial <= 64
         self.num_spherical = num_spherical
@@ -258,6 +284,21 @@ class d_angle_emb(torch.nn.Module):
                 self.bessel_funcs.append(sym.lambdify([x], bessel_formulas[l][n], modules))
 
     def forward(self, dist, angle):
+        """
+        Run the forward pass.
+
+        Parameters
+        ----------
+        dist : Any
+            Input argument.
+        angle : Any
+            Input argument.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         dist = dist / self.cutoff
         rbf = torch.stack([f(dist) for f in self.bessel_funcs], dim=1)
         sbf = torch.stack([f(angle) for f in self.sph_funcs], dim=1)
@@ -267,7 +308,33 @@ class d_angle_emb(torch.nn.Module):
 
 
 class d_theta_phi_emb(torch.nn.Module):
+    """
+    d_theta_phi_emb implementation.
+
+    Parameters
+    ----------
+    num_radial : Any
+        Initialization argument.
+    num_spherical : Any
+        Initialization argument.
+    cutoff : Any
+        Initialization argument.
+    """
+
     def __init__(self, num_radial, num_spherical, cutoff=8.0):
+        """
+        Initialize d_theta_phi_emb.
+
+        Parameters
+        ----------
+        num_radial : Any
+            Input argument.
+        num_spherical : Any
+            Input argument.
+        cutoff : Any
+            Input argument.
+
+        """
         super().__init__()
         assert num_radial <= 64
         self.num_radial = num_radial
@@ -298,6 +365,23 @@ class d_theta_phi_emb(torch.nn.Module):
         self.register_buffer("degreeInOrder", torch.arange(num_spherical) * 2 + 1, persistent=False)
 
     def forward(self, dist, theta, phi):
+        """
+        Run the forward pass.
+
+        Parameters
+        ----------
+        dist : Any
+            Input argument.
+        theta : Any
+            Input argument.
+        phi : Any
+            Input argument.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         dist = dist / self.cutoff
         rbf = torch.stack(
             [f(dist) for f in self.bessel_funcs], dim=1

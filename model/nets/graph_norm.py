@@ -25,6 +25,23 @@ class EquivariantGraphNorm(nn.Module):
     """
 
     def __init__(self, irreps, eps=1e-5, affine=True, reduce="mean", normalization="component"):
+        """
+        Initialize EquivariantGraphNorm.
+
+        Parameters
+        ----------
+        irreps : Any
+            Input argument.
+        eps : Any
+            Input argument.
+        affine : Any
+            Input argument.
+        reduce : Any
+            Input argument.
+        normalization : Any
+            Input argument.
+
+        """
         super().__init__()
 
         self.irreps = Irreps(irreps)
@@ -53,6 +70,14 @@ class EquivariantGraphNorm(nn.Module):
         self.normalization = normalization
 
     def __repr__(self):
+        """
+        Return a readable string representation.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         return f"{self.__class__.__name__} ({self.irreps}, eps={self.eps})"
 
     # @torch.autocast(device_type='cuda', enabled=False)
@@ -140,8 +165,41 @@ class EquivariantGraphNorm(nn.Module):
 
 
 class EquivariantGraphNormV2(nn.Module):
+    """
+    EquivariantGraphNormV2 implementation.
+
+    Parameters
+    ----------
+    irreps : Any
+        Initialization argument.
+    eps : Any
+        Initialization argument.
+    affine : Any
+        Initialization argument.
+    reduce : Any
+        Initialization argument.
+    normalization : Any
+        Initialization argument.
+    """
 
     def __init__(self, irreps, eps=1e-5, affine=True, reduce="mean", normalization="component"):
+        """
+        Initialize EquivariantGraphNormV2.
+
+        Parameters
+        ----------
+        irreps : Any
+            Input argument.
+        eps : Any
+            Input argument.
+        affine : Any
+            Input argument.
+        reduce : Any
+            Input argument.
+        normalization : Any
+            Input argument.
+
+        """
         super().__init__()
 
         self.irreps = Irreps(irreps)
@@ -178,11 +236,35 @@ class EquivariantGraphNormV2(nn.Module):
         self.normalization = normalization
 
     def __repr__(self):
+        """
+        Return a readable string representation.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         return f"{self.__class__.__name__} ({self.irreps}, eps={self.eps})"
 
     # @torch.autocast(device_type='cuda', enabled=False)
     def forward(self, node_input, batch, **kwargs):
+        """
+        Run the forward pass.
 
+        Parameters
+        ----------
+        node_input : Any
+            Input argument.
+        batch : Any
+            Input argument.
+        **kwargs : Any
+            Input argument.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         dim = node_input.shape[-1]
 
         fields = []

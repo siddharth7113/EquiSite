@@ -8,7 +8,33 @@ from torch.nn import init
 
 
 class RadialProfile(nn.Module):
+    """
+    RadialProfile implementation.
+
+    Parameters
+    ----------
+    ch_list : Any
+        Initialization argument.
+    use_layer_norm : Any
+        Initialization argument.
+    use_offset : Any
+        Initialization argument.
+    """
+
     def __init__(self, ch_list, use_layer_norm=True, use_offset=True):
+        """
+        Initialize RadialProfile.
+
+        Parameters
+        ----------
+        ch_list : Any
+            Input argument.
+        use_layer_norm : Any
+            Input argument.
+        use_offset : Any
+            Input argument.
+
+        """
         super().__init__()
         modules = []
         input_channels = ch_list[0]
@@ -44,6 +70,19 @@ class RadialProfile(nn.Module):
             init.uniform_(self.offset, -bound, bound)
 
     def forward(self, f_in):
+        """
+        Run the forward pass.
+
+        Parameters
+        ----------
+        f_in : Any
+            Input argument.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         f_out = self.net(f_in)
         if self.offset is not None:
             f_out = f_out + self.offset.reshape(1, -1)

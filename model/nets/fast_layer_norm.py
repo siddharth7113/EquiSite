@@ -7,8 +7,37 @@ from e3nn.o3 import Irreps
 
 
 class EquivariantLayerNormFast(nn.Module):
+    """
+    EquivariantLayerNormFast implementation.
+
+    Parameters
+    ----------
+    irreps : Any
+        Initialization argument.
+    eps : Any
+        Initialization argument.
+    affine : Any
+        Initialization argument.
+    normalization : Any
+        Initialization argument.
+    """
 
     def __init__(self, irreps, eps=1e-5, affine=True, normalization="component"):
+        """
+        Initialize EquivariantLayerNormFast.
+
+        Parameters
+        ----------
+        irreps : Any
+            Input argument.
+        eps : Any
+            Input argument.
+        affine : Any
+            Input argument.
+        normalization : Any
+            Input argument.
+
+        """
         super().__init__()
 
         self.irreps = Irreps(irreps)
@@ -32,6 +61,14 @@ class EquivariantLayerNormFast(nn.Module):
         self.normalization = normalization
 
     def __repr__(self):
+        """
+        Return a readable string representation.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         return f"{self.__class__.__name__} ({self.irreps}, eps={self.eps})"
 
     def forward(self, node_input, **kwargs):

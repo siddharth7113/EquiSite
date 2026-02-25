@@ -12,10 +12,31 @@ from e3nn.util.jit import compile_mode
 #   https://github.com/e3nn/e3nn/blob/main/e3nn/nn/_batchnorm.py
 @compile_mode("unsupported")
 class EquivariantLayerNorm(torch.nn.Module):
+    """
+    EquivariantLayerNorm implementation.
+
+    Parameters
+    ----------
+    irreps_in : Any
+        Initialization argument.
+    eps : Any
+        Initialization argument.
+    """
 
     NORM_CLAMP = 2**-24  # Minimum positive subnormal for FP16
 
     def __init__(self, irreps_in, eps=1e-5):
+        """
+        Initialize EquivariantLayerNorm.
+
+        Parameters
+        ----------
+        irreps_in : Any
+            Input argument.
+        eps : Any
+            Input argument.
+
+        """
         super().__init__()
         self.irreps_in = irreps_in
         self.eps = eps
@@ -55,12 +76,49 @@ class EquivariantLayerNorm(torch.nn.Module):
         return f_out
 
     def __repr__(self):
+        """
+        Return a readable string representation.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         return f"{self.__class__.__name__}({self.irreps_in}, eps={self.eps})"
 
 
 class EquivariantLayerNormV2(nn.Module):
+    """
+    EquivariantLayerNormV2 implementation.
+
+    Parameters
+    ----------
+    irreps : Any
+        Initialization argument.
+    eps : Any
+        Initialization argument.
+    affine : Any
+        Initialization argument.
+    normalization : Any
+        Initialization argument.
+    """
 
     def __init__(self, irreps, eps=1e-5, affine=True, normalization="component"):
+        """
+        Initialize EquivariantLayerNormV2.
+
+        Parameters
+        ----------
+        irreps : Any
+            Input argument.
+        eps : Any
+            Input argument.
+        affine : Any
+            Input argument.
+        normalization : Any
+            Input argument.
+
+        """
         super().__init__()
 
         self.irreps = Irreps(irreps)
@@ -84,6 +142,14 @@ class EquivariantLayerNormV2(nn.Module):
         self.normalization = normalization
 
     def __repr__(self):
+        """
+        Return a readable string representation.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         return f"{self.__class__.__name__}({self.irreps}, eps={self.eps})"
 
     @torch.amp.autocast("cuda", enabled=False)
@@ -92,6 +158,21 @@ class EquivariantLayerNormV2(nn.Module):
         # node_input = node_input.reshape(batch, -1, dim)  # [batch, sample, stacked features]
         # node_input has shape [batch * nodes, dim], but with variable nr of nodes.
         # the node_input batch slices this into separate graphs
+        """
+        Run the forward pass.
+
+        Parameters
+        ----------
+        node_input : Any
+            Input argument.
+        **kwargs : Any
+            Input argument.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         dim = node_input.shape[-1]
 
         fields = []
@@ -161,6 +242,21 @@ class EquivariantLayerNormV3(nn.Module):
     """
 
     def __init__(self, irreps, eps=1e-5, affine=True, normalization="component"):
+        """
+        Initialize EquivariantLayerNormV3.
+
+        Parameters
+        ----------
+        irreps : Any
+            Input argument.
+        eps : Any
+            Input argument.
+        affine : Any
+            Input argument.
+        normalization : Any
+            Input argument.
+
+        """
         super().__init__()
 
         self.irreps = Irreps(irreps)
@@ -184,11 +280,33 @@ class EquivariantLayerNormV3(nn.Module):
         self.normalization = normalization
 
     def __repr__(self):
+        """
+        Return a readable string representation.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         return f"{self.__class__.__name__} ({self.irreps}, eps={self.eps})"
 
     # @torch.autocast(device_type='cuda', enabled=False)
     def forward(self, node_input, **kwargs):
+        """
+        Run the forward pass.
 
+        Parameters
+        ----------
+        node_input : Any
+            Input argument.
+        **kwargs : Any
+            Input argument.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         dim = node_input.shape[-1]
 
         fields = []
@@ -243,6 +361,21 @@ class EquivariantLayerNormV4(nn.Module):
     """
 
     def __init__(self, irreps, eps=1e-5, affine=True, normalization="component"):
+        """
+        Initialize EquivariantLayerNormV4.
+
+        Parameters
+        ----------
+        irreps : Any
+            Input argument.
+        eps : Any
+            Input argument.
+        affine : Any
+            Input argument.
+        normalization : Any
+            Input argument.
+
+        """
         super().__init__()
 
         self.irreps = Irreps(irreps)
@@ -275,11 +408,33 @@ class EquivariantLayerNormV4(nn.Module):
         self.normalization = normalization
 
     def __repr__(self):
+        """
+        Return a readable string representation.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         return f"{self.__class__.__name__} ({self.irreps}, eps={self.eps})"
 
     # @torch.autocast(device_type='cuda', enabled=False)
     def forward(self, node_input, **kwargs):
+        """
+        Run the forward pass.
 
+        Parameters
+        ----------
+        node_input : Any
+            Input argument.
+        **kwargs : Any
+            Input argument.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         dim = node_input.shape[-1]
 
         fields = []

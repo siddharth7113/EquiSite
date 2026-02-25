@@ -20,6 +20,19 @@ num_esm_embs = 1280
 
 
 def swish(x):
+    """
+    Swish.
+
+    Parameters
+    ----------
+    x : Any
+        Input argument.
+
+    Returns
+    -------
+    Any
+        Function output.
+    """
     return x * torch.sigmoid(x)
 
 
@@ -36,7 +49,21 @@ class Linear(torch.nn.Module):
     """
 
     def __init__(self, in_channels, out_channels, bias=True, weight_initializer="glorot"):
+        """
+        Initialize Linear.
 
+        Parameters
+        ----------
+        in_channels : Any
+            Input argument.
+        out_channels : Any
+            Input argument.
+        bias : Any
+            Input argument.
+        weight_initializer : Any
+            Input argument.
+
+        """
         super().__init__()
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -52,6 +79,14 @@ class Linear(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        """
+        Reset parameters.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         if self.weight_initializer == "glorot":
             inits.glorot(self.weight)
         elif self.weight_initializer == "zeros":
@@ -78,16 +113,54 @@ class TwoLinear(torch.nn.Module):
     """
 
     def __init__(self, in_channels, middle_channels, out_channels, bias=False, act=False):
+        """
+        Initialize TwoLinear.
+
+        Parameters
+        ----------
+        in_channels : Any
+            Input argument.
+        middle_channels : Any
+            Input argument.
+        out_channels : Any
+            Input argument.
+        bias : Any
+            Input argument.
+        act : Any
+            Input argument.
+
+        """
         super().__init__()
         self.lin1 = Linear(in_channels, middle_channels, bias=bias)
         self.lin2 = Linear(middle_channels, out_channels, bias=bias)
         self.act = act
 
     def reset_parameters(self):
+        """
+        Reset parameters.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         self.lin1.reset_parameters()
         self.lin2.reset_parameters()
 
     def forward(self, x):
+        """
+        Run the forward pass.
+
+        Parameters
+        ----------
+        x : Any
+            Input argument.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         x = self.lin1(x)
         if self.act:
             x = swish(x)
@@ -110,6 +183,17 @@ class EdgeGraphConv(MessagePassing):
     """
 
     def __init__(self, in_channels, out_channels):
+        """
+        Initialize EdgeGraphConv.
+
+        Parameters
+        ----------
+        in_channels : Any
+            Input argument.
+        out_channels : Any
+            Input argument.
+
+        """
         super().__init__()
 
         self.in_channels = in_channels
@@ -121,23 +205,107 @@ class EdgeGraphConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        """
+        Reset parameters.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         self.lin_l.reset_parameters()
         self.lin_r.reset_parameters()
 
     def forward(self, x, edge_index, edge_weight, size=None):
+        """
+        Run the forward pass.
+
+        Parameters
+        ----------
+        x : Any
+            Input argument.
+        edge_index : Any
+            Input argument.
+        edge_weight : Any
+            Input argument.
+        size : Any
+            Input argument.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         x = (x, x)
         out = self.propagate(edge_index, x=x, edge_weight=edge_weight, size=size)
         out = self.lin_l(out)
         return out + self.lin_r(x[1])
 
     def message(self, x_j, edge_weight):
+        """
+        Message.
+
+        Parameters
+        ----------
+        x_j : Any
+            Input argument.
+        edge_weight : Any
+            Input argument.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         return edge_weight * x_j
 
     def message_and_aggregate(self, adj_t, x):
+        """
+        Message and aggregate.
+
+        Parameters
+        ----------
+        adj_t : Any
+            Input argument.
+        x : Any
+            Input argument.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         return matmul(adj_t, x[0], reduce=self.aggr)
 
 
 class InteractionBlock(torch.nn.Module):
+    """
+    InteractionBlock implementation.
+
+    Parameters
+    ----------
+    hidden_channels : Any
+        Initialization argument.
+    output_channels : Any
+        Initialization argument.
+    num_radial : Any
+        Initialization argument.
+    num_spherical : Any
+        Initialization argument.
+    num_layers : Any
+        Initialization argument.
+    mid_emb : Any
+        Initialization argument.
+    act : Any
+        Initialization argument.
+    num_pos_emb : Any
+        Initialization argument.
+    dropout : Any
+        Initialization argument.
+    level : Any
+        Initialization argument.
+    """
+
     def __init__(
         self,
         hidden_channels,
@@ -151,6 +319,33 @@ class InteractionBlock(torch.nn.Module):
         dropout=0,
         level="allatom",
     ):
+        """
+        Initialize InteractionBlock.
+
+        Parameters
+        ----------
+        hidden_channels : Any
+            Input argument.
+        output_channels : Any
+            Input argument.
+        num_radial : Any
+            Input argument.
+        num_spherical : Any
+            Input argument.
+        num_layers : Any
+            Input argument.
+        mid_emb : Any
+            Input argument.
+        act : Any
+            Input argument.
+        num_pos_emb : Any
+            Input argument.
+        dropout : Any
+            Input argument.
+        level : Any
+            Input argument.
+
+        """
         super().__init__()
         self.act = act
         self.dropout = nn.Dropout(dropout)
@@ -191,6 +386,14 @@ class InteractionBlock(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        """
+        Reset parameters.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         self.conv0.reset_parameters()
         self.conv1.reset_parameters()
         self.conv2.reset_parameters()
@@ -214,6 +417,29 @@ class InteractionBlock(torch.nn.Module):
         self.final.reset_parameters()
 
     def forward(self, x, feature0, feature1, pos_emb, edge_index, batch):
+        """
+        Run the forward pass.
+
+        Parameters
+        ----------
+        x : Any
+            Input argument.
+        feature0 : Any
+            Input argument.
+        feature1 : Any
+            Input argument.
+        pos_emb : Any
+            Input argument.
+        edge_index : Any
+            Input argument.
+        batch : Any
+            Input argument.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         x_lin_1 = self.act(self.lin_1(x))
         x_lin_2 = self.act(self.lin_2(x))
 
@@ -272,6 +498,45 @@ class EquiSite(nn.Module):
         data_augment_eachlayer=False,
         euler_noise=False,
     ):
+        """
+        Initialize EquiSite.
+
+        Parameters
+        ----------
+        args : Any
+            Input argument.
+        level : Any
+            Input argument.
+        num_blocks : Any
+            Input argument.
+        hidden_channels : Any
+            Input argument.
+        out_channels : Any
+            Input argument.
+        mid_emb : Any
+            Input argument.
+        num_radial : Any
+            Input argument.
+        num_spherical : Any
+            Input argument.
+        cutoff : Any
+            Input argument.
+        max_num_neighbors : Any
+            Input argument.
+        int_emb_layers : Any
+            Input argument.
+        out_layers : Any
+            Input argument.
+        num_pos_emb : Any
+            Input argument.
+        dropout : Any
+            Input argument.
+        data_augment_eachlayer : Any
+            Input argument.
+        euler_noise : Any
+            Input argument.
+
+        """
         super().__init__()
         self.cutoff = cutoff
         self.max_num_neighbors = max_num_neighbors
@@ -350,6 +615,14 @@ class EquiSite(nn.Module):
         self.args = args
 
     def reset_parameters(self):
+        """
+        Reset parameters.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         self.embedding.reset_parameters()
         # for interaction in self.interaction_blocks:
         #     interaction.reset_parameters()
@@ -359,6 +632,21 @@ class EquiSite(nn.Module):
 
     def pos_emb(self, edge_index, num_pos_emb=16):
         # From https://github.com/jingraham/neurips19-graph-protein-design
+        """
+        Pos emb.
+
+        Parameters
+        ----------
+        edge_index : Any
+            Input argument.
+        num_pos_emb : Any
+            Input argument.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         d = edge_index[0] - edge_index[1]
 
         frequency = torch.exp(
@@ -370,7 +658,19 @@ class EquiSite(nn.Module):
         return E
 
     def forward(self, batch_data):
+        """
+        Run the forward pass.
 
+        Parameters
+        ----------
+        batch_data : Any
+            Input argument.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         z, pos, batch = torch.squeeze(batch_data.x.long()), batch_data.coords_ca, batch_data.batch
         pos_n = batch_data.coords_n
         pos_c = batch_data.coords_c
@@ -555,18 +855,41 @@ class EquiSite(nn.Module):
 
     @property
     def num_params(self):
+        """
+        Num params.
+
+        Returns
+        -------
+        Any
+            Computed property value.
+        """
         return sum(p.numel() for p in self.parameters())
 
 
 def batchgraph2batch(x, batch):
+    """
+    Batchgraph2batch.
+
+    Parameters
+    ----------
+    x : Any
+        Input argument.
+    batch : Any
+        Input argument.
+
+    Returns
+    -------
+    Any
+        Function output.
+    """
     max_node_num = torch.unique(batch, return_counts=True)[1].max().item()
     batch_size = batch.max().item() + 1
-    # 重新组织x，按照batch的索引信息将数据堆叠到一起
-    reshaped_x = torch.zeros(batch_size, max_node_num, x.size(1))  # 初始化一个大的张量
+    # Reorganize x by stacking node features per graph using batch indices.
+    reshaped_x = torch.zeros(batch_size, max_node_num, x.size(1))  # Initialize the padded tensor.
     for i in range(batch_size):
-        # 找出属于当前batch的索引
+        # Find indices belonging to the current graph in the batch.
         idx = (batch == i).nonzero().squeeze()
-        # 将属于当前batch的数据放入大张量的对应位置
+        # Place node features for this graph into the padded tensor.
         reshaped_x[i, : idx.size(0), :] = x[idx]
 
     return reshaped_x

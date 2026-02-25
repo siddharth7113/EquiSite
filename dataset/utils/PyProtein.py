@@ -324,6 +324,23 @@ class PyProtein(PyMolecule):
         self.aminoNeighsSIndicesHB_ = np.array(self.aminoNeighsSIndicesHB_)
 
     def __update_neighborhood__(self, pNewIndices, pGraphNeighs, pGraphStartNeighs):
+        """
+        Update neighborhood.
+
+        Parameters
+        ----------
+        pNewIndices : Any
+            Input argument.
+        pGraphNeighs : Any
+            Input argument.
+        pGraphStartNeighs : Any
+            Input argument.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         newStartIndices = np.full((np.amax(pNewIndices) + 1), 0, dtype=np.int32)
 
         if pGraphNeighs.shape[0] > 0:
@@ -364,6 +381,29 @@ class PyProtein(PyMolecule):
     ):
         # Reduce by half the number of atoms for each aminoacid using spectral clustering on
         # the graph defined by the covalent bonds.
+        """
+        Compute side chain pooling.
+
+        Parameters
+        ----------
+        pAtomAminoIds : Any
+            Input argument.
+        pGraphNeighs1 : Any
+            Input argument.
+        pGraphStartNeighs1 : Any
+            Input argument.
+        pGraphNeighs2 : Any
+            Input argument.
+        pGraphStartNeighs2 : Any
+            Input argument.
+        pCacheGraph : Any
+            Input argument.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         newAtomCounter = 0
         aminoCounter = 0
         newAminoIds = []
@@ -446,6 +486,29 @@ class PyProtein(PyMolecule):
     ):
         # Reduce by half the number of atoms for each aminoacid using spectral clustering on
         # the graph defined by the covalent bonds.
+        """
+        Compute side chain pooling rosetta cen.
+
+        Parameters
+        ----------
+        pAtomNames : Any
+            Input argument.
+        pAtomAminoIds : Any
+            Input argument.
+        pGraphNeighs1 : Any
+            Input argument.
+        pGraphStartNeighs1 : Any
+            Input argument.
+        pGraphNeighs2 : Any
+            Input argument.
+        pGraphStartNeighs2 : Any
+            Input argument.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         aminoCounter = 0
         newAminoIds = []
         newIndices = np.full((len(pGraphStartNeighs1)), -1, dtype=np.int32)
@@ -660,7 +723,7 @@ class PyProtein(PyMolecule):
         self.aminoType_ = auxResidueTypes[mask]
         self.aminoChainIds_ = self.atomChainIds_[mask].reshape(-1)
 
-        # Process the amino ids.只有有Ca的氨基酸才会被记录
+        # Process amino-acid IDs; only residues with a CA atom are recorded.
         aminoOrigIds = auxResidueIds[mask]
         filtered_indices = [np.where(aminoOrigIds == curAminoId)[0] for curAminoId in auxResidueIds]
         # if len(naminoIds) > 0:

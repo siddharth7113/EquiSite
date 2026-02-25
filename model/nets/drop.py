@@ -31,13 +31,43 @@ class DropPath(nn.Module):
     """Drop paths (Stochastic Depth) per sample  (when applied in main path of residual blocks)."""
 
     def __init__(self, drop_prob=None):
+        """
+        Initialize DropPath.
+
+        Parameters
+        ----------
+        drop_prob : Any
+            Input argument.
+
+        """
         super().__init__()
         self.drop_prob = drop_prob
 
     def forward(self, x):
+        """
+        Run the forward pass.
+
+        Parameters
+        ----------
+        x : Any
+            Input argument.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         return drop_path(x, self.drop_prob, self.training)
 
     def extra_repr(self):
+        """
+        Extra repr.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         return f"drop_prob={self.drop_prob}"
 
 
@@ -47,10 +77,34 @@ class GraphDropPath(nn.Module):
     """
 
     def __init__(self, drop_prob=None):
+        """
+        Initialize GraphDropPath.
+
+        Parameters
+        ----------
+        drop_prob : Any
+            Input argument.
+
+        """
         super().__init__()
         self.drop_prob = drop_prob
 
     def forward(self, x, batch):
+        """
+        Run the forward pass.
+
+        Parameters
+        ----------
+        x : Any
+            Input argument.
+        batch : Any
+            Input argument.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         batch_size = batch.max() + 1
         shape = (batch_size,) + (1,) * (
             x.ndim - 1
@@ -61,11 +115,41 @@ class GraphDropPath(nn.Module):
         return out
 
     def extra_repr(self):
+        """
+        Extra repr.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         return f"drop_prob={self.drop_prob}"
 
 
 class EquivariantDropout(nn.Module):
+    """
+    EquivariantDropout implementation.
+
+    Parameters
+    ----------
+    irreps : Any
+        Initialization argument.
+    drop_prob : Any
+        Initialization argument.
+    """
+
     def __init__(self, irreps, drop_prob):
+        """
+        Initialize EquivariantDropout.
+
+        Parameters
+        ----------
+        irreps : Any
+            Input argument.
+        drop_prob : Any
+            Input argument.
+
+        """
         super().__init__()
         self.irreps = irreps
         self.num_irreps = irreps.num_irreps
@@ -74,6 +158,19 @@ class EquivariantDropout(nn.Module):
         self.mul = o3.ElementwiseTensorProduct(irreps, o3.Irreps(f"{self.num_irreps}x0e"))
 
     def forward(self, x):
+        """
+        Run the forward pass.
+
+        Parameters
+        ----------
+        x : Any
+            Input argument.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         if not self.training or self.drop_prob == 0.0:
             return x
         shape = (x.shape[0], self.num_irreps)
@@ -84,12 +181,47 @@ class EquivariantDropout(nn.Module):
 
 
 class EquivariantScalarsDropout(nn.Module):
+    """
+    EquivariantScalarsDropout implementation.
+
+    Parameters
+    ----------
+    irreps : Any
+        Initialization argument.
+    drop_prob : Any
+        Initialization argument.
+    """
+
     def __init__(self, irreps, drop_prob):
+        """
+        Initialize EquivariantScalarsDropout.
+
+        Parameters
+        ----------
+        irreps : Any
+            Input argument.
+        drop_prob : Any
+            Input argument.
+
+        """
         super().__init__()
         self.irreps = irreps
         self.drop_prob = drop_prob
 
     def forward(self, x):
+        """
+        Run the forward pass.
+
+        Parameters
+        ----------
+        x : Any
+            Input argument.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         if not self.training or self.drop_prob == 0.0:
             return x
         out = []
@@ -104,4 +236,12 @@ class EquivariantScalarsDropout(nn.Module):
         return out
 
     def extra_repr(self):
+        """
+        Extra repr.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         return f"irreps={self.irreps}, drop_prob={self.drop_prob}"

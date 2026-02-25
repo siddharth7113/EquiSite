@@ -25,6 +25,23 @@ class EquivariantInstanceNorm(nn.Module):
     """
 
     def __init__(self, irreps, eps=1e-5, affine=True, reduce="mean", normalization="component"):
+        """
+        Initialize EquivariantInstanceNorm.
+
+        Parameters
+        ----------
+        irreps : Any
+            Input argument.
+        eps : Any
+            Input argument.
+        affine : Any
+            Input argument.
+        reduce : Any
+            Input argument.
+        normalization : Any
+            Input argument.
+
+        """
         super().__init__()
 
         self.irreps = Irreps(irreps)
@@ -52,6 +69,14 @@ class EquivariantInstanceNorm(nn.Module):
         self.normalization = normalization
 
     def __repr__(self):
+        """
+        Return a readable string representation.
+
+        Returns
+        -------
+        Any
+            Function output.
+        """
         return f"{self.__class__.__name__} ({self.irreps}, eps={self.eps})"
 
     # @torch.autocast(device_type='cuda', enabled=False)
