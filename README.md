@@ -169,16 +169,13 @@ residue_index,residue_name,binding_probability
 
 ### Programmatic Usage
 
-You can also call the inference function directly from Python:
+You can also use the public Python inference API:
 
 ```python
-import torch
-from predict import _load_model, run_single_inference
+from equisite import EquiSitePredictor
 
-device = torch.device("cuda:0")
-model = _load_model("checkpoints/DNA/best_val.pt", device)
-
-results = run_single_inference("my_protein.pdb", model, device)
+predictor = EquiSitePredictor.from_pretrained(binding_type="DNA", device="0")
+results = predictor.predict_proba("my_protein.pdb")
 for r in results:
     if r["binding_probability"] > 0.5:
         print(f"Residue {r['residue_index']} ({r['residue_name']}): "
@@ -240,11 +237,15 @@ Checkpoints and full evaluation outputs are available on
 ```
 EquiSite/
 ├── predict.py              # ← User-friendly inference CLI (start here!)
-├── infer.py                # Legacy batch inference script
 ├── train.py                # Training script
 ├── pyproject.toml          # pip-installable package metadata
 ├── checkpoints/            # Pretrained weights (DNA / RNA)
 ├── examples/               # Sample PDBs and output CSVs
+│
+├── equisite/               # Public Python inference API
+│   ├── __init__.py
+│   ├── predictor.py
+│   └── _*.py               # Private inference internals
 │
 ├── model/
 │   ├── equisite_t3_pro.py  # EquiSite model definition

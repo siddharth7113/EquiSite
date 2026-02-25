@@ -18,13 +18,13 @@ EquiSite predicts protein nucleic-acid binding residues using:
 EquiSite/
 ├── predict.py                 # Main inference CLI
 ├── train.py                   # Training entry point
-├── infer.py                   # Legacy inference script
 ├── pyproject.toml             # Packaging + black/ruff configuration
 ├── checkpoints/               # Pretrained model weights
 │   ├── DNA/best_val.pt
 │   ├── DNA_181/best_val.pt
 │   └── RNA/best_val.pt
 ├── examples/                  # Sample PDBs and output CSV files
+├── equisite/                  # Public Python bindings + private inference modules
 ├── model/
 │   ├── __init__.py
 │   ├── equisite_t3_pro.py
@@ -78,9 +78,6 @@ python predict.py --pdb_dir ./my_pdbs --type RNA --output ./results
 
 # Training
 python train.py --dataset DNA_Check --dataset_path dataset/ --epochs 200
-
-# Legacy inference
-python infer.py --pdb_dir ./my_pdbs --out_dir ./output
 ```
 
 ## Lint and Formatting Rules
