@@ -5,8 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import torch
-
-from model.equisite_t3_pro import EquiSite
+from torch import nn
 
 from ._graph_builder import build_graph
 from ._hdf5_io import extract_sequence, pdb_to_hdf5
@@ -16,7 +15,7 @@ from ._types import PredictionRow
 
 def run_single_inference(
     pdb_path: str | Path,
-    model: EquiSite,
+    model: nn.Module,
     device: torch.device,
     *,
     sequence: str | None = None,

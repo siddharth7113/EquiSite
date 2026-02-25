@@ -1,30 +1,39 @@
-"""Public inference API for EquiSite."""
+"""Backward-compatible predictor wrapper around the public model pipeline API."""
 
 from __future__ import annotations
 
 from pathlib import Path
 
 import torch
+from torch import nn
 
-from model.equisite_t3_pro import EquiSite
-
-from ._constants import DEFAULT_CHECKPOINTS
-from ._device import resolve_device
-from ._inference_runner import run_single_inference
-from ._model_loader import load_model
-from ._types import PredictionRow
+from ._types import BinaryPredictionRow, PredictionRow
+from .model import EquiSitePipeline
 
 
 class EquiSitePredictor:
-    """Sklearn-style inference wrapper around the EquiSite model."""
+    """Compatibility wrapper mirroring the previous predictor interface."""
 
     def __init__(
-        self, model: EquiSite, device: torch.device, model_path: Path | None = None
+        self, model: nn.Module, device: torch.device, model_path: Path | None = None
     ) -> None:
         """Build a predictor from a preloaded model and target device."""
-        self.model = model
-        self.device = device
-        self.model_path = model_path
+        self._pipeline = EquiSitePipeline(model=model, device=device, model_path=model_path)
+
+    @property
+    def model(self) -> nn.Module:
+        """Expose the underlying model instance."""
+        return self._pipeline.model
+
+    @property
+    def device(self) -> torch.device:
+        """Expose the predictor device."""
+        return self._pipeline.device
+
+    @property
+    def model_path(self) -> Path | None:
+        """Expose the checkpoint path when known."""
+        return self._pipeline.model_path
 
     @classmethod
     def from_pretrained(
@@ -33,28 +42,16 @@ class EquiSitePredictor:
         binding_type: str = "DNA",
         model_path: str | Path | None = None,
         device: str | int | torch.device | None = "0",
+        model_kwargs: dict[str, object] | None = None,
     ) -> EquiSitePredictor:
-        """Instantiate a predictor from a pretrained checkpoint."""
-        normalized_binding_type = binding_type.upper()
-        if normalized_binding_type not in DEFAULT_CHECKPOINTS:
-            raise ValueError(
-                f"Unsupported binding_type '{binding_type}'. Expected one of: DNA, RNA."
-            )
-
-        resolved_device = resolve_device(device)
-        checkpoint_path = (
-            Path(model_path)
-            if model_path is not None
-            else Path(DEFAULT_CHECKPOINTS[normalized_binding_type])
+        """Instantiate a predictor from pretrained checkpoint weights."""
+        pipeline = EquiSitePipeline.from_pretrained(
+            binding_type=binding_type,
+            model_path=model_path,
+            device=device,
+            model_kwargs=model_kwargs,
         )
-        if not checkpoint_path.exists():
-            raise FileNotFoundError(
-                f"Checkpoint not found at {checkpoint_path}. "
-                "Download it from the Zenodo release and place it in the expected location."
-            )
-
-        model = load_model(checkpoint_path, resolved_device)
-        return cls(model=model, device=resolved_device, model_path=checkpoint_path)
+        return cls(model=pipeline.model, device=pipeline.device, model_path=pipeline.model_path)
 
     def predict_proba(
         self,
@@ -63,7 +60,7 @@ class EquiSitePredictor:
         sequence: str | None = None,
     ) -> list[PredictionRow]:
         """Return per-residue binding probabilities for a single PDB."""
-        return run_single_inference(pdb_path, self.model, self.device, sequence=sequence)
+        return self._pipeline.predict_proba(pdb_path, sequence=sequence).to_list()
 
     def predict(
         self,
@@ -71,13 +68,13 @@ class EquiSitePredictor:
         *,
         threshold: float = 0.5,
         sequence: str | None = None,
-    ) -> list[dict[str, int | str | float | bool]]:
+    ) -> list[BinaryPredictionRow]:
         """Return per-residue binary predictions at a probability threshold."""
         probabilities = self.predict_proba(pdb_path, sequence=sequence)
         return [
             {
                 **row,
-                "is_binding": float(row["binding_probability"]) >= threshold,
+                "is_binding": row["binding_probability"] >= threshold,
             }
             for row in probabilities
         ]

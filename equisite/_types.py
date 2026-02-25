@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import TypedDict
 
 
 @dataclass(frozen=True)
@@ -15,4 +16,17 @@ class PDBResidueRecord:
     residue_name: str
 
 
-PredictionRow = dict[str, int | str | float]
+class PredictionRow(TypedDict):
+    """Per-residue probability output row."""
+
+    residue_index: int
+    chain: str
+    insertion_code: str
+    residue_name: str
+    binding_probability: float
+
+
+class BinaryPredictionRow(PredictionRow):
+    """Per-residue binary output row."""
+
+    is_binding: bool
