@@ -11,10 +11,10 @@ import textwrap
 from pathlib import Path
 from typing import TextIO
 
-from equisite import EquiSitePredictor
+from equisite.model import EquiSitePipeline, PredictionResult
 
 
-def _write_csv(results: list[dict[str, int | str | float]], destination: TextIO) -> None:
+def _write_csv(results: PredictionResult, destination: TextIO) -> None:
     """Write predictions to CSV."""
     writer = csv.DictWriter(
         destination,
@@ -27,20 +27,16 @@ def _write_csv(results: list[dict[str, int | str | float]], destination: TextIO)
         ],
     )
     writer.writeheader()
-    writer.writerows(results)
+    writer.writerows(results.rows)
 
 
-def _write_json(results: list[dict[str, int | str | float]], destination: TextIO) -> None:
+def _write_json(results: PredictionResult, destination: TextIO) -> None:
     """Write predictions to JSON."""
-    json.dump(results, destination, indent=2)
+    json.dump(results.rows, destination, indent=2)
     destination.write("\n")
 
 
-def _print_summary(
-    results: list[dict[str, int | str | float]],
-    top_k: int,
-    pdb_name: str,
-) -> None:
+def _print_summary(results: PredictionResult, top_k: int, pdb_name: str) -> None:
     """Print top-ranked residues to stderr."""
     sorted_results = sorted(
         results, key=lambda row: float(row["binding_probability"]), reverse=True
@@ -49,7 +45,7 @@ def _print_summary(
 
     print("", file=sys.stderr)
     print(
-        f"EquiSite - Top {min(top_k, len(results))} binding residues for {pdb_name}",
+        f"EquiSite - Top {min(top_k, len(results.rows))} binding residues for {pdb_name}",
         file=sys.stderr,
     )
     print("Index       Residue        Probability", file=sys.stderr)
@@ -64,7 +60,7 @@ def _print_summary(
         )
 
     print("--------------------------------------", file=sys.stderr)
-    print(f"Total residues: {len(results)}", file=sys.stderr)
+    print(f"Total residues: {len(results.rows)}", file=sys.stderr)
     print("", file=sys.stderr)
 
 
@@ -159,7 +155,7 @@ def main(argv: list[str] | None = None) -> None:
     """CLI entrypoint."""
     args = _parse_args(argv)
     try:
-        predictor = EquiSitePredictor.from_pretrained(
+        pipeline = EquiSitePipeline.from_pretrained(
             binding_type=args.type,
             model_path=args.model_path,
             device=args.device,
@@ -167,9 +163,9 @@ def main(argv: list[str] | None = None) -> None:
     except (FileNotFoundError, ValueError) as exc:
         sys.exit(f"Error: {exc}")
 
-    print(f"Using device: {predictor.device}", file=sys.stderr)
-    if predictor.model_path is not None:
-        print(f"Loading model: {predictor.model_path}", file=sys.stderr)
+    print(f"Using device: {pipeline.device}", file=sys.stderr)
+    if pipeline.model_path is not None:
+        print(f"Loading model: {pipeline.model_path}", file=sys.stderr)
 
     if args.pdb:
         pdb_files = [Path(args.pdb)]
@@ -186,7 +182,7 @@ def main(argv: list[str] | None = None) -> None:
     for pdb_path in pdb_files:
         print(f"Processing: {pdb_path.name} ...", file=sys.stderr)
         try:
-            results = predictor.predict_proba(pdb_path, sequence=args.sequence)
+            results = pipeline.predict_proba(pdb_path, sequence=args.sequence)
         except Exception as exc:  # pragma: no cover - this is CLI error handling.
             print(f"  x Error processing {pdb_path.name}: {exc}", file=sys.stderr)
             continue

@@ -26,7 +26,12 @@ def test_predict_adds_binary_binding_flag() -> None:
     torch = pytest.importorskip("torch")
     from equisite.predictor import EquiSitePredictor
 
-    predictor = EquiSitePredictor(model=object(), device=torch.device("cpu"))
+    class _DummyModel(torch.nn.Module):
+        def __init__(self) -> None:
+            super().__init__()
+            self.weight = torch.nn.Parameter(torch.tensor(1.0))
+
+    predictor = EquiSitePredictor(model=_DummyModel(), device=torch.device("cpu"))
 
     def _fake_predict_proba(*args, **kwargs):
         del args, kwargs
