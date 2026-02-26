@@ -1,0 +1,1409 @@
+[
+  {
+    "residue_index": 502,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "PRO",
+    "binding_probability": 0.000564
+  },
+  {
+    "residue_index": 503,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "PRO",
+    "binding_probability": 0.000355
+  },
+  {
+    "residue_index": 504,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "LEU",
+    "binding_probability": 0.000596
+  },
+  {
+    "residue_index": 505,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "HIS",
+    "binding_probability": 0.002569
+  },
+  {
+    "residue_index": 506,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ASP",
+    "binding_probability": 0.003117
+  },
+  {
+    "residue_index": 507,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "PHE",
+    "binding_probability": 0.007877
+  },
+  {
+    "residue_index": 508,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "TYR",
+    "binding_probability": 0.086651
+  },
+  {
+    "residue_index": 509,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "CYS",
+    "binding_probability": 0.000798
+  },
+  {
+    "residue_index": 510,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "SER",
+    "binding_probability": 0.117749
+  },
+  {
+    "residue_index": 511,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ARG",
+    "binding_probability": 0.030044
+  },
+  {
+    "residue_index": 512,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "LEU",
+    "binding_probability": 0.002042
+  },
+  {
+    "residue_index": 513,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "LEU",
+    "binding_probability": 0.000613
+  },
+  {
+    "residue_index": 514,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ASP",
+    "binding_probability": 0.001805
+  },
+  {
+    "residue_index": 515,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "LEU",
+    "binding_probability": 4.9e-05
+  },
+  {
+    "residue_index": 516,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "VAL",
+    "binding_probability": 9e-05
+  },
+  {
+    "residue_index": 517,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "PHE",
+    "binding_probability": 0.000119
+  },
+  {
+    "residue_index": 518,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "LEU",
+    "binding_probability": 9.9e-05
+  },
+  {
+    "residue_index": 519,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "LEU",
+    "binding_probability": 0.000335
+  },
+  {
+    "residue_index": 520,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ASP",
+    "binding_probability": 0.007869
+  },
+  {
+    "residue_index": 521,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "GLY",
+    "binding_probability": 7.3e-05
+  },
+  {
+    "residue_index": 522,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "SER",
+    "binding_probability": 0.019002
+  },
+  {
+    "residue_index": 523,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "SER",
+    "binding_probability": 0.140336
+  },
+  {
+    "residue_index": 524,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ARG",
+    "binding_probability": 0.469417
+  },
+  {
+    "residue_index": 525,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "LEU",
+    "binding_probability": 0.012305
+  },
+  {
+    "residue_index": 526,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "SER",
+    "binding_probability": 0.100007
+  },
+  {
+    "residue_index": 527,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "GLU",
+    "binding_probability": 0.010567
+  },
+  {
+    "residue_index": 528,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ALA",
+    "binding_probability": 0.004578
+  },
+  {
+    "residue_index": 529,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "GLU",
+    "binding_probability": 0.012458
+  },
+  {
+    "residue_index": 530,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "PHE",
+    "binding_probability": 5e-05
+  },
+  {
+    "residue_index": 531,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "GLU",
+    "binding_probability": 0.000309
+  },
+  {
+    "residue_index": 532,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "VAL",
+    "binding_probability": 0.000344
+  },
+  {
+    "residue_index": 533,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "LEU",
+    "binding_probability": 8.2e-05
+  },
+  {
+    "residue_index": 534,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "LYS",
+    "binding_probability": 0.000778
+  },
+  {
+    "residue_index": 535,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ALA",
+    "binding_probability": 0.000654
+  },
+  {
+    "residue_index": 536,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "PHE",
+    "binding_probability": 0.000229
+  },
+  {
+    "residue_index": 537,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "VAL",
+    "binding_probability": 8.3e-05
+  },
+  {
+    "residue_index": 538,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "VAL",
+    "binding_probability": 0.000493
+  },
+  {
+    "residue_index": 539,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ASP",
+    "binding_probability": 0.002179
+  },
+  {
+    "residue_index": 540,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "MET",
+    "binding_probability": 0.000157
+  },
+  {
+    "residue_index": 541,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "MET",
+    "binding_probability": 0.000207
+  },
+  {
+    "residue_index": 542,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "GLU",
+    "binding_probability": 0.043264
+  },
+  {
+    "residue_index": 543,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ARG",
+    "binding_probability": 0.026478
+  },
+  {
+    "residue_index": 544,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "LEU",
+    "binding_probability": 0.00161
+  },
+  {
+    "residue_index": 545,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ARG",
+    "binding_probability": 0.641597
+  },
+  {
+    "residue_index": 546,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ILE",
+    "binding_probability": 0.12492
+  },
+  {
+    "residue_index": 547,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "SER",
+    "binding_probability": 0.346192
+  },
+  {
+    "residue_index": 548,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "GLN",
+    "binding_probability": 0.550978
+  },
+  {
+    "residue_index": 549,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "LYS",
+    "binding_probability": 0.66454
+  },
+  {
+    "residue_index": 550,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "TRP",
+    "binding_probability": 0.094962
+  },
+  {
+    "residue_index": 551,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "VAL",
+    "binding_probability": 0.000632
+  },
+  {
+    "residue_index": 552,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ARG",
+    "binding_probability": 0.314266
+  },
+  {
+    "residue_index": 553,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "VAL",
+    "binding_probability": 8.6e-05
+  },
+  {
+    "residue_index": 554,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ALA",
+    "binding_probability": 0.000198
+  },
+  {
+    "residue_index": 555,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "VAL",
+    "binding_probability": 6.6e-05
+  },
+  {
+    "residue_index": 556,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "VAL",
+    "binding_probability": 0.000143
+  },
+  {
+    "residue_index": 557,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "GLU",
+    "binding_probability": 0.000428
+  },
+  {
+    "residue_index": 558,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "TYR",
+    "binding_probability": 0.008814
+  },
+  {
+    "residue_index": 559,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "HIS",
+    "binding_probability": 0.000566
+  },
+  {
+    "residue_index": 560,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ASP",
+    "binding_probability": 0.225781
+  },
+  {
+    "residue_index": 561,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "GLY",
+    "binding_probability": 0.121029
+  },
+  {
+    "residue_index": 562,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "SER",
+    "binding_probability": 0.002922
+  },
+  {
+    "residue_index": 563,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "HIS",
+    "binding_probability": 0.122921
+  },
+  {
+    "residue_index": 564,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ALA",
+    "binding_probability": 0.009279
+  },
+  {
+    "residue_index": 565,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "TYR",
+    "binding_probability": 0.011229
+  },
+  {
+    "residue_index": 566,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ILE",
+    "binding_probability": 0.001287
+  },
+  {
+    "residue_index": 567,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "GLY",
+    "binding_probability": 0.152509
+  },
+  {
+    "residue_index": 568,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "LEU",
+    "binding_probability": 0.008417
+  },
+  {
+    "residue_index": 569,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "LYS",
+    "binding_probability": 0.590054
+  },
+  {
+    "residue_index": 570,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ASP",
+    "binding_probability": 0.25228
+  },
+  {
+    "residue_index": 571,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ARG",
+    "binding_probability": 0.72154
+  },
+  {
+    "residue_index": 572,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "LYS",
+    "binding_probability": 0.620627
+  },
+  {
+    "residue_index": 573,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ARG",
+    "binding_probability": 0.696518
+  },
+  {
+    "residue_index": 574,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "PRO",
+    "binding_probability": 0.284884
+  },
+  {
+    "residue_index": 575,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "SER",
+    "binding_probability": 0.274449
+  },
+  {
+    "residue_index": 576,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "GLU",
+    "binding_probability": 0.150603
+  },
+  {
+    "residue_index": 577,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "LEU",
+    "binding_probability": 0.001447
+  },
+  {
+    "residue_index": 578,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ARG",
+    "binding_probability": 0.004786
+  },
+  {
+    "residue_index": 579,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ARG",
+    "binding_probability": 0.046497
+  },
+  {
+    "residue_index": 580,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ILE",
+    "binding_probability": 0.005661
+  },
+  {
+    "residue_index": 581,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ALA",
+    "binding_probability": 9.4e-05
+  },
+  {
+    "residue_index": 582,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "SER",
+    "binding_probability": 0.006468
+  },
+  {
+    "residue_index": 583,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "GLN",
+    "binding_probability": 0.010863
+  },
+  {
+    "residue_index": 584,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "VAL",
+    "binding_probability": 0.000156
+  },
+  {
+    "residue_index": 585,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "LYS",
+    "binding_probability": 0.003069
+  },
+  {
+    "residue_index": 586,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "TYR",
+    "binding_probability": 0.003884
+  },
+  {
+    "residue_index": 587,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ALA",
+    "binding_probability": 0.004334
+  },
+  {
+    "residue_index": 588,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "GLY",
+    "binding_probability": 0.060304
+  },
+  {
+    "residue_index": 589,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "SER",
+    "binding_probability": 0.024504
+  },
+  {
+    "residue_index": 590,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "GLN",
+    "binding_probability": 0.529838
+  },
+  {
+    "residue_index": 591,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "VAL",
+    "binding_probability": 0.216676
+  },
+  {
+    "residue_index": 592,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ALA",
+    "binding_probability": 0.011363
+  },
+  {
+    "residue_index": 593,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "SER",
+    "binding_probability": 0.239167
+  },
+  {
+    "residue_index": 594,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "THR",
+    "binding_probability": 0.028084
+  },
+  {
+    "residue_index": 595,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "SER",
+    "binding_probability": 0.318566
+  },
+  {
+    "residue_index": 596,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "GLU",
+    "binding_probability": 0.244712
+  },
+  {
+    "residue_index": 597,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "VAL",
+    "binding_probability": 0.002467
+  },
+  {
+    "residue_index": 598,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "LEU",
+    "binding_probability": 0.000317
+  },
+  {
+    "residue_index": 599,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "LYS",
+    "binding_probability": 0.83084
+  },
+  {
+    "residue_index": 600,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "TYR",
+    "binding_probability": 0.234106
+  },
+  {
+    "residue_index": 601,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "THR",
+    "binding_probability": 0.000443
+  },
+  {
+    "residue_index": 602,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "LEU",
+    "binding_probability": 0.68583
+  },
+  {
+    "residue_index": 603,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "PHE",
+    "binding_probability": 0.875927
+  },
+  {
+    "residue_index": 604,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "GLN",
+    "binding_probability": 0.48583
+  },
+  {
+    "residue_index": 605,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ILE",
+    "binding_probability": 0.07574
+  },
+  {
+    "residue_index": 606,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "PHE",
+    "binding_probability": 0.093352
+  },
+  {
+    "residue_index": 607,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "SER",
+    "binding_probability": 0.799443
+  },
+  {
+    "residue_index": 608,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "LYS",
+    "binding_probability": 0.754689
+  },
+  {
+    "residue_index": 609,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ILE",
+    "binding_probability": 0.350781
+  },
+  {
+    "residue_index": 610,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ASP",
+    "binding_probability": 0.735536
+  },
+  {
+    "residue_index": 611,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ARG",
+    "binding_probability": 0.790418
+  },
+  {
+    "residue_index": 612,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "PRO",
+    "binding_probability": 0.406022
+  },
+  {
+    "residue_index": 613,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "GLU",
+    "binding_probability": 0.300431
+  },
+  {
+    "residue_index": 614,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ALA",
+    "binding_probability": 0.00241
+  },
+  {
+    "residue_index": 615,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "SER",
+    "binding_probability": 0.012791
+  },
+  {
+    "residue_index": 616,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ARG",
+    "binding_probability": 0.242734
+  },
+  {
+    "residue_index": 617,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ILE",
+    "binding_probability": 0.000311
+  },
+  {
+    "residue_index": 618,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ALA",
+    "binding_probability": 0.000163
+  },
+  {
+    "residue_index": 619,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "LEU",
+    "binding_probability": 0.000134
+  },
+  {
+    "residue_index": 620,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "LEU",
+    "binding_probability": 0.000139
+  },
+  {
+    "residue_index": 621,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "LEU",
+    "binding_probability": 8.5e-05
+  },
+  {
+    "residue_index": 622,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "MET",
+    "binding_probability": 0.002051
+  },
+  {
+    "residue_index": 623,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ALA",
+    "binding_probability": 0.001853
+  },
+  {
+    "residue_index": 624,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "SER",
+    "binding_probability": 0.279669
+  },
+  {
+    "residue_index": 625,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "GLN",
+    "binding_probability": 0.794693
+  },
+  {
+    "residue_index": 626,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "GLU",
+    "binding_probability": 0.399125
+  },
+  {
+    "residue_index": 627,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "PRO",
+    "binding_probability": 0.716356
+  },
+  {
+    "residue_index": 628,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "GLN",
+    "binding_probability": 0.84461
+  },
+  {
+    "residue_index": 629,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ARG",
+    "binding_probability": 0.868807
+  },
+  {
+    "residue_index": 630,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "MET",
+    "binding_probability": 0.384715
+  },
+  {
+    "residue_index": 631,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "SER",
+    "binding_probability": 0.475044
+  },
+  {
+    "residue_index": 632,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ARG",
+    "binding_probability": 0.882131
+  },
+  {
+    "residue_index": 633,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ASN",
+    "binding_probability": 0.817463
+  },
+  {
+    "residue_index": 634,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "PHE",
+    "binding_probability": 0.065238
+  },
+  {
+    "residue_index": 635,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "VAL",
+    "binding_probability": 0.701581
+  },
+  {
+    "residue_index": 636,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ARG",
+    "binding_probability": 0.889777
+  },
+  {
+    "residue_index": 637,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "TYR",
+    "binding_probability": 0.814766
+  },
+  {
+    "residue_index": 638,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "VAL",
+    "binding_probability": 0.000788
+  },
+  {
+    "residue_index": 639,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "GLN",
+    "binding_probability": 0.671561
+  },
+  {
+    "residue_index": 640,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "GLY",
+    "binding_probability": 0.748483
+  },
+  {
+    "residue_index": 641,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "LEU",
+    "binding_probability": 0.007956
+  },
+  {
+    "residue_index": 642,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "LYS",
+    "binding_probability": 0.664965
+  },
+  {
+    "residue_index": 643,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "LYS",
+    "binding_probability": 0.791707
+  },
+  {
+    "residue_index": 644,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "LYS",
+    "binding_probability": 0.762357
+  },
+  {
+    "residue_index": 645,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "LYS",
+    "binding_probability": 0.176086
+  },
+  {
+    "residue_index": 646,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "VAL",
+    "binding_probability": 0.002543
+  },
+  {
+    "residue_index": 647,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ILE",
+    "binding_probability": 0.009635
+  },
+  {
+    "residue_index": 648,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "VAL",
+    "binding_probability": 0.000165
+  },
+  {
+    "residue_index": 649,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ILE",
+    "binding_probability": 0.000726
+  },
+  {
+    "residue_index": 650,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "PRO",
+    "binding_probability": 0.000764
+  },
+  {
+    "residue_index": 651,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "VAL",
+    "binding_probability": 0.000385
+  },
+  {
+    "residue_index": 652,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "GLY",
+    "binding_probability": 0.026575
+  },
+  {
+    "residue_index": 653,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ILE",
+    "binding_probability": 0.001069
+  },
+  {
+    "residue_index": 654,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "GLY",
+    "binding_probability": 0.020005
+  },
+  {
+    "residue_index": 655,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "PRO",
+    "binding_probability": 0.740421
+  },
+  {
+    "residue_index": 656,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "HIS",
+    "binding_probability": 0.75631
+  },
+  {
+    "residue_index": 657,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ALA",
+    "binding_probability": 0.355172
+  },
+  {
+    "residue_index": 658,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ASN",
+    "binding_probability": 0.693129
+  },
+  {
+    "residue_index": 659,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "LEU",
+    "binding_probability": 0.671788
+  },
+  {
+    "residue_index": 660,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "LYS",
+    "binding_probability": 0.832368
+  },
+  {
+    "residue_index": 661,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "GLN",
+    "binding_probability": 0.401813
+  },
+  {
+    "residue_index": 662,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ILE",
+    "binding_probability": 0.001088
+  },
+  {
+    "residue_index": 663,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ARG",
+    "binding_probability": 0.716626
+  },
+  {
+    "residue_index": 664,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "LEU",
+    "binding_probability": 0.512416
+  },
+  {
+    "residue_index": 665,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ILE",
+    "binding_probability": 0.00026
+  },
+  {
+    "residue_index": 666,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "GLU",
+    "binding_probability": 0.040048
+  },
+  {
+    "residue_index": 667,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "LYS",
+    "binding_probability": 0.707616
+  },
+  {
+    "residue_index": 668,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "GLN",
+    "binding_probability": 0.668398
+  },
+  {
+    "residue_index": 669,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ALA",
+    "binding_probability": 0.12598
+  },
+  {
+    "residue_index": 670,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "PRO",
+    "binding_probability": 0.145101
+  },
+  {
+    "residue_index": 671,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "GLU",
+    "binding_probability": 0.027806
+  },
+  {
+    "residue_index": 672,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ASN",
+    "binding_probability": 0.000948
+  },
+  {
+    "residue_index": 673,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "LYS",
+    "binding_probability": 0.017271
+  },
+  {
+    "residue_index": 674,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ALA",
+    "binding_probability": 0.005418
+  },
+  {
+    "residue_index": 675,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "PHE",
+    "binding_probability": 0.004214
+  },
+  {
+    "residue_index": 676,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "VAL",
+    "binding_probability": 0.161084
+  },
+  {
+    "residue_index": 677,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "LEU",
+    "binding_probability": 0.004479
+  },
+  {
+    "residue_index": 678,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "SER",
+    "binding_probability": 0.449769
+  },
+  {
+    "residue_index": 679,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "SER",
+    "binding_probability": 0.006805
+  },
+  {
+    "residue_index": 680,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "VAL",
+    "binding_probability": 0.000303
+  },
+  {
+    "residue_index": 681,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ASP",
+    "binding_probability": 0.000421
+  },
+  {
+    "residue_index": 682,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "GLU",
+    "binding_probability": 0.003052
+  },
+  {
+    "residue_index": 683,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "LEU",
+    "binding_probability": 9.8e-05
+  },
+  {
+    "residue_index": 684,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "GLU",
+    "binding_probability": 0.000847
+  },
+  {
+    "residue_index": 685,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "GLN",
+    "binding_probability": 0.001236
+  },
+  {
+    "residue_index": 686,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "GLN",
+    "binding_probability": 0.000486
+  },
+  {
+    "residue_index": 687,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ARG",
+    "binding_probability": 0.001841
+  },
+  {
+    "residue_index": 688,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ASP",
+    "binding_probability": 0.000706
+  },
+  {
+    "residue_index": 689,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "GLU",
+    "binding_probability": 0.000547
+  },
+  {
+    "residue_index": 690,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ILE",
+    "binding_probability": 0.000157
+  },
+  {
+    "residue_index": 691,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "VAL",
+    "binding_probability": 0.000115
+  },
+  {
+    "residue_index": 692,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "SER",
+    "binding_probability": 0.000179
+  },
+  {
+    "residue_index": 693,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "TYR",
+    "binding_probability": 0.001274
+  },
+  {
+    "residue_index": 694,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "LEU",
+    "binding_probability": 0.000105
+  },
+  {
+    "residue_index": 695,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "CYS",
+    "binding_probability": 9.8e-05
+  },
+  {
+    "residue_index": 696,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ASP",
+    "binding_probability": 0.000623
+  },
+  {
+    "residue_index": 697,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "LEU",
+    "binding_probability": 0.00046
+  },
+  {
+    "residue_index": 698,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ALA",
+    "binding_probability": 0.000354
+  },
+  {
+    "residue_index": 699,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "PRO",
+    "binding_probability": 0.000601
+  },
+  {
+    "residue_index": 700,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "GLU",
+    "binding_probability": 0.023192
+  },
+  {
+    "residue_index": 701,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "ALA",
+    "binding_probability": 0.030191
+  },
+  {
+    "residue_index": 702,
+    "chain": "A",
+    "insertion_code": "",
+    "residue_name": "PRO",
+    "binding_probability": 0.031549
+  }
+]

@@ -142,7 +142,7 @@ Each PDB gets its own output file in `./results/`.
 | `--output` / `-o` | `PATH` | stdout | Output file (single) or directory (batch) |
 | `--format` | `csv\|json` | `csv` | Output format |
 | `--top_k` | `int` | `20` | Number of top residues shown in summary |
-| `--device` | `str` | `0` | `"cpu"` or CUDA device index |
+| `--device` | `str` | auto | `"cpu"` or `"cuda"` |
 | `--sequence` | `str` | — | Override protein sequence (e.g. for mutant studies) |
 
 ### Output Format
@@ -172,9 +172,12 @@ residue_index,residue_name,binding_probability
 You can also use the public Python inference API:
 
 ```python
+import torch
+
 from equisite.model import EquiSitePipeline
 
-pipeline = EquiSitePipeline.from_pretrained(binding_type="DNA", device="0")
+device = "cuda" if torch.cuda.is_available() else "cpu"
+pipeline = EquiSitePipeline.from_pretrained(binding_type="DNA", device=device)
 results = pipeline.predict_proba("my_protein.pdb")
 for r in results:
     if r["binding_probability"] > 0.5:

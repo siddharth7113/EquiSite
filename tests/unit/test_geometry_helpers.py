@@ -8,7 +8,7 @@ import pytest
 def _load_geometry_dependencies():
     np = pytest.importorskip("numpy")
     torch = pytest.importorskip("torch")
-    from equisite import _geometry
+    from equisite.preprocessing import _geometry
 
     return np, torch, _geometry
 

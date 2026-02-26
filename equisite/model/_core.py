@@ -3,6 +3,9 @@ This is an implementation of EquiSite model
 
 """
 
+from __future__ import annotations
+
+from pathlib import Path
 from typing import Any
 
 import numpy as np
@@ -12,7 +15,7 @@ from torch import nn
 from torch.nn import Embedding
 from torch_geometric.nn import radius_graph
 
-from .features_equi_t3_pro import d_angle_emb, d_theta_phi_emb
+from ._features import d_angle_emb, d_theta_phi_emb
 from .layers import EdgeGraphConv, InteractionBlock, Linear, TwoLinear, swish
 
 __all__ = [
@@ -39,20 +42,21 @@ class EquiSite(nn.Module):
 
     def __init__(
         self,
-        args: Any,
-        level: str = "aminoacid",
+        *,
+        args: Any = None,
+        level: str = "allatom+esm",
         num_blocks: int = 4,
         hidden_channels: int = 128,
-        out_channels: int = 2,
+        out_channels: int = 1,
         mid_emb: int = 64,
         num_radial: int = 6,
         num_spherical: int = 3,
-        cutoff: float = 10.0,
+        cutoff: float = 11.5,
         max_num_neighbors: int = 32,
         int_emb_layers: int = 3,
         out_layers: int = 2,
         num_pos_emb: int = 16,
-        dropout: float = 0,
+        dropout: float = 0.25,
         data_augment_eachlayer: bool = False,
         euler_noise: bool = False,
     ) -> None:
@@ -424,6 +428,46 @@ class EquiSite(nn.Module):
             Computed property value.
         """
         return sum(p.numel() for p in self.parameters())
+
+    @classmethod
+    def from_pretrained(
+        cls,
+        *,
+        binding_type: str = "DNA",
+        model_path: str | Path | None = None,
+        device: str | None = None,
+        model_kwargs: dict[str, Any] | None = None,
+    ) -> EquiSite:
+        """Create a model and load checkpoint weights.
+
+        Parameters
+        ----------
+        binding_type : str
+            One of ``"DNA"`` or ``"RNA"``.
+        model_path : str | Path | None
+            Explicit path to a checkpoint file. When *None*, the default
+            checkpoint for ``binding_type`` is used.
+        device : str | None
+            Device string (e.g. ``"cpu"``, ``"cuda"``). Autodetected when *None*.
+        model_kwargs : dict[str, Any] | None
+            Extra keyword arguments forwarded to the ``EquiSite`` constructor.
+
+        Returns
+        -------
+        EquiSite
+            Model with loaded weights, placed on ``device`` in eval mode.
+        """
+        from ._pretrained import resolve_checkpoint_path
+
+        device = device or ("cuda" if torch.cuda.is_available() else "cpu")
+        checkpoint_path = resolve_checkpoint_path(binding_type, model_path)
+
+        model = cls(**(model_kwargs or {}))
+        checkpoint = torch.load(str(checkpoint_path), map_location=device)
+        model.load_state_dict(checkpoint["model_state_dict"])
+        model.to(device)
+        model.eval()
+        return model
 
 
 def batchgraph2batch(x: torch.Tensor, batch: torch.Tensor) -> torch.Tensor:

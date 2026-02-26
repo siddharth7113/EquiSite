@@ -36,7 +36,7 @@ def loaded_pipeline() -> EquiSitePipeline:
     return EquiSitePipeline.from_pretrained(
         binding_type="DNA",
         model_path=DNA_CHECKPOINT,
-        device="0",
+        device="cpu",
     )
 
 

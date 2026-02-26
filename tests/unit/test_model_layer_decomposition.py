@@ -9,7 +9,7 @@ def test_core_model_uses_decomposed_linear_layers() -> None:
     """Expose decomposed layer classes through the core model module."""
     pytest.importorskip("torch")
 
-    from equisite.model.equisite_t3_pro import (
+    from equisite.model._core import (
         EdgeGraphConv as CoreEdgeGraphConv,
         InteractionBlock as CoreInteractionBlock,
         Linear as CoreLinear,

@@ -68,24 +68,20 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """Parse CLI arguments."""
     parser = argparse.ArgumentParser(
         prog="predict.py",
-        description=textwrap.dedent(
-            """\
+        description=textwrap.dedent("""\
             EquiSite: Predict per-residue nucleic-acid binding probabilities
             from protein PDB structures.
 
             Provide either --pdb (single file) or --pdb_dir (batch).
-            """
-        ),
+            """),
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog=textwrap.dedent(
-            """\
+        epilog=textwrap.dedent("""\
             Examples:
               python predict.py --pdb protein.pdb --type DNA
               python predict.py --pdb protein.pdb --type RNA --device cpu
               python predict.py --pdb_dir ./pdbs/ --type DNA --output results/
               python predict.py --pdb protein.pdb --format json --output out.json
-            """
-        ),
+            """),
     )
 
     input_group = parser.add_mutually_exclusive_group(required=True)
@@ -138,8 +134,8 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "--device",
         type=str,
-        default="0",
-        help='Device: "cpu" or CUDA device index (default: "0").',
+        default=None,
+        help='Device: "cpu" or "cuda" (default: auto-select).',
     )
     parser.add_argument(
         "--sequence",
@@ -160,7 +156,7 @@ def main(argv: list[str] | None = None) -> None:
             model_path=args.model_path,
             device=args.device,
         )
-    except (FileNotFoundError, ValueError) as exc:
+    except (FileNotFoundError, RuntimeError, ValueError) as exc:
         sys.exit(f"Error: {exc}")
 
     print(f"Using device: {pipeline.device}", file=sys.stderr)

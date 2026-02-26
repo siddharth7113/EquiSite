@@ -11,7 +11,7 @@ def test_extract_sequence_compacts_atom_level_records(tmp_path: Path) -> None:
     """Convert atom-level residue records into residue-level sequence."""
     h5py = pytest.importorskip("h5py")
     np = pytest.importorskip("numpy")
-    from equisite._hdf5_io import extract_sequence
+    from equisite.preprocessing._hdf5_io import extract_sequence
 
     file_path = tmp_path / "protein.hdf5"
     with h5py.File(file_path, "w") as h5_file:

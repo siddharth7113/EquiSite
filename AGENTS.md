@@ -29,7 +29,7 @@ EquiSite/
 ├── equisite/                  # Public Python bindings + private inference modules
 │   ├── __init__.py
 │   ├── model/
-│   │   ├── _model.py
+│   │   ├── _core.py
 │   │   ├── _pipeline.py
 │   │   ├── _result.py
 │   │   ├── equisite_t3_pro.py

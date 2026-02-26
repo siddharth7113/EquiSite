@@ -41,6 +41,15 @@ def test_parse_args_batch_mode() -> None:
     assert args.format == "json"
 
 
+def test_parse_args_defaults_to_auto_device_selection() -> None:
+    """Default CLI device handling to auto-selection."""
+    _parse_args, _write_csv, _write_json, prediction_result = _load_predict_helpers()
+    del _write_csv, _write_json, prediction_result
+
+    args = _parse_args(["--pdb", "protein.pdb", "--type", "DNA"])
+    assert args.device is None
+
+
 def test_write_csv_output_contract() -> None:
     """Write CSV output with stable header and values."""
     _parse_args, _write_csv, _write_json, prediction_result = _load_predict_helpers()

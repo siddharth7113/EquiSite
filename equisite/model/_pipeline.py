@@ -8,10 +8,9 @@ from typing import Any
 import torch
 from torch import nn
 
-from .._device import resolve_device
-from .._inference_runner import run_single_inference
 from .._types import BinaryPredictionRow
-from ._model import EquiSite
+from ..preprocessing._inference_runner import run_single_inference
+from ._core import EquiSite
 from ._result import BinaryPredictionResult, PredictionResult
 
 
@@ -22,15 +21,15 @@ class EquiSitePipeline:
         self,
         model: nn.Module,
         *,
-        device: str | int | torch.device | None = None,
+        device: str | torch.device | None = None,
         model_path: str | Path | None = None,
     ) -> None:
         """Initialize a pipeline with an existing model."""
         self.device = (
-            resolve_device(device) if device is not None else next(model.parameters()).device
+            torch.device(device) if device is not None else next(model.parameters()).device
         )
         self.model = model.to(self.device)
-        self.model.eval()
+        # self.model.eval()
         self.model_path = Path(model_path) if model_path is not None else None
 
     @classmethod
@@ -39,17 +38,18 @@ class EquiSitePipeline:
         *,
         binding_type: str = "DNA",
         model_path: str | Path | None = None,
-        device: str | int | torch.device | None = "0",
+        device: str | None = None,
         model_kwargs: dict[str, Any] | None = None,
     ) -> EquiSitePipeline:
         """Build a pipeline by loading pretrained model weights."""
-        model, resolved_device, resolved_model_path = EquiSite.from_pretrained(
+        model = EquiSite.from_pretrained(
             binding_type=binding_type,
             model_path=model_path,
             device=device,
             model_kwargs=model_kwargs,
         )
-        return cls(model=model, device=resolved_device, model_path=resolved_model_path)
+        resolved_device = next(model.parameters()).device
+        return cls(model=model, device=resolved_device)
 
     def predict_proba(
         self,
@@ -79,7 +79,7 @@ class EquiSitePipeline:
             binary_rows.append(binary_row)
         return BinaryPredictionResult(rows=binary_rows)
 
-    def eval(self) -> EquiSitePipeline:
-        """Set model to eval mode and return the pipeline."""
-        self.model.eval()
-        return self
+    # def eval(self) -> EquiSitePipeline:
+    #     """Set model to eval mode and return the pipeline."""
+    #     self.model.eval()
+    #     return self
